@@ -1,0 +1,181 @@
+---
+:ae:
+  :hub: United Arab Emirates
+  :language: ar
+:ar:
+  :hub: Argentina
+  :language: es
+:asia:
+  :hub: Asia
+  :language: th
+:au:
+  :hub: Australia
+  :language: au
+:ba:
+  :hub: Bosnia And Herzegovina
+  :language: bs
+:bg:
+  :hub: Bulgaria
+  :language: bg
+:br:
+  :hub: Brazil
+  :language: pt
+:cl:
+  :hub: Chile
+  :language: es
+:cn:
+  :hub: China
+  :language: cn
+:cz:
+  :hub: Czech Republic
+  :language: cz
+:de:
+  :hub: Germany
+  :language: de
+:dk:
+  :hub: Denmark
+  :language: dk
+:ee:
+  :hub: Estonia
+  :language: ee
+:eg:
+  :hub: Egypt
+  :language: ar
+:com:
+  :hub: International
+  :language: en
+:es:
+  :hub: Spain
+  :language: es
+:fi:
+  :hub: Finland
+  :language: fi
+:fr:
+  :hub: France
+  :language: fr
+:gq:
+  :hub: Travian Team
+  :language: en
+:gr:
+  :hub: Greece
+  :language: gr
+:hk:
+  :hub: Hong Kong
+  :language: hk
+:hr:
+  :hub: Croatia
+  :language: hr
+:hu:
+  :hub: Hungary
+  :language: hu
+:id:
+  :hub: Indonesia
+  :language: id
+:il:
+  :hub: Israel
+  :language: he
+:in:
+  :hub: India
+  :language: in
+:ine:
+  :hub: India
+  :language: in
+:ir:
+  :hub: Iran, Islamic Republic Of
+  :language: ir
+:it:
+  :hub: Italy
+  :language: it
+:jp:
+  :hub: Japan
+  :language: jp
+:kr:
+  :hub: South Korea
+  :language: ko
+:lt:
+  :hub: Lithuania
+  :language: lt
+:lv:
+  :hub: Latvia
+  :language: lv
+:ma:
+  :hub: Morocco
+  :language: fr
+:mx:
+  :hub: Mexico
+  :language: es
+:my:
+  :hub: Malaysia
+  :language: my
+:net:
+  :hub: Spain
+  :language: es
+:nl:
+  :hub: Netherlands
+  :language: nl
+:no:
+  :hub: Norway
+  :language: no
+:nz:
+  :hub: New Zealand
+  :language: en
+:ph:
+  :hub: Philippines
+  :language: ph
+:pk:
+  :hub: Pakistan
+  :language: en
+:pl:
+  :hub: Poland
+  :language: pl
+:pt:
+  :hub: Portugal
+  :language: pt
+:ro:
+  :hub: Romania
+  :language: ro
+:rs:
+  :hub: Serbia
+  :language: sr
+:ru:
+  :hub: Russian Federation
+  :language: ru
+:sa:
+  :hub: Saudi Arabia
+  :language: ar
+:se:
+  :hub: Sweden
+  :language: sv
+:si:
+  :hub: Slovenia
+  :language: sl
+:sk:
+  :hub: Slovakia
+  :language: sk
+:arabia:
+  :hub: Arabia
+  :language: ar
+:th:
+  :hub: Thailand
+  :language: th
+:tr:
+  :hub: Turkey
+  :language: tr
+:tw:
+  :hub: Taiwan, Province Of China
+  :language: tw
+:ua:
+  :hub: Ukraine
+  :language: uk
+:uk:
+  :hub: United Kingdom
+  :language: en
+:us:
+  :hub: United States
+  :language: en
+:vn:
+  :hub: Viet Nam
+  :language: vi
+:za:
+  :hub: South Africa
+  :language: en
