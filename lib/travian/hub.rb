@@ -36,20 +36,22 @@ module Travian::Hub
       world_page.css('div#country_select').text.gsub(/\n|\t/, '')[/\(({container:[^\)]+).+/]; $1
     end
 
-    def hub_js_hash
-      Hash.from_js(fetch_data)
+    def raw_hubs_hash
+      Hash.from_js(fetch_data)[:flags].values.inject(&:merge)
     end
 
     def hubs_hash
       hash = {}.with_indifferent_access
-      hub_js_hash[:flags].values.inject(&:merge).each do |k,v|
-        begin
-          HTTParty.post("#{v}serverLogin.php", limit: 1)
-          hash[k] = { code: k, host: v, name: name_of(k) } if HTTParty.get(v)
-        rescue HTTParty::RedirectionTooDeep
-        end
+      raw_hubs_hash.each do |k,v|
+        hash[k] = { code: k, host: v, name: name_of(k) } unless is_mirror?(v)
       end
       hash
+    end
+
+    def is_mirror?(host)
+      return false if HTTParty.post("#{host}serverLogin.php", limit: 1)
+    rescue HTTParty::RedirectionTooDeep
+      return true
     end
   end
 

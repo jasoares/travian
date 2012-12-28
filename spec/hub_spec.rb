@@ -63,26 +63,26 @@ module Travian
       end
     end
 
-    describe '.hub_js_hash' do
+    describe '.raw_hubs_hash' do
       before(:each) do
-        @js_hash = "{'key':'value'}"
+        @js_hash = "{flags:{'europe':{'ba':'http://www.travian.ba/'}}}"
         Hub.stub(:fetch_data => @js_hash)
       end
 
-      subject { Hub.send(:hub_js_hash) }
+      subject { Hub.send(:raw_hubs_hash) }
 
       it { should be_a Hash }
 
-      it { should have_key :key }
+      it { should have_key :ba }
 
       it 'delegates data convertion to Hash.from_js' do
-        Hash.should_receive(:from_js).with(@js_hash)
-        Hub.send(:hub_js_hash)
+        Hash.should_receive(:from_js).with(@js_hash).and_return(flags: {europe: {ba: 'http://www.travian.ba/'}})
+        Hub.send(:raw_hubs_hash)
       end
 
       it 'delegates to Hub.fetch_data to get the data' do
         Hub.should_receive(:fetch_data).with no_args
-        Hub.send(:hub_js_hash)
+        Hub.send(:raw_hubs_hash)
       end
     end
 
@@ -104,13 +104,56 @@ module Travian
     end
 
     describe '.fetch_data' do
-      include_context 'fake main hub'
-      include_examples '.fetch_data'
+      context 'offline specs' do
+        include_context 'fake main hub'
+        include_examples '.fetch_data'
+      end
+
+      context 'online specs', online: true do
+        include_context 'online'
+        include_examples '.fetch_data'
+      end
     end
 
-    describe '.fetch_data', :online => true do
-      include_context 'online'
-      include_examples '.fetch_data'
+    describe '.hubs_hash' do
+      context 'given a hash with 2 hubs' do
+        include_context 'fake main hub'
+        include_context 'fake portuguese hub and servers'
+        include_context 'fake czech hub and servers'
+
+        before(:each) do
+          @hubs = { ba: 'http://www.travian.cz/', bg: 'http://www.travian.pt/' }
+        end
+
+        it 'delegates data fetching to .raw_hubs_hash' do
+          Hub.should_receive(:raw_hubs_hash) { @hubs }
+          Hub.send(:hubs_hash)
+        end
+
+        it 'delegates redirection check to .redirected?' do
+          Hub.should_receive(:is_mirror?).exactly(55).times
+          Hub.send(:hubs_hash)
+        end
+      end
+    end
+
+    describe '.is_mirror?' do
+      before(:all) do
+        @host = 'http://www.travian.co.kr/'
+      end
+
+      it 'makes a post request to host/serverLogin.php with redirection limit set to 1' do
+        HTTParty.should_receive(:post).with("#{@host}serverLogin.php", limit: 1)
+        Hub.send(:is_mirror?, @host)
+      end
+
+      context 'when passed a host that redirects', online: true do
+        include_context 'online'
+
+        it 'returns true' do
+          Hub.send(:is_mirror?, @host).should == true
+        end
+      end
     end
   end
 end
