@@ -98,6 +98,10 @@ module Travian
         end
   
         context 'when passed a block' do
+          before(:all) do
+            Timecop.freeze(Time.utc(2012,12,27,10,20,0))
+          end
+
           let(:list) { Server.fetch_list!(@hub) {} }
   
           it 'yields a hub hash of attributes to the block each turn' do
@@ -112,6 +116,10 @@ module Travian
               ["ts7", {"host"=>"http://ts7.travian.pt/", "code"=>"ts7", "name"=>"Servidor7", "start_date"=> Date.new(2012,12,8), "world_id"=>"pt77", "version"=>"4.0", "speed"=>1}],
               ["tx3", {"host"=>"http://tx3.travian.pt/", "code"=>"tx3", "name"=>"Speed3x", "start_date"=> Date.new(2012,9,29), "world_id"=>"ptx18", "version"=>"4.0", "speed"=>3}]
             ])
+          end
+
+          after(:all) do
+            Timecop.return
           end
         end
       end
@@ -139,7 +147,8 @@ module Travian
       context 'when passed the portuguese hub' do
         include_context 'fake portuguese hub and servers'
 
-        before(:each) do
+        before do
+          Timecop.freeze(Time.utc(2012,12,27,10,20,0))
           hub = double('Hub', :host => 'http://www.travian.pt/')
           @hubs_hash = Server.send(:fetch_hub_servers_data_in_hash, hub)
         end
@@ -156,6 +165,10 @@ module Travian
             "ts7" => {"host"=>"http://ts7.travian.pt/", "code"=>"ts7", "name"=>"Servidor7", "start_date"=> Date.new(2012,12,8)},
             "tx3" => {"host"=>"http://tx3.travian.pt/", "code"=>"tx3", "name"=>"Speed3x", "start_date"=> Date.new(2012,9,29)},
           }
+        end
+
+        after do
+          Timecop.return
         end
       end
     end

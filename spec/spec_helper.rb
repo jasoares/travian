@@ -9,6 +9,7 @@ SimpleCov.start
 
 require File.expand_path('../fakewebs', __FILE__)
 require 'travian'
+require 'timecop'
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true

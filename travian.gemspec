@@ -27,4 +27,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency("guard", '~> 1.5.4')
   gem.add_development_dependency("guard-rspec", '~> 2.3.0')
   gem.add_development_dependency("rb-inotify", '~> 0.8.8')
+  gem.add_development_dependency("timecop", '~> 0.5.7')
 end
