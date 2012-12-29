@@ -1,59 +1,63 @@
+require 'travian/servers_hash'
 require 'httparty'
 require 'nokogiri'
+require 'yaml'
 
-module Travian::Hub
-  def self.included(base)
-    base.extend(ClassMethods)
-  end
+module Travian
+  class Hub
+    include HTTParty
 
-  CODES = YAML.load_file(
-    File.expand_path('../../../data/hub_codes.yml', __FILE__)
-  ).with_indifferent_access
+    CODES = YAML.load_file(
+      File.expand_path('../../../data/hub_codes.yml', __FILE__)
+    )
 
-  MAIN_HUB_HOST = 'http://www.travian.com'
+    attr_reader :code, :host, :name, :language, :mirrored_host
 
-  module ClassMethods
+    def initialize(code, host)
+      @code, @host, @name = code, host, CODES[code][:hub]
+      @language = CODES[code][:language]
+    end
 
-    def fetch_list!
-      return hubs_hash unless block_given?
-      hubs_hash.each_pair do |k,v|
-        yield k, v
-      end
+    def attributes
+      {
+        code:     code.to_s,
+        host:     host,
+        name:     name,
+        language: language
+      }
+    end
+
+    def servers
+      @servers ||= ServersHash.build(self)
     end
 
     private
 
-    def name_of(code)
-      CODES[code][:hub]
-    end
+    class << self
 
-    def language_of(code)
-      CODES[code][:language]
-    end
-
-    def fetch_data
-      world_page = Nokogiri::HTML(HTTParty.get(MAIN_HUB_HOST).body)
-      world_page.css('div#country_select').text.gsub(/\n|\t/, '')[/\(({container:[^\)]+).+/]; $1
-    end
-
-    def raw_hubs_hash
-      Hash.from_js(fetch_data)[:flags].values.inject(&:merge)
-    end
-
-    def hubs_hash
-      hash = {}.with_indifferent_access
-      raw_hubs_hash.each do |k,v|
-        hash[k] = { code: k, host: v, name: name_of(k) } unless is_mirror?(v)
+      def parse(data)
+        hash = Parser.to_ruby_hash(select(data))
+        hash = extract_hubs_from(hash)
+        build_hubs_hash(hash)
       end
-      hash
-    end
 
-    def is_mirror?(host)
-      return false if HTTParty.post("#{host}serverLogin.php", limit: 1)
-    rescue HTTParty::RedirectionTooDeep
-      return true
+      private
+
+      def select(data)
+        data.css('div#country_select').text.gsub(/\n|\t/, '')[/\(({container:[^\)]+).+/]; $1
+      end
+
+      def extract_hubs_from(hash)
+        hash[:flags].values.inject(&:merge).reject {|k,v| k == :kr }
+      end
+
+      def build_hubs_hash(hubs)
+        hubs.inject({}) do |hash,hub|
+          hash[hub[0]] = Hub.new(hub[0], hub[1])
+          hash
+        end
+      end
+
     end
   end
-
-  extend ClassMethods
 end
