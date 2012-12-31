@@ -11,15 +11,31 @@ module Travian
 
       subject  { @hash }
 
-      it { should have_key :ts1 }
+      it { should_not have_key :tc9 }
 
-      it { should have_key :tx3 }
+      it { should have(9).servers }
 
-      it { should have(10).servers }
+      its(:size) { should be 9 }
 
-      its(:size) { should be 10 }
+      its(:keys) { should === [:ts1, :ts10, :ts2, :ts3, :ts4, :ts5, :ts6, :ts7, :tx3] }
+    end
 
-      its(:keys) { should include(:ts1, :ts2, :ts3, :ts4, :ts5, :ts6, :ts7, :ts10, :tx3, :tc9) }
+    context 'given the ServersHash built from the german hub' do
+      fake 'www.travian.de/serverLogin.php', :post
+      before(:each) do
+        hub = double('Hub', :host => 'http://www.travian.de/')
+        @hash = ServersHash.build(hub)
+      end
+
+      subject  { @hash }
+
+      it { should_not have_key :tcx8 }
+
+      it { should have(7).servers }
+
+      its(:size) { should be 7 }
+
+      its(:keys) { should == [:ts1, :ts2, :ts3, :ts5, :ts7, :ts8, :tx3] }
     end
 
     describe '.new' do

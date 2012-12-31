@@ -21,10 +21,6 @@ module Travian
       @hash.values
     end
 
-    def classic
-      self.reject {|s| s.classic? }
-    end
-
     class << self
 
       def build(hub)
@@ -35,7 +31,8 @@ module Travian
           name = parse_name(server_data)
           start_date = parse_start_date(server_data)
           players = parse_players(server_data)
-          hash[code] = Server.new(host, code, name, start_date, players)
+          server = Server.new(host, code, name, start_date, players)
+          hash[code] = server unless server.classic?
           hash
         end
         ServersHash.new(hash)
