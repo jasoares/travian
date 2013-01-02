@@ -7,7 +7,7 @@ module Travian
     attr_reader :host, :code, :name, :start_date, :players
 
     def initialize(host, code, name, start_date, players)
-      @host, @code, @name = host, code, name
+      @host, @code, @name = host, code.to_s, name
       @start_date, @players = start_date, players
     end
 

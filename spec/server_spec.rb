@@ -87,5 +87,17 @@ module Travian
       end
 
     end
+
+    context 'when passed a symbol code' do
+      fake 'tx3.travian.pt'
+      before(:each) do
+        @server = Server.new('http://tx3.travian.pt/', :tx3, 'Speed3x', Date.new(2012,9,29), 3113)
+      end
+
+      subject { @server }
+
+      its(:code) { should == 'tx3' }
+
+    end
   end
 end
