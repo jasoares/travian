@@ -31,6 +31,12 @@ module Travian
         end
       end
 
+      describe '#==' do
+        it 'should return true when passed a hub with the same host and code' do
+          @hub.should == Hub.new(:net, 'http://www.travian.net/')
+        end
+      end
+
       describe '#servers' do
         fake 'www.travian.net/serverLogin.php', :post
         it 'should delegate servers data fetching and parsing to ServersHash.build' do
@@ -73,6 +79,12 @@ module Travian
         end
       end
 
+      describe '#==' do
+        it 'should return true when passed a hub with the same host and code' do
+          @hub.should == Hub.new(:nz, 'http://www.travian.co.nz/')
+        end
+      end
+
       describe '#servers' do
         fake 'www.travian.co.nz/serverLogin.php', :post
         it 'should delegate servers data fetching and parsing to ServersHash.build' do
@@ -112,6 +124,12 @@ module Travian
       describe '#leads_to', online: true do
         it 'should return "http://www.travian.com.mx/" as it does not redirect' do
           FakeWeb.allow { @hub.leads_to.should == "http://www.travian.com.mx/" }
+        end
+      end
+
+      describe '#==' do
+        it 'should return true when passed a hub with the same host and code' do
+          @hub.should == Hub.new(:mx, 'http://www.travian.com.mx/')
         end
       end
 

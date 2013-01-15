@@ -42,6 +42,10 @@ module Travian
       e.response.header['Location'] + '/'
     end
 
+    def ==(other)
+      self.host == other.host && self.code == other.code
+    end
+
     private
 
     def servers_hosts_match_tld
