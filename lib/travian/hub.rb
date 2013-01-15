@@ -40,32 +40,5 @@ module Travian
     def servers_hosts_match_tld
       host.index(servers.first.host[/travian\..+\//])
     end
-
-    class << self
-
-      def parse(data)
-        hash = Parser.to_ruby_hash(select(data))
-        hash = extract_hubs_from(hash)
-        build_hubs_hash(hash)
-      end
-
-      private
-
-      def select(data)
-        data.css('div#country_select').text.gsub(/\n|\t/, '')[/\(({container:[^\)]+).+/]; $1
-      end
-
-      def extract_hubs_from(hash)
-        hash[:flags].values.inject(&:merge).reject {|k,v| k == :kr }
-      end
-
-      def build_hubs_hash(hubs)
-        hubs.inject({}) do |hash,hub|
-          hash[hub[0]] = Hub.new(hub[0], hub[1])
-          hash
-        end
-      end
-
-    end
   end
 end
