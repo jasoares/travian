@@ -22,7 +22,7 @@ module Travian
     its(:size) { should be 54 }
 
     it 's values should be Hubs' do
-      @hubs.values.all? {|v| v.is_a? Hub }
+      @hubs.values.all? {|v| v.should be_a Hub }
     end
   end
 end
