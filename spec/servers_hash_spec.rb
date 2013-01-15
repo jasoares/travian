@@ -15,6 +15,8 @@ module Travian
 
       it { should have(9).servers }
 
+      it { should_not be_empty }
+
       its(:size) { should be 9 }
 
       its(:keys) { should === [:ts1, :ts10, :ts2, :ts3, :ts4, :ts5, :ts6, :ts7, :tx3] }
@@ -33,9 +35,27 @@ module Travian
 
       it { should have(7).servers }
 
+      it { should_not be_empty }
+
       its(:size) { should be 7 }
 
       its(:keys) { should == [:ts1, :ts2, :ts3, :ts5, :ts7, :ts8, :tx3] }
+    end
+
+    context 'given the ServersHash built from the new zealand hub' do
+      fake 'www.travian.co.nz/serverLogin.php', :post
+      before(:each) do
+        hub = double('Hub', host: 'http://www.travian.co.nz/')
+        @hash = ServersHash.build(hub)
+      end
+
+      subject { @hash }
+
+      it { should have(0).servers }
+
+      its(:size) { should be 0 }
+
+      it { should be_empty }
     end
 
     describe '.new' do

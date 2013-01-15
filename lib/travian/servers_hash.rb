@@ -7,7 +7,7 @@ module Travian
     extend Forwardable
     include Enumerable
 
-    def_delegators :@hash, :[], :size, :keys, :has_key?, :values, :each_pair
+    def_delegators :@hash, :[], :empty?, :size, :keys, :has_key?, :values, :each_pair
 
     def initialize(hash)
       raise ArgumentError unless hash.is_a? Hash
