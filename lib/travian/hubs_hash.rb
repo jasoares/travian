@@ -40,7 +40,7 @@ module Travian
       end
 
       def extract_hubs_from(hash)
-        hash[:flags].values.inject(&:merge).reject {|k,v| k == :kr }
+        hash[:flags].values.inject(&:merge)
       end
 
       def build_hubs_hash(hubs)
