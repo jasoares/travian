@@ -31,7 +31,15 @@ module Travian
       @servers ||= ServersHash.build(self)
     end
 
+    def is_mirror?
+      !servers.empty? && servers_hosts_match_tld ? false : true
+    end
+
     private
+
+    def servers_hosts_match_tld
+      host.index(servers.first.host[/travian\..+\//])
+    end
 
     class << self
 

@@ -17,6 +17,14 @@ module Travian
 
       its(:attributes) { should == {code: 'net', host: 'http://www.travian.net/', name: 'Spain', language: 'es' } }
 
+      describe '#is_mirror?' do
+        fake 'www.travian.net/serverLogin.php', :post
+
+        it 'should return false' do
+          @hub.is_mirror?.should be false
+        end
+      end
+
       describe '#servers' do
         fake 'www.travian.net/serverLogin.php', :post
         it 'should delegate servers data fetching and parsing to ServersHash.build' do
@@ -28,7 +36,78 @@ module Travian
           @hub.servers.should be_a ServersHash
         end
       end
+    end
 
+    context 'given a sample new zealand hub' do
+      before(:each) do
+        @hub = Hub.new(:nz, 'http://www.travian.co.nz/')
+      end
+
+      subject { @hub }
+
+      its(:code) { should == :nz }
+
+      its(:host) { should == 'http://www.travian.co.nz/' }
+
+      its(:name) { should == 'New Zealand' }
+
+      its(:attributes) { should == {code: 'nz', host: 'http://www.travian.co.nz/', name: 'New Zealand', language: 'en' } }
+
+      describe '#is_mirror?' do
+        fake 'www.travian.co.nz/serverLogin.php', :post
+
+        it 'should return true' do
+          @hub.is_mirror?.should be true
+        end
+      end
+
+      describe '#servers' do
+        fake 'www.travian.co.nz/serverLogin.php', :post
+        it 'should delegate servers data fetching and parsing to ServersHash.build' do
+          ServersHash.should_receive(:build).with(@hub)
+          @hub.servers
+        end
+
+        it 'should return a ServersHash object' do
+          @hub.servers.should be_a ServersHash
+        end
+      end
+    end
+
+    context 'given a sample mexico hub' do
+      before(:each) do
+        @hub = Hub.new(:mx, 'http://www.travian.com.mx/')
+      end
+
+      subject { @hub }
+
+      its(:code) { should == :mx }
+
+      its(:host) { should == 'http://www.travian.com.mx/' }
+
+      its(:name) { should == 'Mexico' }
+
+      its(:attributes) { should == {code: 'mx', host: 'http://www.travian.com.mx/', name: 'Mexico', language: 'es' } }
+
+      describe '#is_mirror?' do
+        fake 'www.travian.com.mx/serverLogin.php', :post
+
+        it 'should return true' do
+          @hub.is_mirror?.should be true
+        end
+      end
+
+      describe '#servers' do
+        fake 'www.travian.com.mx/serverLogin.php', :post
+        it 'should delegate servers data fetching and parsing to ServersHash.build' do
+          ServersHash.should_receive(:build).with(@hub)
+          @hub.servers
+        end
+
+        it 'should return a ServersHash object' do
+          @hub.servers.should be_a ServersHash
+        end
+      end
     end
   end
 end
