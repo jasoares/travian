@@ -25,6 +25,12 @@ module Travian
         end
       end
 
+      describe '#leads_to', online: true do
+        it 'should return "http://www.travian.net/" as it does not redirect' do
+          FakeWeb.allow { @hub.leads_to.should == "http://www.travian.net/" }
+        end
+      end
+
       describe '#servers' do
         fake 'www.travian.net/serverLogin.php', :post
         it 'should delegate servers data fetching and parsing to ServersHash.build' do
@@ -61,6 +67,12 @@ module Travian
         end
       end
 
+      describe '#leads_to', online: true do
+        it 'should return "http://www.travian.com.au/" as it redirects' do
+          FakeWeb.allow { @hub.leads_to.should == "http://www.travian.com.au/" }
+        end
+      end
+
       describe '#servers' do
         fake 'www.travian.co.nz/serverLogin.php', :post
         it 'should delegate servers data fetching and parsing to ServersHash.build' do
@@ -94,6 +106,12 @@ module Travian
 
         it 'should return true' do
           @hub.is_mirror?.should be true
+        end
+      end
+
+      describe '#leads_to', online: true do
+        it 'should return "http://www.travian.com.mx/" as it does not redirect' do
+          FakeWeb.allow { @hub.leads_to.should == "http://www.travian.com.mx/" }
         end
       end
 

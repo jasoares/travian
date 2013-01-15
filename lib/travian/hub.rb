@@ -35,6 +35,13 @@ module Travian
       !servers.empty? && servers_hosts_match_tld ? false : true
     end
 
+    def leads_to
+      HTTParty.get(host, limit: 1)
+      host
+    rescue HTTParty::RedirectionTooDeep => e
+      e.response.header['Location'] + '/'
+    end
+
     private
 
     def servers_hosts_match_tld
