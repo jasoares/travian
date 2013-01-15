@@ -226,5 +226,15 @@ module Travian
         end
       end
     end
+
+    context 'given a sample norwegian hub' do
+      before(:each) do
+        @hub = Hub.new(:no, 'http://www.travian.no/')
+      end
+
+      subject { @hub }
+
+      its(:language) { should == 'no' }
+    end
   end
 end

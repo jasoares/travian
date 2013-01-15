@@ -115,7 +115,7 @@
   :language: nl
 :no:
   :hub: Norway
-  :language: no
+  :language: 'no'
 :nz:
   :hub: New Zealand
   :language: en
