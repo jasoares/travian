@@ -169,5 +169,17 @@ module Travian
         ServersHash.parse_players(@server_data).should == 3101
       end
     end
+
+    describe '.fetch_servers' do
+      fake 'www.travian.pt/serverLogin.php', :post
+
+      it 'returns the response body when passed a valid host' do
+        ServersHash.fetch_servers('http://www.travian.pt/').should match /^<h1>Escolhe um servidor.<\/h1>/
+      end
+
+      it 'returns an empty string when it could not get a response like with the korean hub' do
+        ServersHash.fetch_servers('http://www.travian.co.kr/').should == ""
+      end
+    end
   end
 end

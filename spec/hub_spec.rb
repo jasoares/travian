@@ -173,5 +173,58 @@ module Travian
         end
       end
     end
+
+    context 'given a sample south korean hub' do
+      before(:each) do
+        @hub = Hub.new(:kr, 'http://www.travian.co.kr/')
+      end
+
+      subject { @hub }
+
+      its(:code) { should == :kr }
+
+      its(:host) { should == 'http://www.travian.co.kr/' }
+
+      its(:name) { should == 'South Korea' }
+
+      its(:attributes) { should == {code: 'kr', host: 'http://www.travian.co.kr/', name: 'South Korea', language: 'en' } }
+
+      describe '#is_mirror?' do
+        it 'should return true' do
+          @hub.is_mirror?.should be true
+        end
+      end
+
+      describe '#mirrored_hub' do
+        fake 'www.travian.com'
+
+        it 'should return nil' do
+          FakeWeb.allow { @hub.mirrored_hub.should == Hub.new(:com, 'http://www.travian.com/') }
+        end
+      end
+
+      describe '#leads_to' do
+        it 'should return "http://www.travian.com/" as it does redirect' do
+          FakeWeb.allow { @hub.leads_to.should == "http://www.travian.com/" }
+        end
+      end
+
+      describe '#==' do
+        it 'should return true when passed a hub with the same host and code' do
+          @hub.should == Hub.new(:kr, 'http://www.travian.co.kr/')
+        end
+      end
+
+      describe '#servers' do
+        it 'should delegate servers data fetching and parsing to ServersHash.build' do
+          ServersHash.should_receive(:build).with(@hub)
+          FakeWeb.allow { @hub.servers }
+        end
+
+        it 'should return a ServersHash object' do
+          FakeWeb.allow { @hub.servers.should be_a ServersHash }
+        end
+      end
+    end
   end
 end

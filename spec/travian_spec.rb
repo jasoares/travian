@@ -19,7 +19,7 @@ module Travian
 
     it { should have_key :pt }
 
-    its(:size) { should be 54 }
+    its(:size) { should be 55 }
 
     it 's values should be Hubs' do
       @hubs.values.all? {|v| v.should be_a Hub }

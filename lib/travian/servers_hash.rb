@@ -40,6 +40,8 @@ module Travian
 
       def fetch_servers(host)
         HTTParty.post("#{host}serverLogin.php").body
+      rescue Exception
+        ""
       end
 
       def split_servers(data)

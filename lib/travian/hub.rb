@@ -46,7 +46,8 @@ module Travian
       HTTParty.get(host, limit: 1)
       host
     rescue HTTParty::RedirectionTooDeep => e
-      e.response.header['Location'] + '/'
+      location = e.response.header['Location']
+      location[/\/$/] ? location : location + '/'
     end
 
     def ==(other)
