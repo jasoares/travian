@@ -35,6 +35,13 @@ module Travian
       !servers.empty? && servers_hosts_match_tld ? false : true
     end
 
+    def mirrored_hub
+      return nil unless is_mirror?
+      host = servers.empty? ? leads_to : servers.first.host
+      tld = host[/travian\..+\//]
+      Travian.hubs.select {|h| h.host.match /#{tld}/}.first
+    end
+
     def leads_to
       HTTParty.get(host, limit: 1)
       host

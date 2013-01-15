@@ -25,6 +25,15 @@ module Travian
         end
       end
 
+      describe '#mirrored_hub' do
+        fake 'www.travian.com'
+        fake 'www.travian.net/serverLogin.php', :post
+
+        it 'should return nil' do
+          @hub.mirrored_hub.should be_nil
+        end
+      end
+
       describe '#leads_to', online: true do
         it 'should return "http://www.travian.net/" as it does not redirect' do
           FakeWeb.allow { @hub.leads_to.should == "http://www.travian.net/" }
@@ -73,6 +82,16 @@ module Travian
         end
       end
 
+      describe '#mirrored_hub' do
+        fake 'www.travian.com'
+        fake 'www.travian.co.nz/serverLogin.php', :post
+
+        it 'should return the autralian hub' do
+          @hub.stub(leads_to: 'http://www.travian.com.au/')
+          @hub.mirrored_hub.should == Hub.new(:au, 'http://www.travian.com.au/')
+        end
+      end
+
       describe '#leads_to', online: true do
         it 'should return "http://www.travian.com.au/" as it redirects' do
           FakeWeb.allow { @hub.leads_to.should == "http://www.travian.com.au/" }
@@ -118,6 +137,15 @@ module Travian
 
         it 'should return true' do
           @hub.is_mirror?.should be true
+        end
+      end
+
+      describe '#mirrored_hub' do
+        fake 'www.travian.com'
+        fake 'www.travian.com.mx/serverLogin.php', :post
+
+        it 'should return the chilean hub' do
+          @hub.mirrored_hub.should == Hub.new(:cl, 'http://www.travian.cl/')
         end
       end
 
