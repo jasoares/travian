@@ -5,7 +5,7 @@ module Travian
     extend Forwardable
     include Enumerable
 
-    def_delegators :@hash, :[], :size, :keys, :has_key?, :values, :each_pair
+    def_delegators :@hash, :[], :size, :empty?, :keys, :has_key?, :values, :each_pair
 
     def initialize(hash)
       @hash = hash

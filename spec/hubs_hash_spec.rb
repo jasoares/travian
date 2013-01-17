@@ -2,6 +2,7 @@ require 'spec_helper'
 
 module Travian
   describe HubsHash do
+    let(:hubs_hash) { HubsHash.new(pt: Hub.new(:pt, 'http://www.travian.pt/'), net: Hub.new(:net, 'http://www.travian.net')) }
 
     describe '.build' do
       fake 'www.travian.com'
@@ -41,5 +42,14 @@ module Travian
       end
     end
 
+    describe '#empty?' do
+      it 'returns true if it contains no hubs' do
+        HubsHash.new({}).should be_empty
+      end
+
+      it 'returns false if it contains hubs' do
+        hubs_hash.should_not be_empty
+      end
+    end
   end
 end
