@@ -8,7 +8,7 @@ module Travian
       fake 'www.travian.com'
 
       it 'returns a HubsHash' do
-        HubsHash.build('http://www.travian.com/').should be_a HubsHash
+        HubsHash.build.should be_a HubsHash
       end
     end
 

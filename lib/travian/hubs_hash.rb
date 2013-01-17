@@ -20,7 +20,7 @@ module Travian
 
     class << self
 
-      def build(host)
+      def build
         data = Nokogiri::HTML(fetch_hub_data)
         hash = js_hash_to_ruby_hash(select(data))
         hash = extract_hubs_from(hash)

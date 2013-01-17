@@ -11,7 +11,7 @@ module Travian
   MAIN_HUB = 'http://www.travian.com/'
 
   def hubs
-    @@hubs ||= HubsHash.build(MAIN_HUB)
+    @@hubs ||= HubsHash.build
   end
 
   def clear
