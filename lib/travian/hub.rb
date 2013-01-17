@@ -37,9 +37,9 @@ module Travian
 
     def mirrored_hub
       @mirrored_hub ||= if is_redirected?
-        Travian.hubs.select {|h| h.host.match /#{location}/ }.first
+        Travian.hubs.select {|h| h.matches_host?(location) }.first
       elsif borrows_servers?
-        Travian.hubs.select {|h| h.host.match /#{servers_tld}/ }.first
+        Travian.hubs.select {|h| h.matches_host?(servers_tld) }.first
       else
         nil
       end
@@ -65,11 +65,17 @@ module Travian
       @redirected ||= location != host
     end
 
+    protected
+
+    def matches_host?(term)
+      host.match(/#{term}/) ? true : false
+    end
+
     private
 
     def borrows_servers?
-      regexp = servers_tld
-      regexp && !host.match(/#{regexp}/)
+      tld = servers_tld
+      tld && !matches_host?(tld)
     end
 
     def servers_tld
