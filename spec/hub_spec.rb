@@ -197,6 +197,11 @@ module Travian
         mx_hub.send(:borrows_servers?).should be true
       end
 
+      it 'returns false when called on a hub with no servers' do
+        ir_hub.stub(:servers => ServersHash.new({}))
+        ir_hub.send(:borrows_servers?).should be false
+      end
+
       after(:all) { FakeWeb.allow_net_connect = false }
     end
   end

@@ -73,7 +73,7 @@ module Travian
     end
 
     def servers_tld
-      @servers_tld = servers.first.host[/travian\..+\//]
+      @servers_tld = !servers.empty? && servers.first.host[/travian\..+\//]
     end
   end
 end
