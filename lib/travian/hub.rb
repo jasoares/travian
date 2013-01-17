@@ -65,6 +65,10 @@ module Travian
       @redirected ||= location != host
     end
 
+    def borrows_servers?
+      !servers.empty? && !matches_host?(servers_tld)
+    end
+
     protected
 
     def matches_host?(term)
@@ -73,13 +77,8 @@ module Travian
 
     private
 
-    def borrows_servers?
-      tld = servers_tld
-      tld && !matches_host?(tld)
-    end
-
     def servers_tld
-      @servers_tld = !servers.empty? && servers.first.host[/travian\..+\//]
+      servers.first.host[/travian\..+\//]
     end
   end
 end
