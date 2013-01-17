@@ -52,6 +52,8 @@ module Travian
 
     def fetch_server_data
       HTTParty.get("#{host}").body
+    rescue Exception => e
+      raise Travian::ConnectionTimeout, e
     end
 
     def parse_version(info)

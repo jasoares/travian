@@ -3,6 +3,7 @@ require 'nokogiri'
 require 'httparty'
 
 module Travian
+  class ConnectionTimeout < Exception; end
   class ServersHash
     extend Forwardable
     include Enumerable
@@ -40,8 +41,8 @@ module Travian
 
       def fetch_servers(host)
         HTTParty.post("#{host}serverLogin.php").body
-      rescue Exception
-        ""
+      rescue Exception => e
+        raise ConnectionTimeout, e
       end
 
       def split_servers(data)

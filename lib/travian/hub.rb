@@ -11,7 +11,7 @@ module Travian
       File.expand_path('../../../data/hub_codes.yml', __FILE__)
     )
 
-    attr_reader :code, :host, :name, :language, :mirrored_host
+    attr_reader :code, :host, :name, :language
 
     def initialize(code, host)
       @code, @host, @name = code, host, CODES[code][:hub]
@@ -28,36 +28,52 @@ module Travian
     end
 
     def servers
-      @servers ||= ServersHash.build(self)
+      @servers ||= ServersHash.build(is_redirected? ? mirrored_hub : self)
     end
 
     def is_mirror?
-      !servers.empty? && servers_hosts_match_tld ? false : true
+      is_redirected? || borrows_servers?
     end
 
     def mirrored_hub
-      return nil unless is_mirror?
-      host = servers.empty? ? leads_to : servers.first.host
-      tld = host[/travian\..+\//]
-      Travian.hubs.select {|h| h.host.match /#{tld}/}.first
+      @mirrored_hub ||= if is_redirected?
+        Travian.hubs.select {|h| h.host.match /#{location}/ }.first
+      elsif borrows_servers?
+        Travian.hubs.select {|h| h.host.match /#{servers_tld}/ }.first
+      else
+        nil
+      end
     end
 
-    def leads_to
-      HTTParty.get(host, limit: 1)
-      host
-    rescue HTTParty::RedirectionTooDeep => e
-      location = e.response.header['Location']
-      location[/\/$/] ? location : location + '/'
+    def location
+      @location ||= begin
+        HTTParty.get(host, limit: 1)
+        host
+      rescue HTTParty::RedirectionTooDeep => e
+        location = e.response.header['Location']
+        location[/\/$/] ? location : location + '/'
+      rescue Exception => e
+        raise Travian::ConnectionTimeout, e
+      end
     end
 
     def ==(other)
       self.host == other.host && self.code == other.code
     end
 
+    def is_redirected?
+      @redirected ||= location != host
+    end
+
     private
 
-    def servers_hosts_match_tld
-      host.index(servers.first.host[/travian\..+\//])
+    def borrows_servers?
+      regexp = servers_tld
+      regexp && !host.match(/#{regexp}/)
+    end
+
+    def servers_tld
+      @servers_tld = servers.first.host[/travian\..+\//]
     end
   end
 end

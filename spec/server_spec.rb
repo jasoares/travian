@@ -85,19 +85,26 @@ module Travian
           server.classic?.should be false
         end
       end
-
     end
 
-    context 'when passed a symbol code' do
-      fake 'tx3.travian.pt'
-      before(:each) do
-        @server = Server.new('http://tx3.travian.pt/', :tx3, 'Speed3x', Date.new(2012,9,29), 3113)
+    describe '.fetch_server_data' do
+      it 'raises Travian::ConnectionTimeout if server is offline' do
+        server = Server.new('http://tx3.travian.com.br/', 'tx3', 'Speed3x', Date.new(2012,12,11), 6911)
+        expect { server.send :fetch_server_data }.to raise_error(Travian::ConnectionTimeout)
       end
+    end
 
-      subject { @server }
+    describe '.new' do
+      context 'when passed a symbol code' do
+        fake 'tx3.travian.pt'
+        before(:each) do
+          @server = Server.new('http://tx3.travian.pt/', :tx3, 'Speed3x', Date.new(2012,9,29), 3113)
+        end
 
-      its(:code) { should == 'tx3' }
+        subject { @server }
 
+        its(:code) { should == 'tx3' }
+      end
     end
   end
 end

@@ -177,8 +177,8 @@ module Travian
         ServersHash.fetch_servers('http://www.travian.pt/').should match /^<h1>Escolhe um servidor.<\/h1>/
       end
 
-      it 'returns an empty string when it could not get a response like with the korean hub' do
-        ServersHash.fetch_servers('http://www.travian.co.kr/').should == ""
+      it 'raises a Travian::ConnectionTimeout when an invalid host is passed' do
+        expect { ServersHash.fetch_servers('http://www.travian.ir/') }.to raise_error(Travian::ConnectionTimeout)
       end
     end
   end
