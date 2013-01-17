@@ -110,8 +110,14 @@ module Travian
         kr_hub.location.should == com_hub.host
       end
 
-      it 'raises Travian::ConnectionTimeout when called on an offline hub' do
-        expect { ir_hub.location }.to raise_error(Travian::ConnectionTimeout)
+      context 'given an offline hub' do
+        before(:all) { FakeWeb.allow_net_connect = false }
+
+        it 'raises Travian::ConnectionTimeout when called on an offline hub' do
+          expect { ir_hub.location }.to raise_error(Travian::ConnectionTimeout)
+        end
+
+        after(:all) { FakeWeb.allow_net_connect = true }
       end
 
       after(:all) { FakeWeb.allow_net_connect = true }
