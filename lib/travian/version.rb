@@ -1,3 +1,6 @@
 module Travian
-  VERSION = "0.2.2"
+  MAJOR = 0
+  MINOR = 3
+  REVISION = 0
+  VERSION = [MAJOR, MINOR, REVISION].join('.')
 end
