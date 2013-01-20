@@ -153,8 +153,12 @@ module Travian
         Timecop.freeze(Time.utc(2012,12,27,10,20,0))
       end
 
+      it 'returns a DateTime object' do
+        ServersHash.parse_start_date(@server_data).should be_a DateTime
+      end
+
       it 'returns "29/09/2012" when passed the tx3 server' do
-        ServersHash.parse_start_date(@server_data).should == Date.new(2012,9,3)
+        ServersHash.parse_start_date(@server_data).should == Date.new(2012,9,3).to_datetime
       end
 
       after(:all) do

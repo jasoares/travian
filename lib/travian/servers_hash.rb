@@ -66,7 +66,8 @@ module Travian
       end
 
       def parse_start_date(server_data)
-        Date.today - server_data.search('div')[2].text.gsub(/[^\d]/, '').to_i
+        days_ago = server_data.search('div')[2].text.gsub(/[^\d]/, '').to_i
+        (Date.today - days_ago).to_datetime
       end
 
     end

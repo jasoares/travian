@@ -5,7 +5,7 @@ module Travian
     context 'given the tx3.travian.pt server' do
       fake 'tx3.travian.pt'
       before(:each) do
-        @server = Server.new('http://tx3.travian.pt/', 'tx3', 'Speed3x', Date.new(2012,9,29), 3113)
+        @server = Server.new('http://tx3.travian.pt/', 'tx3', 'Speed3x', Date.new(2012,9,29).to_datetime, 3113)
       end
 
       subject { @server }
@@ -19,6 +19,8 @@ module Travian
       its(:name) { should == 'Speed3x' }
 
       its(:start_date) { should == Date.new(2012,9,29) }
+
+      its(:start_date) { should be_a DateTime }
 
       its(:players) { should == 3113 }
 
