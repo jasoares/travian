@@ -107,15 +107,15 @@ module Travian
       let(:de_ts6) { Server.new(de_hub, 'http://ts6.travian.de/', :ts6, 'Welt 6') }
 
       describe '#is_restarting?' do
-        it 'returns true when passed a restarting server' do
+        it 'returns true when called on a restarting server' do
           de_ts4.is_restarting?.should be true
         end
 
-        it 'returns true when passed another restarting server' do
+        it 'returns true when called on another restarting server' do
           in_ts3.is_restarting?.should be true
         end
 
-        it 'returns false when passed a running server' do
+        it 'returns false when called on a running server' do
           de_ts5.is_restarting?.should be false
         end
 
@@ -139,11 +139,11 @@ module Travian
       end
 
       describe '#start_date' do
-        it 'should return the announced time for a restarting server' do
+        it 'returns the announced time for a restarting server' do
           de_ts4.start_date.should == DateTime.new(2013, 1, 21, 6, 0, 0, "+01:00")
         end
 
-        it 'should return the date the server started for an active server' do
+        it 'returns the date the server started for an active server' do
           Timecop.freeze(Time.utc(2012,12,27,10,20,0))
           de_ts5.start_date.should == DateTime.new(2012, 11, 22)
           Timecop.return
