@@ -32,7 +32,7 @@ module Travian
           name = parse_name(server_data)
           start_date = parse_start_date(server_data)
           players = parse_players(server_data)
-          server = Server.new(host, code, name, start_date, players)
+          server = Server.new(hub, host, code, name, start_date, players)
           hash[code] = server unless server.classic?
           hash
         end

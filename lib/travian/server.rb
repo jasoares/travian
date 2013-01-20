@@ -4,10 +4,10 @@ module Travian
   class Server
     include HTTParty
 
-    attr_reader :host, :code, :name, :start_date, :players
+    attr_reader :hub, :host, :code, :name, :players
 
-    def initialize(host, code, name, start_date, players)
-      @host, @code, @name = host, code.to_s, name
+    def initialize(hub, host, code, name, start_date=nil, players=0)
+      @hub, @host, @code, @name = hub, host, code.to_s, name
       @start_date, @players = start_date, players
     end
 
@@ -16,9 +16,7 @@ module Travian
         code:       code,
         host:       host,
         name:       name,
-        start_date: start_date,
         world_id:   world_id,
-        version:    version,
         speed:      speed
       }
     end
@@ -41,10 +39,20 @@ module Travian
       code[/tcx?\d/] ? true : false
     end
 
+    def is_restarting?
+      start_date && start_date > DateTime.now
+    end
+
+    def start_date
+      @start_date || load_info and @start_date
+    end
+
     private
 
     def load_info
-      info = select_info(Nokogiri::HTML(fetch_server_data))
+      server_data = Nokogiri::HTML(fetch_server_data)
+      info = select_info(server_data)
+      @start_date ||= parse_start_date(server_data)
       @world_id = parse_world_id(info)
       @version = parse_version(info)
       @speed = parse_speed(info)
@@ -71,5 +79,23 @@ module Travian
     def select_info(data)
       data.css('head script').last.text
     end
+
+    def parse_start_date(data)
+      parse_hub_page_start_date or parse_restart_page_start_date(data)
+    end
+
+    def parse_hub_page_start_date
+      hub.servers[code.to_sym].start_date if hub.servers[code.to_sym]
+    end
+
+    def parse_restart_page_start_date(data)
+      date_str = Server.sanitize_date_format(data.css('div#worldStartInfo span.date').text)
+      DateTime.strptime(date_str, "%d.%m.%y %H:%M %:z")
+    end
+
+    def self.sanitize_date_format(date_str)
+      date_str.strip.gsub(/[\(\)]|gmt\s|\.$/i, '')
+    end
+
   end
 end
