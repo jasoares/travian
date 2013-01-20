@@ -90,11 +90,12 @@ module Travian
       end
     end
 
-    context 'given an active and a restarting server' do
+    context 'given some active, restarting and ended servers' do
       fake 'www.travian.de'
       fake 'www.travian.de/serverLogin.php', :post
       fake 'ts4.travian.de'
       fake 'ts5.travian.de'
+      fake 'ts6.travian.de'
       fake 'www.travian.in'
       fake 'www.travian.in/serverLogin.php', :post
       fake 'ts3.travian.in'
@@ -103,6 +104,7 @@ module Travian
       let(:in_ts3) { Server.new(in_hub, 'http://ts3.travian.in/', :ts3, 'Server 3') }
       let(:de_ts4) { Server.new(de_hub, 'http://ts4.travian.de/', :ts4, 'Welt 4') }
       let(:de_ts5) { Server.new(de_hub, 'http://ts5.travian.de/', :ts5, 'Welt 5') }
+      let(:de_ts6) { Server.new(de_hub, 'http://ts6.travian.de/', :ts6, 'Welt 6') }
 
       describe '#is_restarting?' do
         it 'returns true when passed a restarting server' do
@@ -116,6 +118,24 @@ module Travian
         it 'returns false when passed a running server' do
           de_ts5.is_restarting?.should be false
         end
+
+        it 'return false when called on an ended server' do
+          de_ts6.is_restarting?.should be false
+        end
+      end
+
+      describe '#is_finished?' do
+        it 'returns true when called on an ended server' do
+          de_ts6.is_finished?.should be true
+        end
+
+        it 'returns true when called a restarting server' do
+          de_ts4.is_finished?.should be true
+        end
+
+        it 'returns false when called on an active server' do
+          de_ts5.is_finished?.should be false
+        end
       end
 
       describe '#start_date' do
@@ -127,6 +147,10 @@ module Travian
           Timecop.freeze(Time.utc(2012,12,27,10,20,0))
           de_ts5.start_date.should == DateTime.new(2012, 11, 22)
           Timecop.return
+        end
+
+        it 'returns nil if the server ended and is not restarting' do
+          de_ts6.start_date.should be nil
         end
       end
 
@@ -142,6 +166,11 @@ module Travian
         it 'returns the restart time on the server restart page' do
           data = Nokogiri::HTML('<div id="worldStartInfo"><div class="countdownContent">    Rundenstart am <br/><span class="date">21.01.13 06:00<span class="timezone"> (Gmt +01:00)</span></span> </div></div>')
           de_ts4.send(:parse_restart_page_start_date, data).should == DateTime.new(2013,1,21,6,0,0,"+01:00")
+        end
+
+        it 'returns nil if the server has no restart page' do
+          data = Nokogiri::HTML(de_ts6.send(:fetch_server_data))
+          de_ts6.send(:parse_restart_page_start_date, data).should be nil
         end
       end
     end

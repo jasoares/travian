@@ -39,8 +39,12 @@ module Travian
       code[/tcx?\d/] ? true : false
     end
 
+    def is_finished?
+      is_restarting? or start_date.nil?
+    end
+
     def is_restarting?
-      start_date && start_date > DateTime.now
+      start_date && start_date > DateTime.now ? true : false
     end
 
     def start_date
@@ -89,8 +93,12 @@ module Travian
     end
 
     def parse_restart_page_start_date(data)
-      date_str = Server.sanitize_date_format(data.css('div#worldStartInfo span.date').text)
-      DateTime.strptime(date_str, "%d.%m.%y %H:%M %:z")
+      date_str = select_start_date(data)
+      date_str.empty? ? nil : DateTime.strptime(Server.sanitize_date_format(date_str), "%d.%m.%y %H:%M %:z")
+    end
+
+    def select_start_date(data)
+      data.css('div#worldStartInfo span.date').text
     end
 
     def self.sanitize_date_format(date_str)
