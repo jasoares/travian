@@ -42,7 +42,10 @@ module Travian
 
     describe 'fetch_hub_data' do
       it 'raises an exception if MAIN_HUB is offline' do
-        expect { HubsHash.fetch_hub_data }.to raise_error(Travian::ConnectionTimeout)
+        expect { HubsHash.fetch_hub_data }.to raise_error(
+          Travian::ConnectionTimeout,
+          %r{^Error connecting 'http://www.travian.com/'}
+        )
       end
     end
 

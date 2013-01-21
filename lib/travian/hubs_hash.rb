@@ -30,7 +30,7 @@ module Travian
       def fetch_hub_data
         HTTParty.get(MAIN_HUB).body
       rescue Exception => e
-        raise Travian::ConnectionTimeout, e
+        raise Travian::ConnectionTimeout, "Error connecting '#{MAIN_HUB}' (#{e})"
       end
 
       def select(data)
