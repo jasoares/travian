@@ -99,6 +99,11 @@ module Travian
       fake 'www.travian.in'
       fake 'www.travian.in/serverLogin.php', :post
       fake 'ts3.travian.in'
+
+      before(:each) do
+        Timecop.freeze(Time.utc(2013,1,20,23,20,0))
+      end
+
       let(:de_hub) { Hub.new(:de, 'http://www.travian.de/') }
       let(:in_hub) { Hub.new(:in, 'http://www.travian.in/') }
       let(:in_ts3) { Server.new(in_hub, 'http://ts3.travian.in/', :ts3, 'Server 3') }
