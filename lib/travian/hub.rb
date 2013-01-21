@@ -51,7 +51,7 @@ module Travian
         location = e.response.header['Location']
         location[/\/$/] ? location : location + '/'
       rescue Exception => e
-        raise Travian::ConnectionTimeout, e
+        raise Travian::ConnectionTimeout.new(host, e)
       end
     end
 

@@ -1,4 +1,5 @@
 require 'travian/version'
+require 'travian/exceptions'
 require 'travian/hubs_hash'
 require 'travian/hub'
 require 'travian/servers_hash'

@@ -122,7 +122,10 @@ module Travian
         before(:all) { FakeWeb.allow_net_connect = false }
 
         it 'raises Travian::ConnectionTimeout when called on an offline hub' do
-          expect { ir_hub.location }.to raise_error(Travian::ConnectionTimeout)
+          expect { ir_hub.location }.to raise_error(
+            Travian::ConnectionTimeout,
+            %r{Error connecting to 'http://www.travian.ir/' \(}
+          )
         end
 
         after(:all) { FakeWeb.allow_net_connect = true }

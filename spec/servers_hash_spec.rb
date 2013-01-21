@@ -189,7 +189,10 @@ module Travian
       end
 
       it 'raises a Travian::ConnectionTimeout when an invalid host is passed' do
-        expect { ServersHash.fetch_servers('http://www.travian.ir/') }.to raise_error(Travian::ConnectionTimeout)
+        expect { ServersHash.fetch_servers('http://www.travian.ir/') }.to raise_error(
+          Travian::ConnectionTimeout,
+          %r{Error connecting to 'http://www.travian.ir/serverLogin.php' \(}
+        )
       end
 
       after(:all) { unfake }
