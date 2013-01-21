@@ -20,13 +20,14 @@ end
 def fake(host, method=:get, file=nil)
   file ||= "#{File.expand_path('../fakeweb_pages/', __FILE__)}/#{host.gsub(/\//, '_')}.html"
   proxy_response(host, method, file) unless File.exists?(file)
-  before(:all) do
-    FakeWeb.register_uri(
-      method,
-      "http://#{host}",
-      :body => File.read(file),
-      :content_type => "text/html"
-    )
-  end
-  after(:all) { FakeWeb.clean_registry }
+  FakeWeb.register_uri(
+    method,
+    "http://#{host}",
+    :body => File.read(file),
+    :content_type => "text/html"
+  )
+end
+
+def unfake
+  FakeWeb.clean_registry
 end

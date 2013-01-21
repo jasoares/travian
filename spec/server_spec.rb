@@ -3,7 +3,7 @@ require 'spec_helper'
 module Travian
   describe Server do
     context 'given the tx3.travian.pt server' do
-      fake 'tx3.travian.pt'
+      before(:all) { fake 'tx3.travian.pt' }
       before(:each) do
         @hub = Hub.new(:pt, 'http://www.travian.pt/')
         @server = Server.new(@hub, 'http://tx3.travian.pt/', 'tx3', 'Speed3x', Date.new(2012,9,29).to_datetime, 3113)
@@ -88,17 +88,21 @@ module Travian
           server.classic?.should be false
         end
       end
+
+      after(:all) { unfake }
     end
 
     context 'given some active, restarting and ended servers' do
-      fake 'www.travian.de'
-      fake 'www.travian.de/serverLogin.php', :post
-      fake 'ts4.travian.de'
-      fake 'ts5.travian.de'
-      fake 'ts6.travian.de'
-      fake 'www.travian.in'
-      fake 'www.travian.in/serverLogin.php', :post
-      fake 'ts3.travian.in'
+      before(:all) do
+        fake 'www.travian.de'
+        fake 'www.travian.de/serverLogin.php', :post
+        fake 'ts4.travian.de'
+        fake 'ts5.travian.de'
+        fake 'ts6.travian.de'
+        fake 'www.travian.in'
+        fake 'www.travian.in/serverLogin.php', :post
+        fake 'ts3.travian.in'
+      end
 
       before(:each) do
         Timecop.freeze(Time.utc(2013,1,20,23,20,0))
@@ -192,6 +196,8 @@ module Travian
           de_ts6.send(:parse_restart_page_start_date, data).should be nil
         end
       end
+
+      after(:all) { unfake }
     end
 
     describe '.sanitize_date_format' do
@@ -213,7 +219,7 @@ module Travian
 
     describe '.new' do
       context 'when passed a symbol code' do
-        fake 'tx3.travian.pt'
+        before(:all) { fake 'tx3.travian.pt' }
         before(:each) do
           hub = Hub.new(:pt, 'http://www.travian.pt/')
           @server = Server.new(hub, 'http://tx3.travian.pt/', :tx3, 'Speed3x', Date.new(2012,9,29), 3113)
@@ -222,6 +228,8 @@ module Travian
         subject { @server }
 
         its(:code) { should == 'tx3' }
+
+        after(:all) { unfake }
       end
     end
   end

@@ -3,7 +3,7 @@ require 'spec_helper'
 module Travian
   describe ServersHash do
     context 'given the ServersHash built from the portuguese hub' do
-      fake 'www.travian.pt/serverLogin.php', :post
+      before(:all) { fake 'www.travian.pt/serverLogin.php', :post }
       before(:each) do
         hub = double('Hub', :host => 'http://www.travian.pt/')
         @hash = ServersHash.build(hub)
@@ -20,10 +20,12 @@ module Travian
       its(:size) { should be 9 }
 
       its(:keys) { should === [:ts1, :ts10, :ts2, :ts3, :ts4, :ts5, :ts6, :ts7, :tx3] }
+
+      after(:all) { unfake }
     end
 
     context 'given the ServersHash built from the german hub' do
-      fake 'www.travian.de/serverLogin.php', :post
+      before(:all) { fake 'www.travian.de/serverLogin.php', :post }
       before(:each) do
         hub = double('Hub', :host => 'http://www.travian.de/')
         @hash = ServersHash.build(hub)
@@ -40,10 +42,12 @@ module Travian
       its(:size) { should be 7 }
 
       its(:keys) { should == [:ts1, :ts2, :ts3, :ts5, :ts7, :ts8, :tx3] }
+
+      after(:all) { unfake }
     end
 
     context 'given the ServersHash built from the new zealand hub' do
-      fake 'www.travian.co.nz/serverLogin.php', :post
+      before(:all) { fake 'www.travian.co.nz/serverLogin.php', :post }
       before(:each) do
         hub = double('Hub', host: 'http://www.travian.co.nz/')
         @hash = ServersHash.build(hub)
@@ -56,6 +60,8 @@ module Travian
       its(:size) { should be 0 }
 
       it { should be_empty }
+
+      after(:all) { unfake }
     end
 
     describe '.new' do
@@ -65,12 +71,13 @@ module Travian
     end
 
     shared_context 'when passed servers_data' do
-      fake 'www.travian.pt/serverLogin.php', :post
+      before(:all) { fake 'www.travian.pt/serverLogin.php', :post }
       before(:each) do
         @hub = double('Hub', :host => 'http://www.travian.pt/')
         @servers_data = Nokogiri::HTML(ServersHash.fetch_servers(@hub.host))
         @server_data = ServersHash.send(:split_servers, @servers_data)[-2]
       end
+      after(:all) { unfake }
     end
 
     describe '.build' do
@@ -175,7 +182,7 @@ module Travian
     end
 
     describe '.fetch_servers' do
-      fake 'www.travian.pt/serverLogin.php', :post
+      before(:all) { fake 'www.travian.pt/serverLogin.php', :post }
 
       it 'returns the response body when passed a valid host' do
         ServersHash.fetch_servers('http://www.travian.pt/').should match /^<h1>Escolhe um servidor.<\/h1>/
@@ -184,6 +191,8 @@ module Travian
       it 'raises a Travian::ConnectionTimeout when an invalid host is passed' do
         expect { ServersHash.fetch_servers('http://www.travian.ir/') }.to raise_error(Travian::ConnectionTimeout)
       end
+
+      after(:all) { unfake }
     end
   end
 end

@@ -8,9 +8,9 @@ module Travian
   end
 
   describe '.hubs', online: true do
-    fake 'www.travian.com'
     before(:all) do
       @hubs = FakeWeb.allow { Travian.hubs }
+      fake 'www.travian.com'
     end
 
     subject { @hubs }
@@ -24,5 +24,7 @@ module Travian
     it 's values should be Hubs' do
       @hubs.values.all? {|v| v.should be_a Hub }
     end
+
+    after(:all) { unfake }
   end
 end

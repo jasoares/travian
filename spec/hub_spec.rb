@@ -40,9 +40,11 @@ module Travian
     end
 
     describe '#is_mirror?' do
-      fake 'www.travian.net/serverLogin.php', :post
-      fake 'www.travian.co.nz/serverLogin.php', :post
-      fake 'www.travian.com.mx/serverLogin.php', :post
+      before(:all) do
+        fake 'www.travian.net/serverLogin.php', :post
+        fake 'www.travian.co.nz/serverLogin.php', :post
+        fake 'www.travian.com.mx/serverLogin.php', :post
+      end
 
       it 'should be false when called on the spanish hub' do
         net_hub.stub(:location => 'http://www.travian.net/')
@@ -63,12 +65,16 @@ module Travian
         kr_hub.stub(location: 'http://www.travian.com/')
         kr_hub.is_mirror?.should be true
       end
+
+      after(:all) { unfake }
     end
 
     describe '#mirrored_hub' do
-      fake 'www.travian.com'
-      fake 'www.travian.net/serverLogin.php', :post
-      fake 'www.travian.com.mx/serverLogin.php', :post
+      before(:all) do
+        fake 'www.travian.com'
+        fake 'www.travian.net/serverLogin.php', :post
+        fake 'www.travian.com.mx/serverLogin.php', :post
+      end
 
       it 'should be nil when called on the spanish hub' do
         net_hub.stub(location: net_hub.host)
@@ -89,6 +95,8 @@ module Travian
         kr_hub.stub(location: com_hub.host)
         kr_hub.mirrored_hub.should == com_hub
       end
+
+      after(:all) { unfake }
     end
 
     describe '#location', online: true do
