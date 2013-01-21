@@ -47,6 +47,10 @@ module Travian
       start_date && start_date > DateTime.now ? true : false
     end
 
+    def running?
+      start_date && start_date < DateTime.now ? true : false
+    end
+
     def start_date
       @start_date || load_info and @start_date
     end

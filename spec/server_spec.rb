@@ -138,6 +138,20 @@ module Travian
         end
       end
 
+      describe '#running?' do
+        it 'returns false when called on an ended server' do
+          de_ts6.running?.should be false
+        end
+
+        it 'returns false when called on a restarting server' do
+          de_ts4.running?.should be false
+        end
+
+        it 'returns true when called on an active server' do
+          de_ts5.running?.should be true
+        end
+      end
+
       describe '#start_date' do
         it 'returns the announced time for a restarting server' do
           de_ts4.start_date.should == DateTime.new(2013, 1, 21, 6, 0, 0, "+01:00")
