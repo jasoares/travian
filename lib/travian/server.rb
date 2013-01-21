@@ -39,11 +39,11 @@ module Travian
       code[/tcx?\d/] ? true : false
     end
 
-    def is_finished?
-      is_restarting? or start_date.nil?
+    def ended?
+      restarting? or start_date.nil?
     end
 
-    def is_restarting?
+    def restarting?
       start_date && start_date > DateTime.now ? true : false
     end
 

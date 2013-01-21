@@ -106,35 +106,35 @@ module Travian
       let(:de_ts5) { Server.new(de_hub, 'http://ts5.travian.de/', :ts5, 'Welt 5') }
       let(:de_ts6) { Server.new(de_hub, 'http://ts6.travian.de/', :ts6, 'Welt 6') }
 
-      describe '#is_restarting?' do
+      describe '#restarting?' do
         it 'returns true when called on a restarting server' do
-          de_ts4.is_restarting?.should be true
+          de_ts4.restarting?.should be true
         end
 
         it 'returns true when called on another restarting server' do
-          in_ts3.is_restarting?.should be true
+          in_ts3.restarting?.should be true
         end
 
         it 'returns false when called on a running server' do
-          de_ts5.is_restarting?.should be false
+          de_ts5.restarting?.should be false
         end
 
         it 'return false when called on an ended server' do
-          de_ts6.is_restarting?.should be false
+          de_ts6.restarting?.should be false
         end
       end
 
-      describe '#is_finished?' do
+      describe '#ended?' do
         it 'returns true when called on an ended server' do
-          de_ts6.is_finished?.should be true
+          de_ts6.ended?.should be true
         end
 
         it 'returns true when called a restarting server' do
-          de_ts4.is_finished?.should be true
+          de_ts4.ended?.should be true
         end
 
         it 'returns false when called on an active server' do
-          de_ts5.is_finished?.should be false
+          de_ts5.ended?.should be false
         end
       end
 
