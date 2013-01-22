@@ -11,8 +11,10 @@ module Travian
 
   MAIN_HUB = 'http://www.travian.com/'
 
-  def hubs
+  def hubs(options={})
     @@hubs ||= HubsHash.build
+    @@hubs.map {|hub| Thread.new { hub.mirrored_hub } }.each(&:join) if options[:preload]
+    @@hubs
   end
 
   def clear

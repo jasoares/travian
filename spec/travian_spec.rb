@@ -7,13 +7,12 @@ module Travian
     it { should == 'http://www.travian.com/' }
   end
 
-  describe '.hubs', online: true do
-    before(:all) do
-      @hubs = FakeWeb.allow { Travian.hubs }
-      fake 'www.travian.com'
-    end
+  describe '.hubs' do
+    before(:all) { fake 'www.travian.com' }
 
-    subject { @hubs }
+    let(:hubs) { Travian.hubs }
+
+    subject { hubs }
 
     it { should be_a HubsHash }
 
@@ -21,8 +20,25 @@ module Travian
 
     its(:size) { should be 55 }
 
-    it 's values should be Hubs' do
-      @hubs.values.all? {|v| v.should be_a Hub }
+    it 'each value should be a Hub' do
+      hubs.values.all? {|v| v.should be_a Hub }
+    end
+
+    context 'when no options are passed' do
+      before(:each) do
+        Travian.clear
+      end
+
+      it 'only fetches the hub list' do
+        expect{ Travian.hubs }.not_to raise_exception
+      end
+    end
+
+    context 'when passed preload => true' do
+      it 'fetches every hub servers list and location in advance' do
+        Travian.hubs.each {|hub| hub.should_receive(:mirrored_hub) }
+        Travian.hubs(preload: true)
+      end
     end
 
     after(:all) { unfake }
