@@ -34,10 +34,32 @@ module Travian
       end
     end
 
-    context 'when passed preload => true' do
+    context 'when passed :preload => :servers' do
+      it 'fetches every hub servers list in advance' do
+        Travian.hubs.each {|hub| hub.should_receive(:servers) }
+        Travian.hubs(:preload => :servers)
+      end
+    end
+
+    context 'when passed :preload => :mirrors' do
       it 'fetches every hub servers list and location in advance' do
         Travian.hubs.each {|hub| hub.should_receive(:mirrored_hub) }
-        Travian.hubs(preload: true)
+        Travian.hubs(:preload => :mirrors)
+      end
+    end
+
+    context 'when passed :preload => :all' do
+      before(:each) do
+        @server = double('Server', attributes: nil)
+      end
+
+      it 'fetches every hub location, servers and its attributes in advance' do
+        Travian.hubs.each do |hub|
+          hub.should_receive(:mirrored_hub)
+          hub.should_receive(:servers).and_return([@server])
+        end
+        @server.should_receive(:attributes)
+        Travian.hubs(:preload => :all)
       end
     end
 
