@@ -22,14 +22,24 @@ module Travian
   end
 
   def preload(options=:all)
-    threads = @@hubs.inject([]) do |pool,hub|
-      case options
-      when :servers then pool << Thread.new { hub.servers }
-      when :mirrors then pool << Thread.new { hub.mirrored_hub }
-      else
-        pool + [Thread.new { hub.mirrored_hub}, Thread.new { hub.servers.each(&:attributes) }]
-      end
+    options == :servers ? preload_servers : preload_server_attributes
+  end
+
+  private
+
+  def preload_servers
+    @@hubs.map do |hub|
+      Thread.new { hub.servers }
     end.each(&:join)
+  end
+
+  def preload_server_attributes
+    preload_servers
+    @@hubs.each do |hub|
+      hub.servers.inject([]) do |pool,server|
+        pool << Thread.new { server.attributes }
+      end.each(&:join)
+    end
   end
 
 end

@@ -5,6 +5,7 @@ module Travian
   module Agent
 
     MAX_TRIES = 3
+    DEFAULT_OPTIONS = {timeout: 6}
 
     def get(path, options={}, &block)
       request(:get, path, options, &block)
@@ -18,6 +19,7 @@ module Travian
 
     def request(req, path, options={}, &block)
       try = 0
+      options.merge!(DEFAULT_OPTIONS)
       begin
         HTTParty.send(req, path, options, &block)
       rescue Timeout::Error, Errno::ETIMEDOUT, SocketError => e
