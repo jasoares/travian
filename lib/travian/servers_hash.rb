@@ -22,6 +22,7 @@ module Travian
     end
 
     class << self
+      include Agent
 
       def build(hub)
         data = Nokogiri::HTML(fetch_servers(hub.host))
@@ -40,9 +41,7 @@ module Travian
 
       def fetch_servers(host)
         uri = "#{host}serverLogin.php"
-        HTTParty.post(uri).body
-      rescue Exception => e
-        raise ConnectionTimeout.new(uri, e)
+        post(uri).body
       end
 
       def split_servers(data)

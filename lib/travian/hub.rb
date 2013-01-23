@@ -5,7 +5,7 @@ require 'yaml'
 
 module Travian
   class Hub
-    include HTTParty
+    include Agent
 
     CODES = YAML.load_file(
       File.expand_path('../../../data/hub_codes.yml', __FILE__)
@@ -45,13 +45,11 @@ module Travian
 
     def location
       @location ||= begin
-        HTTParty.get(host, limit: 1)
+        get(host, limit: 1)
         host
       rescue HTTParty::RedirectionTooDeep => e
         location = e.response.header['Location']
         location[/\/$/] ? location : location + '/'
-      rescue Exception => e
-        raise Travian::ConnectionTimeout.new(host, e)
       end
     end
 

@@ -2,7 +2,7 @@ require 'httparty'
 
 module Travian
   class Server
-    include HTTParty
+    include Agent
 
     attr_reader :hub, :host, :code, :name, :players
 
@@ -67,9 +67,7 @@ module Travian
     end
 
     def fetch_server_data
-      HTTParty.get("#{host}").body
-    rescue Exception => e
-      raise Travian::ConnectionTimeout.new(host, e)
+      get("#{host}").body
     end
 
     def parse_version(info)

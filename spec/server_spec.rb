@@ -210,17 +210,6 @@ module Travian
       end
     end
 
-    describe '.fetch_server_data' do
-      it 'raises Travian::ConnectionTimeout if server is offline' do
-        hub = Hub.new(:br, 'http://www.travian.com.br/')
-        server = Server.new(hub, 'http://tx3.travian.com.br/', 'tx3', 'Speed3x', Date.new(2012,12,11), 6911)
-        expect { server.send :fetch_server_data }.to raise_error(
-          Travian::ConnectionTimeout,
-          %r{Error connecting to 'http://tx3.travian.com.br/' \(}
-        )
-      end
-    end
-
     describe '.new' do
       context 'when passed a symbol code' do
         before(:all) { fake 'tx3.travian.pt' }

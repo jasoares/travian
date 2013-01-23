@@ -19,6 +19,7 @@ module Travian
     end
 
     class << self
+      include Agent
 
       def build
         data = Nokogiri::HTML(fetch_hub_data)
@@ -28,9 +29,7 @@ module Travian
       end
 
       def fetch_hub_data
-        HTTParty.get(MAIN_HUB).body
-      rescue Exception => e
-        raise Travian::ConnectionTimeout.new(MAIN_HUB, e)
+        get(MAIN_HUB).body
       end
 
       def select(data)

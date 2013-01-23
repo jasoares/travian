@@ -40,15 +40,6 @@ module Travian
       after(:all) { unfake }
     end
 
-    describe 'fetch_hub_data' do
-      it 'raises an exception if MAIN_HUB is offline' do
-        expect { HubsHash.fetch_hub_data }.to raise_error(
-          Travian::ConnectionTimeout,
-          %r{^Error connecting to 'http://www.travian.com/'}
-        )
-      end
-    end
-
     describe '#empty?' do
       it 'returns true if it contains no hubs' do
         HubsHash.new({}).should be_empty
