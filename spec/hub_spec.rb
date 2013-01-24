@@ -40,33 +40,28 @@ module Travian
     end
 
     describe '#is_mirror?' do
-      before(:all) do
-        fake 'www.travian.net/serverLogin.php', :post
-        fake 'www.travian.co.nz/serverLogin.php', :post
-        fake 'www.travian.com.mx/serverLogin.php', :post
-      end
-
-      it 'should be false when called on the spanish hub' do
-        net_hub.stub(:location => 'http://www.travian.net/')
+      it 'should be false when it is neither redirected or borrows servers' do
+        net_hub.stub(:is_redirected? => false)
+        net_hub.stub(:borrows_servers? => false)
         net_hub.is_mirror?.should be false
       end
 
-      it 'should be true when called on the New Zealand hub' do
-        nz_hub.stub(location: 'http://www.travian.com.au/')
+      it 'should be true when it is redirected' do
+        nz_hub.stub(:is_redirected? => true)
         nz_hub.is_mirror?.should be true
       end
 
-      it 'should be true when called on the mexican hub' do
-        mx_hub.stub(location: 'http://www.travian.com.mx/')
+      it 'should not call borrows_servers if it is redirected' do
+        kr_hub.stub(:is_redirected? => true)
+        kr_hub.should_not_receive :borrows_servers?
+        kr_hub.is_mirror?
+      end
+
+      it 'should be true when it is not redirected but it borrows_servers' do
+        mx_hub.stub(:is_redirected? => false)
+        mx_hub.stub(:borrows_servers? => true)
         mx_hub.is_mirror?.should be true
       end
-
-      it 'should be true when called on the south korean hub' do
-        kr_hub.stub(location: 'http://www.travian.com/')
-        kr_hub.is_mirror?.should be true
-      end
-
-      after(:all) { unfake }
     end
 
     describe '#mirrored_hub' do
