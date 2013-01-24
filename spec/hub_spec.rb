@@ -157,9 +157,7 @@ module Travian
       end
     end
 
-    describe '#is_redirected?', online: true do
-      before(:all) { FakeWeb.allow_net_connect = true }
-
+    describe '#is_redirected?' do
       it 'returns false when called on the spanish hub' do
         net_hub.stub(location: 'http://www.travian.net/')
         net_hub.is_redirected?.should be false
@@ -179,8 +177,6 @@ module Travian
         kr_hub.stub(location: 'http://www.travian.com/')
         kr_hub.is_redirected?.should be true
       end
-
-      after(:all) { FakeWeb.allow_net_connect = false }
     end
 
     describe '#borrows_servers?', online: true do
