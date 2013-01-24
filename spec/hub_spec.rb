@@ -114,6 +114,8 @@ module Travian
         fake_redirection 'www.travian.co.kr' => 'www.travian.com'
         kr_hub.location.should == com_hub.host
       end
+
+      after(:all) { unfake }
     end
 
     describe '#servers', online: true do
