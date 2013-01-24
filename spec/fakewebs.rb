@@ -10,7 +10,6 @@ def FakeWeb.allow
 end
 
 def proxy_response(host, method, file)
-  puts file
   File.open(file, 'w') do |f|
     response = FakeWeb.allow { HTTParty.send(method, "http://#{host}") }
     f.write(response.body)
@@ -25,6 +24,15 @@ def fake(host, method=:get, file=nil)
     "http://#{host}",
     :body => File.read(file),
     :content_type => "text/html"
+  )
+end
+
+def fake_redirection(from, to)
+  redirection = {status: ['302', 'Moved Temporarily'], location: "http://#{to}"}
+  FakeWeb.register_uri(
+    :get,
+    "http://#{from}",
+    redirection
   )
 end
 

@@ -99,22 +99,26 @@ module Travian
       after(:all) { unfake }
     end
 
-    describe '#location', online: true do
+    describe '#location' do
       before(:all) { FakeWeb.allow_net_connect = true }
 
       it 'returns "http://www.travian.net/" when called on the spanish hub' do
+        fake 'www.travian.net'
         net_hub.location.should == net_hub.host
       end
 
       it 'returns "http://www.travian.com.au/" when called on the new zealand hub' do
+        fake_redirection 'www.travian.co.nz', 'www.travian.com.au'
         nz_hub.location.should == au_hub.host
       end
 
       it 'returns "http://www.travian.com.mx/" when called on the mexican hub' do
+        fake 'www.travian.com.mx'
         mx_hub.location.should == mx_hub.host
       end
 
       it 'returns "http://www.travian.com/" when called on the korean hub' do
+        fake_redirection 'www.travian.co.kr', 'www.travian.com'
         kr_hub.location.should == com_hub.host
       end
 
