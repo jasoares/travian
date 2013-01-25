@@ -27,13 +27,14 @@ def fake(host, method=:get, file=nil)
   )
 end
 
-def fake_redirection(hosts)
+def fake_redirection(hosts, method=:get)
   redirection = {status: ['302', 'Moved Temporarily'], location: "http://#{hosts.values.first}"}
   FakeWeb.register_uri(
-    :get,
+    method,
     "http://#{hosts.keys.first}",
     redirection
   )
+  fake hosts.values.first, method
 end
 
 def unfake
