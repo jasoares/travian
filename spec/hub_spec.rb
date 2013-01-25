@@ -118,8 +118,15 @@ module Travian
       after(:all) { unfake }
     end
 
-    describe '#servers', online: true do
-      before(:all) { FakeWeb.allow_net_connect = true }
+    describe '#servers' do
+      before(:all) do
+        fake 'www.travian.net'
+        fake 'www.travian.net/serverLogin.php', :post
+        fake_redirection 'www.travian.co.nz' => 'www.travian.com.au'
+        fake_redirection 'www.travian.co.kr' => 'www.travian.com'
+        fake 'www.travian.com/serverLogin.php', :post
+        fake 'www.travian.com.au/serverLogin.php', :post
+      end
 
       it 'returns a ServersHash object' do
         net_hub.servers.should be_a ServersHash
@@ -129,8 +136,8 @@ module Travian
         net_hub.servers.should have(9).servers
       end
 
-      it 'returns a ServersHash object with 3 servers when called on the new zealand hub' do
-        nz_hub.servers.should have(3).servers
+      it 'returns a ServersHash object with 4 servers when called on the new zealand hub' do
+        nz_hub.servers.should have(4).servers
       end
 
       it 'passes itself to ServersHash.build when called on the spanish hub' do
@@ -148,7 +155,13 @@ module Travian
         nz_hub.servers
       end
 
-      after(:all) { FakeWeb.allow_net_connect = false }
+      it 'should proxy the call to ServersHash' do
+        ServersHash.should_receive(:build).once.and_call_original
+        net_hub.servers
+        net_hub.servers
+      end
+
+      after(:all) { unfake }
     end
 
     describe '#==' do
