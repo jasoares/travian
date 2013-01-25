@@ -107,5 +107,19 @@ module Travian
       date_str.strip.gsub(/[\(\)]|gmt\s|\.$/i, '')
     end
 
+    class << self
+
+      def [](obj, code="")
+        if [:hub, :host, :code, :name, :start_date].all? {|method| obj.respond_to? method }
+          Server.new(obj.hub, obj.host, obj.code, obj.name, obj.start_date)
+        elsif obj.is_a?(String) || obj.is_a?(Symbol) and code.is_a?(String) || code.is_a?(Symbol)
+          Travian.hubs[obj.to_sym].servers[code.to_sym]
+        else
+          raise ArgumentError
+        end
+      end
+
+    end
+
   end
 end
