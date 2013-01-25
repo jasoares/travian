@@ -47,9 +47,10 @@ module Travian
     end
 
     context 'given the ServersHash built from the new zealand hub' do
-      before(:all) { fake 'www.travian.co.nz/serverLogin.php', :post }
-      before(:each) do
-        hub = double('Hub', host: 'http://www.travian.co.nz/')
+      before(:all) do
+        fake_redirection({'www.travian.co.nz/serverLogin.php' => 'www.travian.com.au'}, :post)
+        fake 'www.travian.com.au'
+        hub = Hub.new(:nz, 'http://www.travian.co.nz/')
         @hash = ServersHash.build(hub)
       end
 
