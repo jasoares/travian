@@ -31,7 +31,7 @@ module Travian
       @servers ||= ServersHash.build(is_redirected? ? mirrored_hub : self)
     end
 
-    def is_mirror?
+    def mirror?
       is_redirected? || borrows_servers?
     end
 
