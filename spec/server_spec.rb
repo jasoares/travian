@@ -70,22 +70,22 @@ module Travian
       describe '#classic?' do
         it 'returns true when called on a classic server like tcx8.travian.de' do
           server = Server.new(nil, 'http://tcx8.travian.de/', 'tcx8', 'Speed8x', Date.new(2012,12,11), 6911)
-          server.classic?.should be true
+          server.should be_classic
         end
 
         it 'returns true when called on a classic server like tc27.travian.my' do
           server = Server.new(nil, 'http://tc27.travian.my/', 'tc27', 'Classic Server 27', Date.new(2012,12,11), 6911)
-          server.classic?.should be true
+          server.should be_classic
         end
 
         it 'returns false when called on a speed server like tx3.travian.com.br' do
           server = Server.new(nil, 'http://tx3.travian.com.br/', 'tx3', 'Speed3x', Date.new(2012,12,11), 6911)
-          server.classic?.should be false
+          server.should_not be_classic
         end
 
         it 'returns false when called on a normal server like ts4.travian.pt' do
           server = Server.new(nil, 'http://ts4.travian.pt/', 'ts4', 'Servidor 4', Date.new(2012,12,11), 6911)
-          server.classic?.should be false
+          server.should_not be_classic
         end
       end
 
@@ -117,47 +117,47 @@ module Travian
 
       describe '#restarting?' do
         it 'returns true when called on a restarting server' do
-          de_ts4.restarting?.should be true
+          de_ts4.should be_restarting
         end
 
         it 'returns true when called on another restarting server' do
-          in_ts3.restarting?.should be true
+          in_ts3.should be_restarting
         end
 
         it 'returns false when called on a running server' do
-          de_ts5.restarting?.should be false
+          de_ts5.should_not be_restarting
         end
 
         it 'return false when called on an ended server' do
-          de_ts6.restarting?.should be false
+          de_ts6.should_not be_restarting
         end
       end
 
       describe '#ended?' do
         it 'returns true when called on an ended server' do
-          de_ts6.ended?.should be true
+          de_ts6.should be_ended
         end
 
         it 'returns true when called a restarting server' do
-          de_ts4.ended?.should be true
+          de_ts4.should be_ended
         end
 
         it 'returns false when called on an active server' do
-          de_ts5.ended?.should be false
+          de_ts5.should_not be_ended
         end
       end
 
       describe '#running?' do
         it 'returns false when called on an ended server' do
-          de_ts6.running?.should be false
+          de_ts6.should_not be_running
         end
 
         it 'returns false when called on a restarting server' do
-          de_ts4.running?.should be false
+          de_ts4.should_not be_running
         end
 
         it 'returns true when called on an active server' do
-          de_ts5.running?.should be true
+          de_ts5.should be_running
         end
       end
 
