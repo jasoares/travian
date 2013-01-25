@@ -234,9 +234,10 @@ module Travian
       end
 
       it 'returns a Server object when passed a valid object' do
-        hub = double('Hub', code: 'pt', host: 'http://www.travian.pt/')
-        server = double('Server', hub: hub, host: 'http://tx3.travian.pt/', code: 'tx3', name: 'Speed3x', start_date: Date.new(2012,11,28).to_datetime)
-        Server.should_receive(:new).with(hub, server.host, server.code, server.name, server.start_date)
+        server = double('Server', :code => 'tx3')
+        server.stub_chain(:hub, :code).and_return('pt')
+        Travian.hubs[:pt].servers.should_receive(:[]).with(:tx3).and_call_original
+        Travian.hubs.should_receive(:[]).with(:pt).and_call_original
         Server[server]
       end
 

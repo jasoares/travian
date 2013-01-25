@@ -110,13 +110,14 @@ module Travian
     class << self
 
       def [](obj, code="")
-        if [:hub, :host, :code, :name, :start_date].all? {|method| obj.respond_to? method }
-          Server.new(obj.hub, obj.host, obj.code, obj.name, obj.start_date)
+        hub, server = if obj.respond_to?(:hub) && obj.respond_to?(:code) && obj.hub.respond_to?(:code)
+          [obj.hub.code, obj.code]
         elsif obj.is_a?(String) || obj.is_a?(Symbol) and code.is_a?(String) || code.is_a?(Symbol)
-          Travian.hubs[obj.to_sym].servers[code.to_sym]
+          [obj, code]
         else
           raise ArgumentError
         end
+        Travian.hubs[hub.to_sym].servers[server.to_sym]
       end
 
     end
