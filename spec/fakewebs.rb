@@ -38,4 +38,5 @@ end
 
 def unfake
   FakeWeb.clean_registry
+  Travian.clear
 end
