@@ -41,24 +41,24 @@ module Travian
 
     describe '#mirror?' do
       it 'should be false when it is neither redirected or borrows servers' do
-        net_hub.stub(:is_redirected? => false)
+        net_hub.stub(:redirected? => false)
         net_hub.stub(:borrows_servers? => false)
         net_hub.should_not be_mirror
       end
 
       it 'should be true when it is redirected' do
-        nz_hub.stub(:is_redirected? => true)
+        nz_hub.stub(:redirected? => true)
         nz_hub.should be_mirror
       end
 
       it 'should not call borrows_servers if it is redirected' do
-        kr_hub.stub(:is_redirected? => true)
+        kr_hub.stub(:redirected? => true)
         kr_hub.should_not_receive :borrows_servers?
         kr_hub.mirror?
       end
 
       it 'should be true when it is not redirected but it borrows_servers' do
-        mx_hub.stub(:is_redirected? => false)
+        mx_hub.stub(:redirected? => false)
         mx_hub.stub(:borrows_servers? => true)
         mx_hub.should be_mirror
       end
@@ -170,25 +170,25 @@ module Travian
       end
     end
 
-    describe '#is_redirected?' do
+    describe '#redirected?' do
       it 'returns false when called on the spanish hub' do
         net_hub.stub(location: 'http://www.travian.net/')
-        net_hub.is_redirected?.should be false
+        net_hub.should_not be_redirected
       end
 
       it 'returns true when called on the New Zealand hub' do
         nz_hub.stub(location: 'http://www.travian.com.au/')
-        nz_hub.is_redirected?.should be true
+        nz_hub.should be_redirected
       end
 
       it 'returns false when called on the mexican hub' do
         mx_hub.stub(location: 'http://www.travian.com.mx/')
-        mx_hub.is_redirected?.should be false
+        mx_hub.should_not be_redirected
       end
 
       it 'returns true when called on the south korean hub' do
         kr_hub.stub(location: 'http://www.travian.com/')
-        kr_hub.is_redirected?.should be true
+        kr_hub.should be_redirected
       end
     end
 

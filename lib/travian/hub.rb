@@ -28,15 +28,15 @@ module Travian
     end
 
     def servers
-      @servers ||= ServersHash.build(is_redirected? ? mirrored_hub : self)
+      @servers ||= ServersHash.build(redirected? ? mirrored_hub : self)
     end
 
     def mirror?
-      is_redirected? || borrows_servers?
+      redirected? || borrows_servers?
     end
 
     def mirrored_hub
-      @mirrored_hub ||= if is_redirected? || borrows_servers?
+      @mirrored_hub ||= if redirected? || borrows_servers?
         Travian.hubs.select {|h| h.matches_host?(mirrored_host) }.first
       else
         nil
@@ -57,7 +57,7 @@ module Travian
       self.host == other.host && self.code == other.code
     end
 
-    def is_redirected?
+    def redirected?
       location != host
     end
 
@@ -74,7 +74,7 @@ module Travian
     private
 
     def mirrored_host
-      is_redirected? ? location : borrows_servers? ? servers_tld : nil
+      redirected? ? location : borrows_servers? ? servers_tld : nil
     end
 
     def servers_tld
