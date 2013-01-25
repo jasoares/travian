@@ -80,5 +80,20 @@ module Travian
     def servers_tld
       servers.first.host[/travian\..+\//]
     end
+
+    class << self
+
+      def [](obj)
+        raise ArgumentError unless (obj.is_a?(String) || obj.is_a?(Symbol) || obj.respond_to?(:code))
+        key = obj.respond_to?(:code) ? obj.code : obj
+        valid?(key) ? Travian.hubs[key.to_sym] : CODES.keys
+      end
+
+      def valid?(code)
+        CODES.keys.include? code.to_sym
+      end
+
+    end
+
   end
 end
