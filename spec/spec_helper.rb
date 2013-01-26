@@ -23,3 +23,16 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = 'random'
 end
+
+def fakeweb_page(filename)
+  path = File.expand_path("../fakeweb_pages", __FILE__) + "/#{filename}.html"
+end
+
+def load_servers_login_data(hub_host)
+  data = Nokogiri::HTML(File.read(fakeweb_page "#{hub_host}_serverLogin.php"))
+  split_servers(data)
+end
+
+def split_servers(data)
+  data.css('div[class~="server"]')
+end
