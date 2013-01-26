@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-class Includer
-  include Travian::Agent
-end
-
 module Travian
+  class AgentIncluder
+    include Agent
+  end
+
   describe Agent do
     describe '#request' do
-      let(:agent) { Includer.new }
+      let(:agent) { AgentIncluder.new }
 
       context 'given connection is successfull' do
         it 'calls HTTParty.get when passed :get' do
