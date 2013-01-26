@@ -26,13 +26,12 @@ module Travian
 
       def build(hub)
         data = Nokogiri::HTML(fetch_servers(hub.host))
-        hash = LoginData.split_servers(data).inject({}) do |hash,server_data|
-          host, code, name, start_date, players = LoginData.parse(server_data)
-          server = Server.new(hub, host, code, name, start_date, players)
-          hash[code.to_sym] = server unless server.classic?
+        servers_hash = LoginData.split_servers(data).inject({}) do |hash,login_data|
+          server = Server.build(hub, login_data)
+          hash[server.code.to_sym] = server unless server.classic?
           hash
         end
-        ServersHash.new(hash)
+        ServersHash.new(servers_hash)
       end
 
       def fetch_servers(host)
@@ -41,5 +40,6 @@ module Travian
       end
 
     end
+
   end
 end

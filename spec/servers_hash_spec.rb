@@ -2,11 +2,26 @@ require 'spec_helper'
 
 module Travian
   describe ServersHash do
+    let(:klass) { ServersHash }
+    let(:instance) { ServersHash.new({}) }
+
+    it 'should extend Agent' do
+      klass.should respond_to :get, :post
+    end
+
+    it 'should respond_to each' do
+      instance.should respond_to :each
+    end
+
+    it 'should include Enumerable' do
+      instance.should respond_to :map, :find, :select, :reject
+    end
+
     context 'given the ServersHash built from the portuguese hub' do
       before(:all) { fake 'www.travian.pt/serverLogin.php', :post }
       before(:each) do
         hub = double('Hub', :host => 'http://www.travian.pt/')
-        @hash = ServersHash.build(hub)
+        @hash = klass.build(hub)
       end
 
       subject  { @hash }
@@ -28,7 +43,7 @@ module Travian
       before(:all) { fake 'www.travian.de/serverLogin.php', :post }
       before(:each) do
         hub = double('Hub', :host => 'http://www.travian.de/')
-        @hash = ServersHash.build(hub)
+        @hash = klass.build(hub)
       end
 
       subject  { @hash }
@@ -51,7 +66,7 @@ module Travian
         fake_redirection({'www.travian.co.nz/serverLogin.php' => 'www.travian.com.au'}, :post)
         fake 'www.travian.com.au'
         hub = Hub.new(:nz, 'http://www.travian.co.nz/')
-        @hash = ServersHash.build(hub)
+        @hash = klass.build(hub)
       end
 
       subject { @hash }
@@ -67,7 +82,7 @@ module Travian
 
     describe '.new' do
       it 'raises ArgumentError when passed an argument that is not a Hash' do
-        expect { ServersHash.new(123) }.to raise_error(ArgumentError)
+        expect { klass.new(123) }.to raise_error(ArgumentError)
       end
     end
 
@@ -79,12 +94,12 @@ module Travian
       end
 
       it 'returns a Hash object' do
-        ServersHash.build(@hub).should be_a ServersHash
+        klass.build(@hub).should be_a ServersHash
       end
       
       it 'calls LoginData.new to create the object to return' do
-        ServersHash.should_receive(:new).with(kind_of(Hash)).once
-        ServersHash.build(@hub)
+        klass.should_receive(:new).with(kind_of(Hash)).once
+        klass.build(@hub)
       end
 
       after(:all) { unfake }
@@ -94,7 +109,7 @@ module Travian
       before(:all) { fake 'www.travian.pt/serverLogin.php', :post }
 
       it 'returns the response body when passed a valid host' do
-        ServersHash.fetch_servers('http://www.travian.pt/').should match /^<h1>Escolhe um servidor.<\/h1>/
+        klass.fetch_servers('http://www.travian.pt/').should match /^<h1>Escolhe um servidor.<\/h1>/
       end
 
       after(:all) { unfake }

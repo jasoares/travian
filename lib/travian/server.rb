@@ -3,6 +3,7 @@ require 'httparty'
 module Travian
   class Server
     include Agent
+    extend LoginData
 
     attr_reader :hub, :host, :code, :name, :players
 
@@ -118,6 +119,10 @@ module Travian
           raise ArgumentError
         end
         Travian.hubs[hub.to_sym].servers[server.to_sym]
+      end
+
+      def build(hub, login_data)
+        Server.new(hub, *parse(login_data))
       end
 
     end
