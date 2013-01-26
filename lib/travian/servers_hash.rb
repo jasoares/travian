@@ -5,6 +5,7 @@ require 'httparty'
 module Travian
   class ServersHash
     extend Forwardable
+    extend Agent
     include Enumerable
 
     def_delegators :@hash, :[], :empty?, :size, :keys, :has_key?, :values, :each_pair
@@ -22,7 +23,6 @@ module Travian
     end
 
     class << self
-      include Agent
 
       def build(hub)
         data = Nokogiri::HTML(fetch_servers(hub.host))

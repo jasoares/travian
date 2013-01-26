@@ -81,17 +81,7 @@ module Travian
       it 'returns a Hash object' do
         ServersHash.build(@hub).should be_a ServersHash
       end
-
-      it 'delegates the data splitting to LoginData.split_servers' do
-        LoginData.should_receive(:split_servers).once.and_call_original
-        ServersHash.build(@hub)
-      end
-
-      it 'delegates login data parsing to LoginData.parse' do
-        LoginData.should_receive(:parse).exactly(10).times.and_call_original
-        ServersHash.build(@hub)
-      end
-
+      
       it 'calls LoginData.new to create the object to return' do
         ServersHash.should_receive(:new).with(kind_of(Hash)).once
         ServersHash.build(@hub)
