@@ -57,7 +57,7 @@ module Travian
       end
 
       def parse_name(server_data)
-        server_data.search('div')[0].text.gsub(/[\s]/, '')
+        server_data.search('div')[0].text.strip
       end
 
       def parse_players(server_data)

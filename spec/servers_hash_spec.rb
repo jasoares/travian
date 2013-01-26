@@ -150,8 +150,8 @@ module Travian
     describe '.parse_name' do
       include_context 'when passed servers_data'
 
-      it 'returns "Speed3x" when passed the tx3 server' do
-        ServersHash.parse_name(@server_data).should == "Speed3x"
+      it 'returns "Speed 3x" when passed the tx3 server' do
+        ServersHash.parse_name(@server_data).should == "Speed 3x"
       end
     end
 
