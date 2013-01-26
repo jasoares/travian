@@ -26,7 +26,7 @@ module Travian
 
       def build(hub)
         data = Nokogiri::HTML(fetch_servers(hub.host))
-        hash = split_servers(data).inject({}) do |hash,server_data|
+        hash = LoginData.split_servers(data).inject({}) do |hash,server_data|
           host, code, name, start_date, players = LoginData.parse(server_data)
           server = Server.new(hub, host, code, name, start_date, players)
           hash[code.to_sym] = server unless server.classic?
@@ -38,10 +38,6 @@ module Travian
       def fetch_servers(host)
         uri = "#{host}serverLogin.php"
         post(uri).body
-      end
-
-      def split_servers(data)
-        data.css('div[class~="server"]')
       end
 
     end

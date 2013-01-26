@@ -3,6 +3,10 @@ module Travian
 
     class << self
 
+      def split_servers(data)
+        data.css('div[class~="server"]')
+      end
+
       def parse(data)
         host = parse_host(data)
         code = parse_code(host)

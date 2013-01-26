@@ -19,6 +19,23 @@ module Travian
     let(:de_data) { load_servers_login_data('www.travian.de') }
     let(:arabia_data) { load_servers_login_data('arabia.travian.com') }
 
+    describe '.split_servers' do
+      it 'should return an array with 6 servers when passed data from arabia.travian.com' do
+        data = load_login_data('arabia.travian.com')
+        LoginData.split_servers(data).should have(6).servers
+      end
+
+      it 'should return an array with 10 servers when passed data from www.travian.pt' do
+        data = load_login_data('www.travian.pt')
+        LoginData.split_servers(data).should have(10).servers
+      end
+
+      it 'should return an array with 10 servers when passed data from www.travian.de' do
+        data = load_login_data('www.travian.de')
+        LoginData.split_servers(data).should have(8).servers
+      end
+    end
+
     describe '.parse' do
       it 'delegates name parsing to LoginData.parse_name' do
         LoginData.should_receive(:parse_name).with(pt_data.first).and_call_original

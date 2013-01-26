@@ -88,8 +88,8 @@ module Travian
         ServersHash.build(@hub).should be_a ServersHash
       end
 
-      it 'delegates the data splitting to ServersHash.select_servers' do
-        ServersHash.should_receive(:split_servers).once.and_call_original
+      it 'delegates the data splitting to LoginData.split_servers' do
+        LoginData.should_receive(:split_servers).once.and_call_original
         ServersHash.build(@hub)
       end
 
