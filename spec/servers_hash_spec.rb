@@ -71,18 +71,12 @@ module Travian
       end
     end
 
-    shared_context 'when passed servers_data' do
-      before(:all) { fake 'www.travian.pt/serverLogin.php', :post }
-      before(:each) do
-        @hub = double('Hub', :host => 'http://www.travian.pt/')
-        @servers_data = Nokogiri::HTML(ServersHash.fetch_servers(@hub.host))
-        @server_data = ServersHash.send(:split_servers, @servers_data)[-2]
-      end
-      after(:all) { unfake }
-    end
-
     describe '.build' do
-      include_context 'when passed servers_data'
+      before(:all) { fake 'www.travian.pt/serverLogin.php', :post }
+
+      before(:each) do
+        @hub = double('Hub', host: 'http://www.travian.pt/')
+      end
 
       it 'returns a Hash object' do
         ServersHash.build(@hub).should be_a ServersHash
@@ -102,6 +96,8 @@ module Travian
         ServersHash.should_receive(:new).with(kind_of(Hash)).once
         ServersHash.build(@hub)
       end
+
+      after(:all) { unfake }
     end
 
     describe '.fetch_servers' do
