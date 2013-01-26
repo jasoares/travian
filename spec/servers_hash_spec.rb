@@ -93,92 +93,14 @@ module Travian
         ServersHash.build(@hub)
       end
 
-      it 'delegates host parsing to ServersHash.parse_host' do
-        ServersHash.should_receive(:parse_host).exactly(10).times.and_call_original
+      it 'delegates login data parsing to LoginData.parse' do
+        LoginData.should_receive(:parse).exactly(10).times.and_call_original
         ServersHash.build(@hub)
       end
 
-      it 'delegates name parsing to ServersHash.parse_name' do
-        ServersHash.should_receive(:parse_name).exactly(10).times.and_call_original
-        ServersHash.build(@hub)
-      end
-
-      it 'delegates start date parsing to ServersHash.parse_start_date' do
-        ServersHash.should_receive(:parse_start_date).exactly(10).times.and_call_original
-        ServersHash.build(@hub)
-      end
-
-      it 'delegates name parsing to ServersHash.parse_players' do
-        ServersHash.should_receive(:parse_players).exactly(10).times.and_call_original
-        ServersHash.build(@hub)
-      end
-
-      it 'calls ServersHash.new to create the object to return' do
+      it 'calls LoginData.new to create the object to return' do
         ServersHash.should_receive(:new).with(kind_of(Hash)).once
         ServersHash.build(@hub)
-      end
-    end
-
-    describe '.parse_host' do
-      include_context 'when passed servers_data'
-
-      it 'returns "http://tx3.travian.pt/" when passed server data' do
-        ServersHash.parse_host(@server_data).should == "http://tx3.travian.pt/"
-      end
-    end
-
-    describe '.parse_subdomain' do
-      include_context 'when passed servers_data'
-
-      it 'returns "tcx8" when passed "http://tcx8.travian.de/"' do
-        ServersHash.parse_subdomain("http://tcx8.travian.de/").should == "tcx8"
-      end
-
-      it 'returns "ts4" when passed "http://ts4.travian.net/"' do
-        ServersHash.parse_subdomain('http://ts4.travian.net/').should == 'ts4'
-      end
-
-      it 'returns "tx3" when passed "http://tx3.travian.com.br/"' do
-        ServersHash.parse_subdomain('http://tx3.travian.com.br/').should == 'tx3'
-      end
-
-      it 'returns "arabiats6" when passed "http://arabiats6.travian.com/"' do
-        ServersHash.parse_subdomain('http://arabiats6.travian.com/').should == 'arabiats6'
-      end
-    end
-
-    describe '.parse_name' do
-      include_context 'when passed servers_data'
-
-      it 'returns "Speed 3x" when passed the tx3 server' do
-        ServersHash.parse_name(@server_data).should == "Speed 3x"
-      end
-    end
-
-    describe '.parse_start_date' do
-      include_context 'when passed servers_data'
-      before(:all) do
-        Timecop.freeze(Time.utc(2012,12,27,10,20,0))
-      end
-
-      it 'returns a DateTime object' do
-        ServersHash.parse_start_date(@server_data).should be_a DateTime
-      end
-
-      it 'returns "29/09/2012" when passed the tx3 server' do
-        ServersHash.parse_start_date(@server_data).should == Date.new(2012,9,3).to_datetime
-      end
-
-      after(:all) do
-        Timecop.return
-      end
-    end
-
-    describe '.parse_players' do
-      include_context 'when passed servers_data'
-
-      it 'returns 2039 when passed the tx3 server' do
-        ServersHash.parse_players(@server_data).should == 3101
       end
     end
 

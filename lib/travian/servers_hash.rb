@@ -27,13 +27,9 @@ module Travian
       def build(hub)
         data = Nokogiri::HTML(fetch_servers(hub.host))
         hash = split_servers(data).inject({}) do |hash,server_data|
-          host = parse_host(server_data)
-          code = parse_subdomain(host).to_sym
-          name = parse_name(server_data)
-          start_date = parse_start_date(server_data)
-          players = parse_players(server_data)
+          host, code, name, start_date, players = LoginData.parse(server_data)
           server = Server.new(hub, host, code, name, start_date, players)
-          hash[code] = server unless server.classic?
+          hash[code.to_sym] = server unless server.classic?
           hash
         end
         ServersHash.new(hash)
@@ -46,27 +42,6 @@ module Travian
 
       def split_servers(data)
         data.css('div[class~="server"]')
-      end
-
-      def parse_host(server_data)
-        server_data.search('a.link').first['href']
-      end
-
-      def parse_subdomain(host)
-        host[%r{http://(\w+)\.travian\..+/}]; $1
-      end
-
-      def parse_name(server_data)
-        server_data.search('div')[0].text.strip
-      end
-
-      def parse_players(server_data)
-        server_data.search('div')[1].text.gsub(/[^\d]/, '').to_i
-      end
-
-      def parse_start_date(server_data)
-        days_ago = server_data.search('div')[2].text.gsub(/[^\d]/, '').to_i
-        (Date.today - days_ago).to_datetime
       end
 
     end
