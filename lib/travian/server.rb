@@ -59,16 +59,12 @@ module Travian
     private
 
     def load_info
-      server_data = Nokogiri::HTML(fetch_server_data)
-      info = select_info(server_data)
-      @start_date ||= parse_start_date(server_data)
+      data = server_data
+      info = select_info(data)
+      @start_date ||= parse_start_date(data)
       @world_id = parse_world_id(info)
       @version = parse_version(info)
       @speed = parse_speed(info)
-    end
-
-    def fetch_server_data
-      get("#{host}").body
     end
 
     def parse_version(info)

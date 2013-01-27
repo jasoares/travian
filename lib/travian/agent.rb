@@ -17,6 +17,10 @@ module Travian
       Nokogiri::HTML(post(uri).body)
     end
 
+    def server_data
+      Nokogiri::HTML(get("#{host}").body)
+    end
+
     def redirected_location(host)
       begin
         get(host, limit: 1)

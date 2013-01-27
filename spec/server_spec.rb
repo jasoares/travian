@@ -192,7 +192,7 @@ module Travian
         end
 
         it 'returns nil if the server has no restart page' do
-          data = Nokogiri::HTML(de_ts6.send(:fetch_server_data))
+          data = de_ts6.server_data
           de_ts6.send(:parse_restart_page_start_date, data).should be nil
         end
       end
