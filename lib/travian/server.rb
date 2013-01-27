@@ -1,8 +1,7 @@
-require 'httparty'
+require 'travian/parsers/server_data'
 
 module Travian
   class Server
-    include Agent
     extend LoginData
 
     attr_reader :hub, :host, :code, :name, :players
@@ -25,15 +24,19 @@ module Travian
     alias :subdomain :code
 
     def world_id
-      @world_id || load_info and @world_id
+      server_data.world_id
     end
 
     def version
-      @version || load_info and @version
+      server_data.version
     end
 
     def speed
-      @speed || load_info and @speed
+      server_data.speed
+    end
+
+    def restart_date
+      server_data.restart_date
     end
 
     def classic?
@@ -45,7 +48,7 @@ module Travian
     end
 
     def restarting?
-      start_date && start_date > DateTime.now ? true : false
+      restart_date ? true : false
     end
 
     def running?
@@ -53,34 +56,13 @@ module Travian
     end
 
     def start_date
-      @start_date || load_info and @start_date
+      @start_date ||= parse_hub_page_start_date
     end
 
     private
 
-    def load_info
-      data = server_data
-      info = select_info(data)
-      @start_date ||= parse_start_date(data)
-      @world_id = parse_world_id(info)
-      @version = parse_version(info)
-      @speed = parse_speed(info)
-    end
-
-    def parse_version(info)
-      info[/Travian\.Game\.version = '(.+)';/]; $1
-    end
-
-    def parse_world_id(info)
-      info[/Travian\.Game\.worldId = '(.+)';/]; $1
-    end
-
-    def parse_speed(info)
-      info[/Travian\.Game\.speed = (.+);/]; $1.to_i
-    end
-
-    def select_info(data)
-      data.css('head script').last.text
+    def server_data
+      @server_data ||= ServerData.new(self)
     end
 
     def parse_start_date(data)
@@ -89,19 +71,6 @@ module Travian
 
     def parse_hub_page_start_date
       hub.servers[code.to_sym].start_date if hub.servers[code.to_sym]
-    end
-
-    def parse_restart_page_start_date(data)
-      date_str = select_start_date(data)
-      date_str.empty? ? nil : DateTime.strptime(Server.sanitize_date_format(date_str), "%d.%m.%y %H:%M %:z")
-    end
-
-    def select_start_date(data)
-      data.css('div#worldStartInfo span.date').text
-    end
-
-    def self.sanitize_date_format(date_str)
-      date_str.strip.gsub(/[\(\)]|gmt\s|\.$/i, '')
     end
 
     class << self

@@ -4,6 +4,7 @@ require 'nokogiri'
 
 module Travian
   module Agent
+    extend self
 
     MAX_TRIES = 3
     DEFAULT_OPTIONS = {timeout: 6}
@@ -17,7 +18,7 @@ module Travian
       Nokogiri::HTML(post(uri).body)
     end
 
-    def server_data
+    def server_data(host)
       Nokogiri::HTML(get("#{host}").body)
     end
 

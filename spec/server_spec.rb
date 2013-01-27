@@ -45,28 +45,6 @@ module Travian
         end
       end
 
-      shared_examples 'a proxy' do
-        it 'should only need to call Server#load_info once and cache the info' do
-          @server.should_receive(:load_info).once.and_call_original
-          @server.send(method); @server.send(method)
-        end
-      end
-
-      describe '#world_id' do
-        let(:method) { :world_id }
-        it_should_behave_like 'a proxy'
-      end
-
-      describe '#version' do
-        let(:method) { :version }
-        it_should_behave_like 'a proxy'
-      end
-
-      describe '#speed' do
-        let(:method) { :speed }
-        it_should_behave_like 'a proxy'
-      end
-
       describe '#classic?' do
         it 'returns true when called on a classic server like tcx8.travian.de' do
           server = Server.new(nil, 'http://tcx8.travian.de/', 'tcx8', 'Speed8x', Date.new(2012,12,11), 6911)
@@ -162,10 +140,6 @@ module Travian
       end
 
       describe '#start_date' do
-        it 'returns the announced time for a restarting server' do
-          de_ts4.start_date.should == DateTime.new(2013, 1, 21, 6, 0, 0, "+01:00")
-        end
-
         it 'returns the date the server started for an active server' do
           Timecop.freeze(Time.utc(2012,12,27,10,20,0))
           de_ts5.start_date.should == DateTime.new(2012, 11, 22)
@@ -185,29 +159,7 @@ module Travian
         end
       end
 
-      describe '#parse_restart_page_start_date' do
-        it 'returns the restart time on the server restart page' do
-          data = Nokogiri::HTML('<div id="worldStartInfo"><div class="countdownContent">    Rundenstart am <br/><span class="date">21.01.13 06:00<span class="timezone"> (Gmt +01:00)</span></span> </div></div>')
-          de_ts4.send(:parse_restart_page_start_date, data).should == DateTime.new(2013,1,21,6,0,0,"+01:00")
-        end
-
-        it 'returns nil if the server has no restart page' do
-          data = de_ts6.server_data
-          de_ts6.send(:parse_restart_page_start_date, data).should be nil
-        end
-      end
-
       after(:all) { unfake }
-    end
-
-    describe '.sanitize_date_format' do
-      it 'returns "25.01.13 12:00 +05:30" when passed "25.01.13 12:00 (GMT +05:30).  "' do
-        Server.sanitize_date_format("   25.01.13 12:00 (GMT +05:30).  ").should == "25.01.13 12:00 +05:30"
-      end
-
-      it 'returns "21.01.13 06:00 +01:00" when passed "21.01.13 06:00 (Gmt +01:00)"' do
-        Server.sanitize_date_format("21.01.13 06:00 (Gmt +01:00)").should == "21.01.13 06:00 +01:00"
-      end
     end
 
     describe '.new' do
