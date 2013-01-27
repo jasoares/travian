@@ -104,15 +104,5 @@ module Travian
 
       after(:all) { unfake }
     end
-
-    describe '.fetch_servers' do
-      before(:all) { fake 'www.travian.pt/serverLogin.php', :post }
-
-      it 'returns the response body when passed a valid host' do
-        klass.fetch_servers('http://www.travian.pt/').should match /^<h1>Escolhe um servidor.<\/h1>/
-      end
-
-      after(:all) { unfake }
-    end
   end
 end

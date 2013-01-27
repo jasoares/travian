@@ -8,6 +8,10 @@ module Travian
       klass.should respond_to :parse
     end
 
+    it 'should extend Agent' do
+      klass.should respond_to :hubs_data
+    end
+
     describe '.build' do
       before(:all) { fake 'www.travian.com' }
 

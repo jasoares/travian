@@ -1,6 +1,5 @@
 require 'forwardable'
 require 'nokogiri'
-require 'httparty'
 
 module Travian
   class ServersHash
@@ -25,18 +24,13 @@ module Travian
     class << self
 
       def build(hub)
-        data = Nokogiri::HTML(fetch_servers(hub.host))
+        data = login_data(hub.host)
         servers_hash = LoginData.split_servers(data).inject({}) do |hash,login_data|
           server = Server.build(hub, login_data)
           hash[server.code.to_sym] = server unless server.classic?
           hash
         end
         ServersHash.new(servers_hash)
-      end
-
-      def fetch_servers(host)
-        uri = "#{host}serverLogin.php"
-        post(uri).body
       end
 
     end

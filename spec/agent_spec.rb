@@ -6,9 +6,34 @@ module Travian
   end
 
   describe Agent do
-    describe '#request' do
-      let(:agent) { AgentIncluder.new }
+    let(:agent) { AgentIncluder.new }
 
+    describe '#login_data' do
+      before(:all) { fake 'www.travian.pt/serverLogin.php', :post }
+
+      it 'makes a post request to the passed host' do
+        agent.should_receive(:post).with('http://www.travian.pt/serverLogin.php').and_call_original
+        agent.login_data('http://www.travian.pt/')
+      end
+
+      it 'returns the response body wrapped in a Nokogiri::HTML::Document' do
+        agent.login_data('http://www.travian.pt/').should be_a Nokogiri::HTML::Document
+      end
+
+      after(:all) { unfake }
+    end
+
+    describe '#hubs_data' do
+      before(:all) { fake 'www.travian.com' }
+
+      it 'returns the response body wrapped in a Nokogiri::HTML::Document' do
+        agent.hubs_data.should be_a Nokogiri::HTML::Document
+      end
+
+      after(:all) { unfake }
+    end
+
+    describe '#request' do
       context 'given connection is successfull' do
         it 'calls HTTParty.get when passed :get' do
           fake 'www.travian.com'

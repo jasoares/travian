@@ -1,6 +1,4 @@
 require 'travian/servers_hash'
-require 'httparty'
-require 'nokogiri'
 require 'yaml'
 
 module Travian
@@ -44,13 +42,11 @@ module Travian
     end
 
     def location
-      @location ||= begin
-        get(host, limit: 1)
-        host
-      rescue HTTParty::RedirectionTooDeep => e
-        location = e.response.header['Location']
-        location[/\/$/] ? location : location + '/'
+      unless @location
+        location = redirected_location(host)
+        @location = location[/\/$/] ? location : location + '/'
       end
+      @location
     end
 
     def ==(other)
