@@ -6,7 +6,7 @@ module Travian
       before(:all) { fake 'tx3.travian.pt' }
       before(:each) do
         @hub = Hub.new(:pt, 'http://www.travian.pt/')
-        @server = Server.new(@hub, 'http://tx3.travian.pt/', 'tx3', 'Speed3x', Date.new(2012,9,29).to_datetime, 3113)
+        @server = Server.new(@hub, 'http://tx3.travian.pt/', 'Speed3x', Date.new(2012,9,29).to_datetime, 3113)
       end
 
       subject { @server }
@@ -47,22 +47,22 @@ module Travian
 
       describe '#classic?' do
         it 'returns true when called on a classic server like tcx8.travian.de' do
-          server = Server.new(nil, 'http://tcx8.travian.de/', 'tcx8', 'Speed8x', Date.new(2012,12,11), 6911)
+          server = Server.new(nil, 'http://tcx8.travian.de/', 'Speed8x', Date.new(2012,12,11), 6911)
           server.should be_classic
         end
 
         it 'returns true when called on a classic server like tc27.travian.my' do
-          server = Server.new(nil, 'http://tc27.travian.my/', 'tc27', 'Classic Server 27', Date.new(2012,12,11), 6911)
+          server = Server.new(nil, 'http://tc27.travian.my/', 'Classic Server 27', Date.new(2012,12,11), 6911)
           server.should be_classic
         end
 
         it 'returns false when called on a speed server like tx3.travian.com.br' do
-          server = Server.new(nil, 'http://tx3.travian.com.br/', 'tx3', 'Speed3x', Date.new(2012,12,11), 6911)
+          server = Server.new(nil, 'http://tx3.travian.com.br/', 'Speed3x', Date.new(2012,12,11), 6911)
           server.should_not be_classic
         end
 
         it 'returns false when called on a normal server like ts4.travian.pt' do
-          server = Server.new(nil, 'http://ts4.travian.pt/', 'ts4', 'Servidor 4', Date.new(2012,12,11), 6911)
+          server = Server.new(nil, 'http://ts4.travian.pt/', 'Servidor 4', Date.new(2012,12,11), 6911)
           server.should_not be_classic
         end
       end
@@ -88,10 +88,10 @@ module Travian
 
       let(:de_hub) { Hub.new(:de, 'http://www.travian.de/') }
       let(:in_hub) { Hub.new(:in, 'http://www.travian.in/') }
-      let(:in_ts3) { Server.new(in_hub, 'http://ts3.travian.in/', :ts3, 'Server 3') }
-      let(:de_ts4) { Server.new(de_hub, 'http://ts4.travian.de/', :ts4, 'Welt 4') }
-      let(:de_ts5) { Server.new(de_hub, 'http://ts5.travian.de/', :ts5, 'Welt 5') }
-      let(:de_ts6) { Server.new(de_hub, 'http://ts6.travian.de/', :ts6, 'Welt 6') }
+      let(:in_ts3) { Server.new(in_hub, 'http://ts3.travian.in/', 'Server 3') }
+      let(:de_ts4) { Server.new(de_hub, 'http://ts4.travian.de/', 'Welt 4') }
+      let(:de_ts5) { Server.new(de_hub, 'http://ts5.travian.de/', 'Welt 5') }
+      let(:de_ts6) { Server.new(de_hub, 'http://ts6.travian.de/', 'Welt 6') }
 
       describe '#restarting?' do
         it 'returns true when called on a restarting server' do
@@ -162,12 +162,31 @@ module Travian
       after(:all) { unfake }
     end
 
+    describe '.code' do
+      let(:klass) { Server }
+      it 'returns "tcx8" when passed "http://tcx8.travian.de/"' do
+        klass.code("http://tcx8.travian.de/").should == "tcx8"
+      end
+
+      it 'returns "ts4" when passed "http://ts4.travian.net/"' do
+        klass.code('http://ts4.travian.net/').should == 'ts4'
+      end
+
+      it 'returns "tx3" when passed "http://tx3.travian.com.br/"' do
+        klass.code('http://tx3.travian.com.br/').should == 'tx3'
+      end
+
+      it 'returns "arabiats6" when passed "http://arabiats6.travian.com/"' do
+        klass.code('http://arabiats6.travian.com/').should == 'arabiats6'
+      end
+    end
+
     describe '.new' do
       context 'when passed a symbol code' do
         before(:all) { fake 'tx3.travian.pt' }
         before(:each) do
           hub = Hub.new(:pt, 'http://www.travian.pt/')
-          @server = Server.new(hub, 'http://tx3.travian.pt/', :tx3, 'Speed3x', Date.new(2012,9,29), 3113)
+          @server = Server.new(hub, 'http://tx3.travian.pt/', 'Speed3x', Date.new(2012,9,29), 3113)
         end
 
         subject { @server }

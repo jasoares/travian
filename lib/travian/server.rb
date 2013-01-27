@@ -4,10 +4,10 @@ module Travian
   class Server
     extend LoginData
 
-    attr_reader :hub, :host, :code, :name, :players
+    attr_reader :hub, :host, :name, :players
 
-    def initialize(hub, host, code, name, start_date=nil, players=0)
-      @hub, @host, @code, @name = hub, host, code.to_s, name
+    def initialize(hub, host, name, start_date=nil, players=0)
+      @hub, @host, @name = hub, host, name
       @start_date, @players = start_date, players
     end
 
@@ -19,6 +19,10 @@ module Travian
         world_id:   world_id,
         speed:      speed
       }
+    end
+
+    def code
+      self.class.code(host)
     end
 
     alias :subdomain :code
@@ -74,6 +78,10 @@ module Travian
     end
 
     class << self
+
+      def code(host)
+        host[%r{http://(\w+)\.travian\..+/}]; $1
+      end
 
       def [](obj, code="")
         hub, server = if obj.respond_to?(:hub) && obj.respond_to?(:code) && obj.hub.respond_to?(:code)

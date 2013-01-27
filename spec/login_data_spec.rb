@@ -60,24 +60,6 @@ module Travian
       end
     end
 
-    describe '.parse_code' do
-      it 'returns "tcx8" when passed "http://tcx8.travian.de/"' do
-        klass.parse_code("http://tcx8.travian.de/").should == "tcx8"
-      end
-
-      it 'returns "ts4" when passed "http://ts4.travian.net/"' do
-        klass.parse_code('http://ts4.travian.net/').should == 'ts4'
-      end
-
-      it 'returns "tx3" when passed "http://tx3.travian.com.br/"' do
-        klass.parse_code('http://tx3.travian.com.br/').should == 'tx3'
-      end
-
-      it 'returns "arabiats6" when passed "http://arabiats6.travian.com/"' do
-        klass.parse_code('http://arabiats6.travian.com/').should == 'arabiats6'
-      end
-    end
-
     describe '.parse_name' do
       it 'returns "Speed 3x" when passed the tx3.travian.de server' do
         klass.parse_name(de_data[6]).should == "Speed 3x"

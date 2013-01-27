@@ -8,19 +8,15 @@ module Travian
 
     def parse(data)
       host = parse_host(data)
-      code = parse_code(host)
       name = parse_name(data)
       start_date = parse_start_date(data)
       players = parse_players(data)
-      [host, code, name, start_date, players]
+      [host, name, start_date, players]
     end
 
     def parse_host(data)
       data.search('a.link').first['href']
-    end
 
-    def parse_code(host)
-      host[%r{http://(\w+)\.travian\..+/}]; $1
     end
 
     def parse_name(data)
