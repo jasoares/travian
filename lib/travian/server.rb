@@ -1,8 +1,8 @@
+require 'travian/parsers/login_data'
 require 'travian/parsers/server_data'
 
 module Travian
   class Server
-    extend LoginData
 
     attr_reader :hub, :host, :name, :players
 
@@ -95,7 +95,7 @@ module Travian
       end
 
       def build(hub, login_data)
-        Server.new(hub, *parse(login_data))
+        Server.new(hub, *login_data.to_array)
       end
 
     end

@@ -1,5 +1,4 @@
 require 'forwardable'
-require 'nokogiri'
 
 module Travian
   class ServersHash
@@ -24,8 +23,9 @@ module Travian
     class << self
 
       def build(hub)
-        data = login_data(hub.host)
-        servers_hash = LoginData.split_servers(data).inject({}) do |hash,login_data|
+        data = Agent.login_data(hub.host)
+        servers_hash = LoginData.split_servers(data).inject({}) do |hash,login|
+          login_data = LoginData.new(login)
           server = Server.build(hub, login_data)
           hash[server.code.to_sym] = server unless server.classic?
           hash
