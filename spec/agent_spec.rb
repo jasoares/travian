@@ -69,6 +69,15 @@ module Travian
           )
         end
 
+        it "should retry the connection #{Agent::MAX_TRIES} times when it raised Errno::ECONNREFUSED" do
+          host = 'http://www.travian.pt/'
+          HTTParty.should_receive(:get).exactly(Agent::MAX_TRIES).times.and_raise(Errno::ECONNREFUSED)
+          expect { agent.get(host) }.to raise_exception(
+            ConnectionTimeout,
+            /Error connecting to '#{host}' \(/
+          )
+        end
+
         it "should retry the connection #{Agent::MAX_TRIES} times when it raised Timeout::Error" do
           host = 'http://www.travian.pt/'
           HTTParty.should_receive(:get).exactly(Agent::MAX_TRIES).times.and_raise(Timeout::Error)

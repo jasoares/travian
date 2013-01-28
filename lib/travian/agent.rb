@@ -46,7 +46,7 @@ module Travian
       options.merge!(DEFAULT_OPTIONS)
       begin
         HTTParty.send(req, path, options, &block)
-      rescue Timeout::Error, Errno::ETIMEDOUT, SocketError => e
+      rescue Timeout::Error, Errno::ETIMEDOUT, Errno::ECONNREFUSED, SocketError => e
         try += 1
         retry unless try == MAX_TRIES
         raise Travian::ConnectionTimeout.new(path, e)
