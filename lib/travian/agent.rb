@@ -27,7 +27,7 @@ module Travian
         get(host, limit: 1)
         host
       rescue HTTParty::RedirectionTooDeep => e
-        location = e.response.header['Location']
+        e.response.header['Location']
       end
     end
 
