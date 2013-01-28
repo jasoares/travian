@@ -3,12 +3,16 @@ require 'travian/parsers/server_data'
 
 module Travian
   class Server
+    extend Forwardable
 
-    attr_reader :hub, :host, :name, :players
+    def_delegators :server_data, :world_id, :speed, :version, :restart_date
 
-    def initialize(hub, host, name, start_date=nil, players=0)
-      @hub, @host, @name = hub, host, name
-      @start_date, @players = start_date, players
+    attr_reader :hub
+
+    def initialize(hub, login_data, host = nil)
+      @hub = hub
+      @login_data = login_data ? LoginData.new(login_data) : nil
+      @host = host
     end
 
     def attributes
@@ -21,26 +25,26 @@ module Travian
       }
     end
 
+    def host
+      @login_data ? @login_data.host : @host
+    end
+
     def code
       self.class.code(host)
     end
 
     alias :subdomain :code
 
-    def world_id
-      server_data.world_id
+    def name
+      @login_data ? @login_data.name : nil
     end
 
-    def version
-      server_data.version
+    def start_date
+      @login_data ? @login_data.start_date : nil
     end
 
-    def speed
-      server_data.speed
-    end
-
-    def restart_date
-      server_data.restart_date
+    def players
+      @login_data ? @login_data.players : nil
     end
 
     def classic?
@@ -56,25 +60,13 @@ module Travian
     end
 
     def running?
-      start_date && start_date < DateTime.now ? true : false
-    end
-
-    def start_date
-      @start_date ||= parse_hub_page_start_date
+      start_date
     end
 
     private
 
     def server_data
       @server_data ||= ServerData.new(self)
-    end
-
-    def parse_start_date(data)
-      parse_hub_page_start_date or parse_restart_page_start_date(data)
-    end
-
-    def parse_hub_page_start_date
-      hub.servers[code.to_sym].start_date if hub.servers[code.to_sym]
     end
 
     class << self
@@ -92,10 +84,6 @@ module Travian
           raise ArgumentError
         end
         Travian.hubs[hub.to_sym].servers[server.to_sym]
-      end
-
-      def build(hub, login_data)
-        Server.new(hub, *login_data.to_array)
       end
 
     end

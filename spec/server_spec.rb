@@ -3,10 +3,17 @@ require 'spec_helper'
 module Travian
   describe Server do
     context 'given the tx3.travian.pt server' do
-      before(:all) { fake 'tx3.travian.pt' }
+      before(:all) do
+        fake 'www.travian.com'
+        fake 'www.travian.pt'
+        fake 'www.travian.pt/serverLogin.php', :post
+        fake 'tx3.travian.pt'
+      end
+
       before(:each) do
         @hub = Hub.new(:pt, 'http://www.travian.pt/')
-        @server = Server.new(@hub, 'http://tx3.travian.pt/', 'Speed3x', Date.new(2012,9,29).to_datetime, 3113)
+        @server = Travian.hubs[:pt].servers[:tx3]
+        Timecop.freeze(Time.utc(2013,1,22))
       end
 
       subject { @server }
@@ -19,13 +26,13 @@ module Travian
 
       its(:subdomain) { should == 'tx3' }
 
-      its(:name) { should == 'Speed3x' }
+      its(:name) { should == 'Speed 3x' }
 
       its(:start_date) { should == Date.new(2012,9,29) }
 
       its(:start_date) { should be_a DateTime }
 
-      its(:players) { should == 3113 }
+      its(:players) { should == 3101 }
 
       its(:world_id) { should == 'ptx18' }
 
@@ -38,7 +45,7 @@ module Travian
           @server.attributes.should == {
             host: 'http://tx3.travian.pt/',
             code: 'tx3',
-            name: 'Speed3x',
+            name: 'Speed 3x',
             world_id: 'ptx18',
             speed: 3,
           }
@@ -47,22 +54,22 @@ module Travian
 
       describe '#classic?' do
         it 'returns true when called on a classic server like tcx8.travian.de' do
-          server = Server.new(nil, 'http://tcx8.travian.de/', 'Speed8x', Date.new(2012,12,11), 6911)
+          server = Server.new(nil, nil, 'http://tcx8.travian.de/')
           server.should be_classic
         end
 
         it 'returns true when called on a classic server like tc27.travian.my' do
-          server = Server.new(nil, 'http://tc27.travian.my/', 'Classic Server 27', Date.new(2012,12,11), 6911)
+          server = Server.new(nil, nil, 'http://tc27.travian.my/')
           server.should be_classic
         end
 
         it 'returns false when called on a speed server like tx3.travian.com.br' do
-          server = Server.new(nil, 'http://tx3.travian.com.br/', 'Speed3x', Date.new(2012,12,11), 6911)
+          server = Server.new(nil, nil, 'http://tx3.travian.com.br/')
           server.should_not be_classic
         end
 
         it 'returns false when called on a normal server like ts4.travian.pt' do
-          server = Server.new(nil, 'http://ts4.travian.pt/', 'Servidor 4', Date.new(2012,12,11), 6911)
+          server = Server.new(nil, nil, 'http://ts4.travian.pt/')
           server.should_not be_classic
         end
       end
@@ -72,6 +79,7 @@ module Travian
 
     context 'given some active, restarting and ended servers' do
       before(:all) do
+        fake 'www.travian.com'
         fake 'www.travian.de'
         fake 'www.travian.de/serverLogin.php', :post
         fake 'ts4.travian.de'
@@ -86,75 +94,77 @@ module Travian
         Timecop.freeze(Time.utc(2013,1,20,23,20,0))
       end
 
-      let(:de_hub) { Hub.new(:de, 'http://www.travian.de/') }
-      let(:in_hub) { Hub.new(:in, 'http://www.travian.in/') }
-      let(:in_ts3) { Server.new(in_hub, 'http://ts3.travian.in/', 'Server 3') }
-      let(:de_ts4) { Server.new(de_hub, 'http://ts4.travian.de/', 'Welt 4') }
-      let(:de_ts5) { Server.new(de_hub, 'http://ts5.travian.de/', 'Welt 5') }
-      let(:de_ts6) { Server.new(de_hub, 'http://ts6.travian.de/', 'Welt 6') }
+      let(:in_restarting) { Server.new(nil, nil, 'http://ts3.travian.in/') }
+      let(:de_restarting) { Server.new(nil, nil, 'http://ts4.travian.de/') }
+      let(:de_running) { Travian.hubs[:de].servers[:ts5] }
+      let(:de_ended) { Server.new(nil, nil, 'http://ts6.travian.de/') }
 
       describe '#restarting?' do
         it 'returns true when called on a restarting server' do
-          de_ts4.should be_restarting
+          de_restarting.should be_restarting
         end
 
         it 'returns true when called on another restarting server' do
-          in_ts3.should be_restarting
+          in_restarting.should be_restarting
         end
 
         it 'returns false when called on a running server' do
-          de_ts5.should_not be_restarting
+          de_running.should_not be_restarting
         end
 
         it 'return false when called on an ended server' do
-          de_ts6.should_not be_restarting
+          de_ended.should_not be_restarting
         end
       end
 
       describe '#ended?' do
         it 'returns true when called on an ended server' do
-          de_ts6.should be_ended
+          de_ended.should be_ended
         end
 
         it 'returns true when called a restarting server' do
-          de_ts4.should be_ended
+          de_restarting.should be_ended
         end
 
         it 'returns false when called on an active server' do
-          de_ts5.should_not be_ended
+          de_running.should_not be_ended
         end
       end
 
       describe '#running?' do
         it 'returns false when called on an ended server' do
-          de_ts6.should_not be_running
+          de_ended.should_not be_running
         end
 
         it 'returns false when called on a restarting server' do
-          de_ts4.should_not be_running
+          de_restarting.should_not be_running
         end
 
         it 'returns true when called on an active server' do
-          de_ts5.should be_running
+          de_running.should be_running
         end
       end
 
       describe '#start_date' do
         it 'returns the date the server started for an active server' do
           Timecop.freeze(Time.utc(2012,12,27,10,20,0))
-          de_ts5.start_date.should == DateTime.new(2012, 11, 22)
+          de_running.start_date.should == DateTime.new(2012, 11, 22)
           Timecop.return
         end
 
-        it 'returns nil if the server ended and is not restarting' do
-          de_ts6.start_date.should be nil
+        it 'returns nil if the server ended' do
+          de_ended.start_date.should be nil
         end
       end
 
-      describe '#parse_hub_page_start_date' do
-        it 'returns the hub page computed start time' do
-          Timecop.freeze(Time.utc(2012,12,27,10,20,0))
-          de_ts5.send(:parse_hub_page_start_date).should == DateTime.new(2012,11,22)
+      describe '#restart_date' do
+        it 'returns nil when the server is running or has ended but there is still no restart date' do
+          de_ended.restart_date.should be nil
+        end
+
+        it 'returns the restart date when the server has ended but there is already a restart date' do
+          Timecop.freeze(Time.utc(2012,1,18))
+          de_restarting.restart_date.should == DateTime.new(2013,1,21,6,0,0,"+01:00")
           Timecop.return
         end
       end
@@ -178,22 +188,6 @@ module Travian
 
       it 'returns "arabiats6" when passed "http://arabiats6.travian.com/"' do
         klass.code('http://arabiats6.travian.com/').should == 'arabiats6'
-      end
-    end
-
-    describe '.new' do
-      context 'when passed a symbol code' do
-        before(:all) { fake 'tx3.travian.pt' }
-        before(:each) do
-          hub = Hub.new(:pt, 'http://www.travian.pt/')
-          @server = Server.new(hub, 'http://tx3.travian.pt/', 'Speed3x', Date.new(2012,9,29), 3113)
-        end
-
-        subject { @server }
-
-        its(:code) { should == 'tx3' }
-
-        after(:all) { unfake }
       end
     end
 

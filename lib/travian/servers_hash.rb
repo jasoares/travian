@@ -24,9 +24,8 @@ module Travian
 
       def build(hub)
         data = Agent.login_data(hub.host)
-        servers_hash = LoginData.split_servers(data).inject({}) do |hash,login|
-          login_data = LoginData.new(login)
-          server = Server.build(hub, login_data)
+        servers_hash = LoginData.split_servers(data).inject({}) do |hash,login_data|
+          server = Server.new(hub, login_data)
           hash[server.code.to_sym] = server unless server.classic?
           hash
         end
@@ -34,6 +33,5 @@ module Travian
       end
 
     end
-
   end
 end

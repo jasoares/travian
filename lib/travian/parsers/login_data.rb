@@ -2,6 +2,7 @@ module Travian
   class LoginData
 
     def initialize(data)
+      raise ArgumentError, "Data Missing" if data.nil?
       @data = data
     end
 
