@@ -36,4 +36,8 @@ module Travian
     end
 
   end
+
+  def LoginData(data)
+    LoginData.new(data)
+  end
 end

@@ -57,4 +57,12 @@ module Travian
 
     after(:all) { unfake }
   end
+
+  describe '::LoginData' do
+    let(:pt_data) { load_servers_login_data('www.travian.pt') }
+
+    it 'returns a LoginData object loaded with the data passed as argument' do
+      Travian::LoginData(pt_data[8]).should be_a LoginData
+    end
+  end
 end
