@@ -93,4 +93,9 @@ module Travian
     end
 
   end
+
+  def Hub(obj)
+    raise ArgumentError unless obj.respond_to?(:code) && obj.respond_to?(:host)
+    Hub.new(obj.code.to_sym, obj.host)
+  end
 end

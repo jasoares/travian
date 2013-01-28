@@ -73,4 +73,21 @@ module Travian
       Travian::ServerData(ptx_data).should be_a ServerData
     end
   end
+
+  describe '::Hub' do
+    it 'returns a Travian::Hub object when passed a valid object' do
+      hub = double('Hub', code: 'de', host: 'http://www.travian.de/')
+      Travian::Hub(hub).should be_a Hub
+    end
+
+    it 'raises ArgumentError when passed an object that does not respond to :code' do
+      hub = double('Hub', host: 'http://www.travian.de/')
+      expect { Travian::Hub(hub) }.to raise_error(ArgumentError)
+    end
+
+    it 'raises ArgumentError when passed an object that does not respond to :host' do
+      hub = double('Hub', code: 'de')
+      expect { Travian::Hub(hub) }.to raise_error(ArgumentError)
+    end
+  end
 end
