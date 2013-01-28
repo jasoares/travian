@@ -17,7 +17,6 @@ module Travian
       @hash.values.each do |server|
         yield server
       end
-      @hash.values
     end
 
     class << self
