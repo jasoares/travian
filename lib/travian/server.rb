@@ -89,4 +89,9 @@ module Travian
     end
 
   end
+
+  def Server(obj)
+    raise ArgumentError unless obj.respond_to?(:hub) && obj.respond_to?(:host)
+    Server.new(obj.hub, nil, obj.host)
+  end
 end
