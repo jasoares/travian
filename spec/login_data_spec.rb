@@ -1,18 +1,5 @@
 require 'spec_helper'
 
-def load_login_data(hub_host)
-  Nokogiri::HTML(File.read(fakeweb_page "#{hub_host}_serverLogin.php"))
-end
-
-def load_servers_login_data(hub_host)
-  data = load_login_data(hub_host)
-  servers_selector(data)
-end
-
-def servers_selector(data)
-  data.css('div[class~="server"]')
-end
-
 module Travian
   describe LoginData do
     let(:klass) { LoginData }
@@ -78,6 +65,5 @@ module Travian
         klass.split_servers(data).should have(8).servers
       end
     end
-
   end
 end

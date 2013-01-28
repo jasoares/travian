@@ -27,3 +27,16 @@ end
 def fakeweb_page(filename)
   path = File.expand_path("../fakeweb_pages", __FILE__) + "/#{filename}.html"
 end
+
+def load_login_data(hub_host)
+  Nokogiri::HTML(File.read(fakeweb_page "#{hub_host}_serverLogin.php"))
+end
+
+def load_servers_login_data(hub_host)
+  data = load_login_data(hub_host)
+  servers_selector(data)
+end
+
+def servers_selector(data)
+  data.css('div[class~="server"]')
+end
