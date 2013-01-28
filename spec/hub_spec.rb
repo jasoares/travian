@@ -215,6 +215,21 @@ module Travian
       after(:all) { FakeWeb.allow_net_connect = false }
     end
 
+    describe '.new' do
+      it 'raises an ArgumentError when passed an invalid code' do
+        expect { Hub.new(:ic, 'http://www.travian.ic/') }.to raise_error(ArgumentError)
+      end
+
+      it 'accepts a string code' do
+        hub = double('Hub', code: 'de', host: 'http://www.travian.de/')
+        expect { Hub.new(:de, 'http://www.travian.de/') }.not_to raise_error
+      end
+
+      it 'accepts a symbol code' do
+        expect { Hub.new('de', 'http://www.travian.de/') }.not_to raise_error
+      end
+    end
+
     describe '.[]' do
       before(:all) { fake 'www.travian.com' }
       it 'returns a hub when passed an object that responds to :code with a valid string' do

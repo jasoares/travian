@@ -12,8 +12,9 @@ module Travian
     attr_reader :code, :host, :name, :language
 
     def initialize(code, host)
-      @code, @host, @name = code, host, CODES[code][:hub]
-      @language = CODES[code][:language]
+      raise ArgumentError unless Hub.valid?(code)
+      @code, @host, @name = code, host, CODES[code.to_sym][:hub]
+      @language = CODES[code.to_sym][:language]
     end
 
     def attributes
