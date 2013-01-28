@@ -8,8 +8,8 @@ module Travian
     end
 
     let(:klass) { ServerData }
-    let(:pt_tx3_server_data) { ServerData.new(double('Server', host: 'http://tx3.travian.pt/')) }
-    let(:de_ts4_server_data) { ServerData.new(double('Server', host: 'http://ts4.travian.de/')) }
+    let(:pt_tx3_server_data) { ServerData.new(load_server_data 'tx3.travian.pt') }
+    let(:de_ts4_server_data) { ServerData.new(load_server_data 'ts4.travian.de') }
 
     describe '#restart_date' do
       it 'returns the restart time on the server restart page' do

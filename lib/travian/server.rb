@@ -66,7 +66,7 @@ module Travian
     private
 
     def server_data
-      @server_data ||= ServerData.new(self)
+      @server_data ||= Travian::ServerData.new(Agent.server_data(host))
     end
 
     class << self

@@ -3,8 +3,8 @@ module Travian
 
     attr_reader :server
 
-    def initialize(server)
-      @data = Agent.server_data(server.host)
+    def initialize(data)
+      @data = data
     end
 
     def version

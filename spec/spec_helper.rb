@@ -32,6 +32,10 @@ def load_login_data(hub_host)
   Nokogiri::HTML(File.read(fakeweb_page "#{hub_host}_serverLogin.php"))
 end
 
+def load_server_data(server_host)
+  Nokogiri::HTML(File.read(fakeweb_page "#{server_host}"))
+end
+
 def load_servers_login_data(hub_host)
   data = load_login_data(hub_host)
   servers_selector(data)
