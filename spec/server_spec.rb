@@ -97,6 +97,7 @@ module Travian
       let(:in_restarting) { Server.new(nil, nil, 'http://ts3.travian.in/') }
       let(:de_restarting) { Server.new(nil, nil, 'http://ts4.travian.de/') }
       let(:de_running) { Travian.hubs[:de].servers[:ts5] }
+      let(:de_running_built) { Server.new(nil, nil, 'http://ts5.travian.de/') }
       let(:de_ended) { Server.new(nil, nil, 'http://ts6.travian.de/') }
 
       describe '#restarting?' do
@@ -115,6 +116,10 @@ module Travian
         it 'return false when called on an ended server' do
           de_ended.should_not be_restarting
         end
+
+        it 'returns false when called on a built running server' do
+          de_running_built.should_not be_restarting
+        end
       end
 
       describe '#ended?' do
@@ -129,6 +134,10 @@ module Travian
         it 'returns false when called on an active server' do
           de_running.should_not be_ended
         end
+
+        it 'returns false when called on a built running server' do
+          de_running_built.should_not be_ended
+        end
       end
 
       describe '#running?' do
@@ -142,6 +151,10 @@ module Travian
 
         it 'returns true when called on an active server' do
           de_running.should be_running
+        end
+
+        it 'returns true when called on a built running server' do
+          de_running_built.should be_running
         end
       end
 
