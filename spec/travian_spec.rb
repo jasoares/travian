@@ -65,4 +65,12 @@ module Travian
       Travian::LoginData(pt_data[8]).should be_a LoginData
     end
   end
+
+  describe '::ServerData' do
+    let(:ptx_data) { load_server_data('tx3.travian.pt') }
+
+    it 'returns a ServerData object loaded with the data passed as argument' do
+      Travian::ServerData(ptx_data).should be_a ServerData
+    end
+  end
 end

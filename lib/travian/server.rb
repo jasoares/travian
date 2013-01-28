@@ -11,7 +11,7 @@ module Travian
 
     def initialize(hub, login_data, host = nil)
       @hub = hub
-      @login_data = login_data ? LoginData.new(login_data) : nil
+      @login_data = login_data ? Travian::LoginData(login_data) : nil
       @host = host
     end
 
@@ -66,7 +66,7 @@ module Travian
     private
 
     def server_data
-      @server_data ||= Travian::ServerData.new(Agent.server_data(host))
+      @server_data ||= Travian::ServerData(Agent.server_data(host))
     end
 
     class << self

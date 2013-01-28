@@ -43,4 +43,8 @@ module Travian
     end
 
   end
+
+  def ServerData(data)
+    ServerData.new(data)
+  end
 end
