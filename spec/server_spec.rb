@@ -2,197 +2,240 @@ require 'spec_helper'
 
 module Travian
   describe Server do
-    let(:server) { Server.new(double('Hub'), nil, 'http://tx3.travian.com/') }
+    let(:hub) { Hub.new('pt', 'http://www.travian.pt/') }
+    let(:server) { Server.new(hub, nil, 'http://tx3.travian.pt/') }
 
     it 'should include UriHelper' do
       server.should respond_to :tld, :subdomain
     end
 
-    context 'given the tx3.travian.pt server' do
-      before(:all) do
-        fake 'www.travian.com'
-        fake 'www.travian.pt'
-        fake 'www.travian.pt/serverLogin.php', :post
-        fake 'tx3.travian.pt'
+    subject { server }
+
+    its(:hub) { should == hub }
+
+    describe '#host' do
+      it 'returns "http://tx3.travian.pt/" when the @host is not nil' do
+        server.host.should == 'http://tx3.travian.pt/'
       end
 
-      before(:each) do
-        @hub = Hub.new(:pt, 'http://www.travian.pt/')
-        @server = Travian.hubs[:pt].servers[:tx3]
-        Timecop.freeze(Time.utc(2013,1,22))
+      it 'does not call #login_data when @host is not nil' do
+        server.should_not_receive(:login_data)
+        server.host
       end
 
-      subject { @server }
-
-      its(:hub) { should == @hub }
-
-      its(:host) { should == 'http://tx3.travian.pt/' }
-
-      its(:code) { should == 'tx3' }
-
-      its(:subdomain) { should == 'tx3' }
-
-      its(:name) { should == 'Speed 3x' }
-
-      its(:start_date) { should == Date.new(2012,9,29) }
-
-      its(:start_date) { should be_a DateTime }
-
-      its(:players) { should == 3101 }
-
-      its(:world_id) { should == 'ptx18' }
-
-      its(:speed) { should be 3 }
-
-      its(:version) { should == "4.0" }
-
-      describe '#attributes' do
-        it 'should return a hash with the server\'s attributes' do
-          @server.attributes.should == {
-            host: 'http://tx3.travian.pt/',
-            code: 'tx3',
-            name: 'Speed 3x',
-            world_id: 'ptx18',
-            speed: 3,
-          }
-        end
+      it 'returns LoginData#host if @host is nil' do
+        server.instance_variable_set(:@host, nil)
+        login_data = double('LoginData', host: 'http://ts1.travian.pt/')
+        server.should_receive(:login_data).and_return(login_data)
+        server.host.should == 'http://ts1.travian.pt/'
       end
-
-      describe '#classic?' do
-        let(:hub) { double('Hub') }
-
-        it 'returns true when called on a classic server like tcx8.travian.de' do
-          server = Server.new(hub, nil, 'http://tcx8.travian.de/')
-          server.should be_classic
-        end
-
-        it 'returns true when called on a classic server like tc27.travian.my' do
-          server = Server.new(hub, nil, 'http://tc27.travian.my/')
-          server.should be_classic
-        end
-
-        it 'returns false when called on a speed server like tx3.travian.com.br' do
-          server = Server.new(hub, nil, 'http://tx3.travian.com.br/')
-          server.should_not be_classic
-        end
-
-        it 'returns false when called on a normal server like ts4.travian.pt' do
-          server = Server.new(hub, nil, 'http://ts4.travian.pt/')
-          server.should_not be_classic
-        end
-      end
-
-      after(:all) { unfake }
     end
 
-    context 'given some active, restarting and ended servers' do
-      before(:all) do
-        fake 'www.travian.com'
-        fake 'www.travian.de'
-        fake 'www.travian.de/serverLogin.php', :post
-        fake 'ts4.travian.de'
-        fake 'ts5.travian.de'
-        fake 'ts6.travian.de'
-        fake 'www.travian.in'
-        fake 'www.travian.in/serverLogin.php', :post
-        fake 'ts3.travian.in'
+    shared_examples "a delegator to #login_data" do
+      it "delegates to #login_data if it is not nil" do
+        login_data = double('LoginData')
+        login_data.should_receive(method).and_return(expected)
+        server.should_receive(:login_data).twice.and_return(login_data)
+        server.send(method)
       end
 
-      before(:each) do
-        Timecop.freeze(Time.utc(2013,1,20,23,20,0))
+      it 'returns the return value of the call to login_data' do
+        login_data = double('LoginData', method => expected)
+        server.stub(login_data: login_data)
+        server.send(method).should == expected
       end
 
-      let(:in_hub) { Hub.new(:in, 'http://www.travian.in/') }
-      let(:de_hub) { Hub.new(:de, 'http://www.travian.de/') }
-      let(:in_restarting) { Server.new(in_hub, nil, 'http://ts3.travian.in/') }
-      let(:de_restarting) { Server.new(de_hub, nil, 'http://ts4.travian.de/') }
-      let(:de_running) { Travian.hubs[:de].servers[:ts5] }
-      let(:de_running_built) { Server.new(de_hub, nil, 'http://ts5.travian.de/') }
-      let(:de_ended) { Server.new(de_hub, nil, 'http://ts6.travian.de/') }
+      it "returns nil if login_data is nil" do
+        server.stub(login_data: nil)
+        server.send(method).should be nil
+      end
+    end
 
-      describe '#restarting?' do
-        it 'returns true when called on a restarting server' do
-          de_restarting.should be_restarting
+    describe '#name' do
+      let(:method) { :name }
+      let(:expected) { "Speed 3x" }
+
+      it_behaves_like 'a delegator to #login_data'
+    end
+
+    describe '#start_date' do
+      let(:method) { :start_date }
+      let(:expected) { Date.today.to_datetime }
+
+      it_behaves_like 'a delegator to #login_data'
+    end
+
+    describe '#players' do
+      let(:method) { :players }
+      let(:expected) { 3103 }
+
+      it_behaves_like 'a delegator to #login_data'
+    end
+
+    shared_examples "a delegator to #server_data" do
+      it "delegates to #server_data" do
+        server_data = double('ServerData')
+        server_data.should_receive(method)
+        server.should_receive(:server_data).and_return(server_data)
+        server.send(method)
+      end
+    end
+
+    describe '#world_id' do
+      let(:method) { :world_id }
+
+      it_behaves_like 'a delegator to #server_data'
+    end
+
+    describe '#speed' do
+      let(:method) { :speed }
+
+      it_behaves_like 'a delegator to #server_data'
+    end
+
+    describe '#version' do
+      let(:method) { :version }
+
+      it_behaves_like 'a delegator to #server_data'
+    end
+
+    describe '#restart_date' do
+      let(:method) { :restart_date }
+
+      it_behaves_like 'a delegator to #server_data'
+    end
+
+    describe '#code' do
+      it 'returns tx3 when host is "http://tx3.travian.pt/"' do
+        server.stub(host: 'http://tx3.travian.pt/')
+        server.code.should == 'tx3'
+      end
+
+      it 'returns arabiatx4 when host is "http://arabiatx4.travian.com/' do
+        server.stub(host: 'http://arabiatx4.travian.pt/')
+        server.code.should == 'arabiatx4'
+      end
+    end
+
+    describe '#attributes' do
+      it 'returns a hash with the server\'s attributes' do
+        server.stub(host: 'http://tx3.travian.pt/', code: 'tx3', name: 'Speed 3x', world_id: 'ptx18', speed: 3)
+        server.attributes.should == {
+          host: 'http://tx3.travian.pt/',
+          code: 'tx3',
+          name: 'Speed 3x',
+          world_id: 'ptx18',
+          speed: 3,
+        }
+      end
+    end
+
+    describe '#classic?' do
+      let(:hub) { double('Hub') }
+
+      it 'returns true when code is tcx8' do
+        server.stub(code: 'tcx8')
+        server.should be_classic
+      end
+
+      it 'returns true when code is tc27' do
+        server.stub(code: 'tc27')
+        server.should be_classic
+      end
+
+      it 'returns false when code is tx3' do
+        server.stub(code: 'tx3')
+        server.should_not be_classic
+      end
+
+      it 'returns false when code is ts4' do
+        server.stub(code: 'ts4')
+        server.should_not be_classic
+      end
+    end
+
+    describe '#restarting?' do
+      it 'returns true if #restart_date is not nil' do
+        server.stub(restart_date: Date.today.to_datetime)
+        server.should be_restarting
+      end
+
+      it 'returns false if #restart_date is nil' do
+        server.stub(restart_date: nil)
+        server.should_not be_restarting
+      end
+    end
+
+    describe '#running?' do
+      it 'returns true if #start_date is not nil' do
+        server.stub(start_date: Date.today.to_datetime)
+        server.should be_running
+      end
+
+      it 'returns false if #start_date is nil' do
+        server.stub(start_date: nil)
+        server.should_not be_running
+      end
+    end
+
+    describe '#ended?' do
+      it 'returns true if #restarting? is true' do
+        server.stub(restarting?: true)
+        server.should be_ended
+      end
+
+      it 'returns true if #start_date is nil' do
+        server.stub(restarting?: false, start_date: nil)
+        server.should be_ended
+      end
+
+      it 'returns false when both #restarting is false and #start_date is not nil' do
+        server.stub(restarting?: false, start_date: Date.today.to_datetime)
+        server.should_not be_ended
+      end
+    end
+
+    describe '#server_data' do
+      it 'delegates the fetching of html data to Agent.server_data' do
+        Agent.should_receive(:server_data).with('http://tx3.travian.pt/')
+        server.send(:server_data)
+      end
+
+      it 'delegates the creation of the ServerData object to Travian::ServerData' do
+        data = double('Nokogiri')
+        Agent.stub(server_data: data)
+        Travian.should_receive(:ServerData).with(data)
+        server.send(:server_data)
+      end
+
+      it 'returns a ServerData object' do
+        data = double('Nokogiri')
+        Agent.stub(server_data: data)
+        server.send(:server_data).should be_a ServerData
+      end
+    end
+
+    describe '#login_data' do
+      context 'given a Server object created without login_data' do
+        it 'returns nil if hub does not have this server' do
+          server.stub_chain(:hub, :servers, :[]).and_return(nil)
+          server.send(:login_data).should be_nil
         end
 
-        it 'returns true when called on another restarting server' do
-          in_restarting.should be_restarting
-        end
-
-        it 'returns false when called on a running server' do
-          de_running.should_not be_restarting
-        end
-
-        it 'return false when called on an ended server' do
-          de_ended.should_not be_restarting
-        end
-
-        it 'returns false when called on a built running server' do
-          de_running_built.should_not be_restarting
+        it 'returns a LoginData object if hub has this server' do
+          login_data = double('LoginData')
+          server.stub_chain(:hub, :servers, :[], :login_data).and_return(login_data)
+          server.send(:login_data).should be login_data
         end
       end
 
-      describe '#ended?' do
-        it 'returns true when called on an ended server' do
-          de_ended.should be_ended
-        end
-
-        it 'returns true when called a restarting server' do
-          de_restarting.should be_ended
-        end
-
-        it 'returns false when called on an active server' do
-          de_running.should_not be_ended
-        end
-
-        it 'returns false when called on a built running server' do
-          de_running_built.should_not be_ended
+      context 'given a Server object created with login_data' do
+        it 'returns the LoginData object the instance variable' do
+          login_data = double('LoginData')
+          server.instance_variable_set(:@login_data, login_data)
+          server.send(:login_data).should be login_data
         end
       end
-
-      describe '#running?' do
-        it 'returns false when called on an ended server' do
-          de_ended.should_not be_running
-        end
-
-        it 'returns false when called on a restarting server' do
-          de_restarting.should_not be_running
-        end
-
-        it 'returns true when called on an active server' do
-          de_running.should be_running
-        end
-
-        it 'returns true when called on a built running server' do
-          de_running_built.should be_running
-        end
-      end
-
-      describe '#start_date' do
-        it 'returns the date the server started for an active server' do
-          Timecop.freeze(Time.utc(2012,12,27,10,20,0))
-          de_running.start_date.should == DateTime.new(2012, 11, 22)
-          Timecop.return
-        end
-
-        it 'returns nil if the server ended' do
-          de_ended.start_date.should be nil
-        end
-      end
-
-      describe '#restart_date' do
-        it 'returns nil when the server is running or has ended but there is still no restart date' do
-          de_ended.restart_date.should be nil
-        end
-
-        it 'returns the restart date when the server has ended but there is already a restart date' do
-          Timecop.freeze(Time.utc(2012,1,18))
-          de_restarting.restart_date.should == DateTime.new(2013,1,21,6,0,0,"+01:00")
-          Timecop.return
-        end
-      end
-
-      after(:all) { unfake }
     end
 
     describe '.[]' do

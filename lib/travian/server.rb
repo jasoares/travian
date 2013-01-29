@@ -62,7 +62,7 @@ module Travian
     end
 
     def running?
-      start_date
+      start_date ? true : false
     end
 
     protected
