@@ -53,23 +53,25 @@ module Travian
       end
 
       describe '#classic?' do
+        let(:hub) { double('Hub') }
+
         it 'returns true when called on a classic server like tcx8.travian.de' do
-          server = Server.new(nil, nil, 'http://tcx8.travian.de/')
+          server = Server.new(hub, nil, 'http://tcx8.travian.de/')
           server.should be_classic
         end
 
         it 'returns true when called on a classic server like tc27.travian.my' do
-          server = Server.new(nil, nil, 'http://tc27.travian.my/')
+          server = Server.new(hub, nil, 'http://tc27.travian.my/')
           server.should be_classic
         end
 
         it 'returns false when called on a speed server like tx3.travian.com.br' do
-          server = Server.new(nil, nil, 'http://tx3.travian.com.br/')
+          server = Server.new(hub, nil, 'http://tx3.travian.com.br/')
           server.should_not be_classic
         end
 
         it 'returns false when called on a normal server like ts4.travian.pt' do
-          server = Server.new(nil, nil, 'http://ts4.travian.pt/')
+          server = Server.new(hub, nil, 'http://ts4.travian.pt/')
           server.should_not be_classic
         end
       end
@@ -237,6 +239,23 @@ module Travian
 
       it 'raises ArgumentError when passed invalid arguments like :pt, nil' do
         expect { Server[:pt, nil] }.to raise_error(ArgumentError)
+      end
+    end
+
+    describe '.new' do
+      it 'raises ArgumentError when passed nil as the hub' do
+        expect { Server.new(nil, nil) }.to raise_error(
+          ArgumentError,
+          /hub can't be nil./
+        )
+      end
+
+      it 'raises ArgumentError when passed nil as the login_data and as the host' do
+        hub = double('Hub')
+        expect { Server.new(hub, nil) }.to raise_error(
+          ArgumentError,
+          /Either login_data or host must have a value./
+        )
       end
     end
   end

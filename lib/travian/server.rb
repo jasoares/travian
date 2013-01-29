@@ -10,6 +10,8 @@ module Travian
     attr_reader :hub
 
     def initialize(hub, login_data, host = nil)
+      raise ArgumentError, "hub can't be nil." unless hub
+      raise ArgumentError, "Either login_data or host must have a value." unless login_data or host
       @hub = hub
       @login_data = login_data ? Travian::LoginData(login_data) : nil
       @host = host
