@@ -23,10 +23,6 @@ module Travian
       (Date.today - days_ago).to_datetime
     end
 
-    def to_array
-      [host, name, start_date, players]
-    end
-
     class << self
 
       def split_servers(data)
