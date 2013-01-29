@@ -26,7 +26,10 @@ module Travian
     end
 
     def host
-      @login_data ? @login_data.host : @host
+      # attemps to retrieve host from instance variable first for
+      # performance, instead of making an external call in case of
+      # an externally built server
+      @host ? @host : login_data.host
     end
 
     def code
