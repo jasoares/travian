@@ -59,14 +59,16 @@ module Travian
       location != host
     end
 
-    def borrows_servers?
-      !servers.empty? && self.tld != servers.first.tld
-    end
-
     def mirrored_host
       return nil unless mirror?
       return location if redirected?
       "http://www.travian.#{servers.first.tld}/"
+    end
+
+    private
+
+    def borrows_servers?
+      !servers.empty? && self.tld != servers.first.tld
     end
 
     class << self
