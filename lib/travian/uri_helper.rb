@@ -2,12 +2,23 @@ module Travian
   module UriHelper
 
     def tld
-      host[/travian\.(\w+(?:\.\w+)?)\/?$/]; $1
+      UriHelper.tld(host)
     end
 
     def subdomain
-      host[/(\w+)\.travian/]; $1
+      UriHelper.subdomain(host)
     end
 
+    class << self
+
+      def tld(host)
+        host[/travian\.(\w+(?:\.\w+)?)\/?$/]; $1
+      end
+
+      def subdomain(host)
+        host[/(\w+)\.travian/]; $1
+      end
+
+    end
   end
 end
