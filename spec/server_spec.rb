@@ -94,11 +94,13 @@ module Travian
         Timecop.freeze(Time.utc(2013,1,20,23,20,0))
       end
 
-      let(:in_restarting) { Server.new(nil, nil, 'http://ts3.travian.in/') }
-      let(:de_restarting) { Server.new(nil, nil, 'http://ts4.travian.de/') }
+      let(:in_hub) { Hub.new(:in, 'http://www.travian.in/') }
+      let(:de_hub) { Hub.new(:de, 'http://www.travian.de/') }
+      let(:in_restarting) { Server.new(in_hub, nil, 'http://ts3.travian.in/') }
+      let(:de_restarting) { Server.new(de_hub, nil, 'http://ts4.travian.de/') }
       let(:de_running) { Travian.hubs[:de].servers[:ts5] }
-      let(:de_running_built) { Server.new(nil, nil, 'http://ts5.travian.de/') }
-      let(:de_ended) { Server.new(nil, nil, 'http://ts6.travian.de/') }
+      let(:de_running_built) { Server.new(de_hub, nil, 'http://ts5.travian.de/') }
+      let(:de_ended) { Server.new(de_hub, nil, 'http://ts6.travian.de/') }
 
       describe '#restarting?' do
         it 'returns true when called on a restarting server' do

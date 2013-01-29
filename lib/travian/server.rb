@@ -36,15 +36,15 @@ module Travian
     alias :subdomain :code
 
     def name
-      @login_data ? @login_data.name : nil
+      login_data ? login_data.name : nil
     end
 
     def start_date
-      @login_data ? @login_data.start_date : nil
+      login_data ? login_data.start_date : nil
     end
 
     def players
-      @login_data ? @login_data.players : nil
+      login_data ? login_data.players : nil
     end
 
     def classic?
@@ -61,6 +61,12 @@ module Travian
 
     def running?
       start_date
+    end
+
+    protected
+
+    def login_data
+      @login_data ||= hub.servers[code.to_sym] ? hub.servers[code.to_sym].login_data : nil
     end
 
     private
@@ -91,7 +97,9 @@ module Travian
   end
 
   def Server(obj)
-    raise ArgumentError unless obj.respond_to?(:hub) && obj.respond_to?(:host)
-    Server.new(obj.hub, nil, obj.host)
+    error_msg = "Object passed must respond to :hub and :host"
+    raise ArgumentError, error_msg unless obj.respond_to?(:host) && obj.respond_to?(:hub)
+    hub = Travian::Hub(obj.hub)
+    Server.new(hub, nil, obj.host)
   end
 end

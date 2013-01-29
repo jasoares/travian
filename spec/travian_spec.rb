@@ -93,19 +93,32 @@ module Travian
 
   describe '::Server' do
     it 'returns a Travian::Server object when passed a valid object' do
-      hub = double('Hub')
+      hub = double('Hub', code: 'de', host: 'http://www.travian.de/')
       server = double('Server', hub: hub, host: 'http://tx3.travian.de/')
       Travian::Server(server).should be_a Server
     end
 
     it 'raises ArgumentError when passed an object that does not respond to :hub' do
       server = double('Server', host: 'http://tx3.travian.de/')
-      expect { Travian::Server(server) }.to raise_error(ArgumentError)
+      expect { Travian::Server(server) }.to raise_error(
+        ArgumentError,
+        /Object\spassed\smust\srespond\sto\s.+hub/
+      )
     end
 
     it 'raises ArgumentError when passed an object that does not respond to :host' do
       server = double('Server', hub: nil)
-      expect { Travian::Server(server) }.to raise_error(ArgumentError)
+      expect { Travian::Server(server) }.to raise_error(
+        ArgumentError,
+        /Object\spassed\smust\srespond\sto\s.+host/
+      )
+    end
+
+    it 'it calls Server.new with a Travian::Hub object and a String host' do
+      Server.should_receive(:new).with(kind_of(Travian::Hub), nil, kind_of(String))
+      hub = double('Hub', code: 'de', host: 'http://www.travian.de/')
+      server = double('Server', hub: hub, host: 'http://tx3.travian.de/')
+      Travian::Server(server)
     end
   end
 end
