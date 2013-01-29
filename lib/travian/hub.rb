@@ -36,8 +36,8 @@ module Travian
     end
 
     def mirrored_hub
-      @mirrored_hub ||= if redirected? || borrows_servers?
-        Travian.hubs.find {|h| h.matches_host?(mirrored_host_pattern) }
+      @mirrored_hub ||= if mirror?
+        Travian.hubs.find {|h| h.host == mirrored_host }
       else
         nil
       end
@@ -60,23 +60,13 @@ module Travian
     end
 
     def borrows_servers?
-      !servers.empty? && !matches_host?(servers_tld)
+      !servers.empty? && self.tld != servers.first.tld
     end
 
-    protected
-
-    def matches_host?(term)
-      host.match(/#{term}/) ? true : false
-    end
-
-    private
-
-    def mirrored_host_pattern
-      redirected? ? location : borrows_servers? ? servers_tld : nil
-    end
-
-    def servers_tld
-      servers.first.host[/travian\..+\//]
+    def mirrored_host
+      return nil unless mirror?
+      return location if redirected?
+      "http://www.travian.#{servers.first.tld}/"
     end
 
     class << self

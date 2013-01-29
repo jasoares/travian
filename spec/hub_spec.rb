@@ -2,8 +2,10 @@ require 'spec_helper'
 
 module Travian
   describe Hub do
+    let(:hub) { Hub.new(:pt, 'http://www.travian.net') }
     let(:net_hub) { Hub.new(:net, 'http://www.travian.net/') }
     let(:mx_hub) { Hub.new(:mx, 'http://www.travian.com.mx/') }
+    let(:ar_hub) { Hub.new(:ar, 'http://www.travian.com.ar/') }
     let(:kr_hub) { Hub.new(:kr, 'http://www.travian.co.kr/') }
     let(:nz_hub) { Hub.new(:nz, 'http://www.travian.co.nz/') }
     let(:au_hub) { Hub.new(:au, 'http://www.travian.com.au/') }
@@ -69,6 +71,7 @@ module Travian
         fake 'www.travian.com'
         fake 'www.travian.net/serverLogin.php', :post
         fake 'www.travian.com.mx/serverLogin.php', :post
+        fake 'www.travian.com.ar/serverLogin.php', :post
       end
 
       it 'should be nil when called on the spanish hub' do
@@ -86,12 +89,35 @@ module Travian
         mx_hub.mirrored_hub.should == cl_hub
       end
 
+      it 'returns the chilean hub when called on the argentinean hub' do
+        ar_hub.stub(location: ar_hub.host)
+        ar_hub.mirrored_hub.should == cl_hub
+      end
+
       it 'returns the international hub when called on the south korea hub' do
         kr_hub.stub(location: com_hub.host)
         kr_hub.mirrored_hub.should == com_hub
       end
 
       after(:all) { unfake }
+    end
+
+    describe '#mirrored_host' do
+      it 'should be nil when called on a non mirror hub' do
+        hub.stub(mirror?: false)
+        hub.mirrored_host.should be nil
+      end
+
+      it 'returns the location when called on a redirected hub' do
+        hub.stub(mirror?: true, redirected?: true, location: "http://www.travian.com.au/")
+        hub.mirrored_host.should == "http://www.travian.com.au/"
+      end
+
+      it 'returns a base host "http://www.travian." plus a server tld when called on a non redirected mirror' do
+        hub.stub(mirror?: true, redirected?: false)
+        hub.stub_chain(:servers, :first, :tld).and_return("cl")
+        hub.mirrored_host.should == "http://www.travian.cl/"
+      end
     end
 
     describe '#location' do
