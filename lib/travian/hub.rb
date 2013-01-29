@@ -4,6 +4,7 @@ require 'yaml'
 module Travian
   class Hub
     include Agent
+    include UriHelper
 
     CODES = YAML.load_file(
       File.expand_path('../../../data/hub_codes.yml', __FILE__)

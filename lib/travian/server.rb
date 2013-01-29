@@ -4,6 +4,7 @@ require 'travian/parsers/server_data'
 module Travian
   class Server
     extend Forwardable
+    include UriHelper
 
     def_delegators :server_data, :world_id, :speed, :version, :restart_date
 
@@ -34,11 +35,7 @@ module Travian
       @host ? @host : login_data.host
     end
 
-    def code
-      self.class.code(host)
-    end
-
-    alias :subdomain :code
+    alias :code :subdomain
 
     def name
       login_data ? login_data.name : nil
@@ -81,10 +78,6 @@ module Travian
     end
 
     class << self
-
-      def code(host)
-        host[%r{http://(\w+)\.travian\..+/}]; $1
-      end
 
       def [](obj, code="")
         hub, server = if obj.respond_to?(:hub) && obj.respond_to?(:code) && obj.hub.respond_to?(:code)

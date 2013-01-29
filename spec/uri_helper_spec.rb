@@ -5,7 +5,7 @@ module Travian
     include UriHelper
   end
 
-  describe UriHelper, focus: true do
+  describe UriHelper do
     let(:obj) { UriHelperIncluder.new }
 
     describe '#tld' do

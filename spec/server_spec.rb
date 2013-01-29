@@ -2,6 +2,12 @@ require 'spec_helper'
 
 module Travian
   describe Server do
+    let(:server) { Server.new(double('Hub'), nil, 'http://tx3.travian.com/') }
+
+    it 'should include UriHelper' do
+      server.should respond_to :tld, :subdomain
+    end
+
     context 'given the tx3.travian.pt server' do
       before(:all) do
         fake 'www.travian.com'
@@ -187,25 +193,6 @@ module Travian
       end
 
       after(:all) { unfake }
-    end
-
-    describe '.code' do
-      let(:klass) { Server }
-      it 'returns "tcx8" when passed "http://tcx8.travian.de/"' do
-        klass.code("http://tcx8.travian.de/").should == "tcx8"
-      end
-
-      it 'returns "ts4" when passed "http://ts4.travian.net/"' do
-        klass.code('http://ts4.travian.net/').should == 'ts4'
-      end
-
-      it 'returns "tx3" when passed "http://tx3.travian.com.br/"' do
-        klass.code('http://tx3.travian.com.br/').should == 'tx3'
-      end
-
-      it 'returns "arabiats6" when passed "http://arabiats6.travian.com/"' do
-        klass.code('http://arabiats6.travian.com/').should == 'arabiats6'
-      end
     end
 
     describe '.[]' do
