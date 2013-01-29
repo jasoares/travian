@@ -64,18 +64,43 @@ module Travian
     context 'given the ServersHash built from the new zealand hub' do
       before(:all) do
         fake_redirection({'www.travian.co.nz/serverLogin.php' => 'www.travian.com.au'}, :post)
-        fake 'www.travian.com.au'
-        hub = Hub.new(:nz, 'http://www.travian.co.nz/')
+        fake 'www.travian.com.au/serverLogin.php', :post
+      end
+
+      before(:each) do
+        hub = double('Hub', host: 'http://www.travian.co.nz/')
         @hash = klass.build(hub)
       end
 
       subject { @hash }
 
-      it { should have(0).servers }
+      it { should have(4).servers }
 
-      its(:size) { should be 0 }
+      its(:size) { should be 4 }
 
-      it { should be_empty }
+      it { should_not be_empty }
+
+      after(:all) { unfake }
+    end
+
+    context 'given the ServersHash built from the south korean hub' do
+      before(:all) do
+        fake_redirection({'www.travian.co.kr/serverLogin.php' => 'www.travian.com/serverLogin.php'}, :post)
+        fake 'www.travian.com/serverLogin.php', :post
+      end
+
+      before(:each) do
+        hub = double('Hub', host: 'http://www.travian.co.kr/')
+        @hash = klass.build(hub)
+      end
+
+      subject { @hash }
+
+      it { should have(9).servers }
+
+      its(:size) { should be 9 }
+
+      it { should_not be_empty }
 
       after(:all) { unfake }
     end

@@ -14,8 +14,15 @@ module Travian
     end
 
     def login_data(host)
-      uri = "#{host}serverLogin.php"
-      Nokogiri::HTML(post(uri).body)
+      uri = URI(host)
+      begin
+        uri.path = '/serverLogin.php'
+        resp = post(uri.to_s, limit: 1)
+        Nokogiri::HTML(resp.body) if resp
+      rescue HTTParty::RedirectionTooDeep => e
+        uri = URI(e.response.header['Location'])
+        retry
+      end
     end
 
     def server_data(host)

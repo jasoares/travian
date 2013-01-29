@@ -12,12 +12,26 @@ module Travian
       before(:all) { fake 'www.travian.pt/serverLogin.php', :post }
 
       it 'makes a post request to the passed host' do
-        agent.should_receive(:post).with('http://www.travian.pt/serverLogin.php').and_call_original
+        agent.should_receive(:post).with('http://www.travian.pt/serverLogin.php', limit: 1).and_call_original
         agent.login_data('http://www.travian.pt/')
       end
 
       it 'returns the response body wrapped in a Nokogiri::HTML::Document' do
         agent.login_data('http://www.travian.pt/').should be_a Nokogiri::HTML::Document
+      end
+
+      it 'retries the post request to the new location when redirected' do
+        fake_redirection({'www.travian.co.kr/serverLogin.php' => 'www.travian.com/serverLogin.php'}, :post)
+        agent.should_receive(:post).with('http://www.travian.co.kr/serverLogin.php', limit: 1).once.and_call_original
+        agent.should_receive(:post).with('http://www.travian.com/serverLogin.php', limit: 1).once
+        agent.login_data('http://www.travian.co.kr/')
+      end
+
+      it 'retries the post request to the new location when redirected and provided with only the host' do
+        fake_redirection({'www.travian.co.nz/serverLogin.php' => 'www.travian.com.au'}, :post)
+        agent.should_receive(:post).with('http://www.travian.co.nz/serverLogin.php', limit: 1).and_call_original
+        agent.should_receive(:post).with('http://www.travian.com.au/serverLogin.php', limit: 1)
+        agent.login_data('http://www.travian.co.nz/')
       end
 
       after(:all) { unfake }
