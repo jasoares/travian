@@ -54,9 +54,9 @@ module Travian
 
       it 'returns the mirrored hub when called on a mirror hub' do
         hub.stub(mirror?: true, mirrored_host: 'http://www.travian.com/')
-        server = Server.new(:com, 'http://www.travian.com/')
-        Travian.stub_chain(:hubs, :find).and_return(server)
-        hub.mirrored_hub.should == server
+        mirrored = Hub.new(:com, 'http://www.travian.com/')
+        Travian.stub_chain(:hubs, :find).and_return(mirrored)
+        hub.mirrored_hub.should == mirrored
       end
     end
 
