@@ -238,40 +238,6 @@ module Travian
       end
     end
 
-    describe '.[]' do
-      before(:all) do
-        fake 'www.travian.com'
-        fake 'www.travian.pt'
-        fake 'www.travian.pt/serverLogin.php', :post
-      end
-
-      it 'returns a Server object when passed a valid object' do
-        server = double('Server', :code => 'tx3')
-        server.stub_chain(:hub, :code).and_return('pt')
-        Travian.hubs[:pt].servers.should_receive(:[]).with(:tx3).and_call_original
-        Travian.hubs.should_receive(:[]).with(:pt).and_call_original
-        Server[server]
-      end
-
-      it 'returns a Server object when passed the hub code and the server code' do
-        Travian.hubs[:pt].servers.should_receive(:[]).with(:tx3).and_call_original
-        Travian.hubs.should_receive(:[]).with(:pt).and_call_original
-        Server[:pt, :tx3]
-      end
-
-      it 'returns nil when passed an invalid hub or an invalid server code' do
-        Server[:pt, :tx4].should be nil
-      end
-
-      it 'raises ArgumentError when passed an invalid object like an integer' do
-        expect { Server[3] }.to raise_error(ArgumentError)
-      end
-
-      it 'raises ArgumentError when passed invalid arguments like :pt, nil' do
-        expect { Server[:pt, nil] }.to raise_error(ArgumentError)
-      end
-    end
-
     describe '.new' do
       it 'raises ArgumentError when passed nil as the hub' do
         expect { Server.new(nil, nil) }.to raise_error(

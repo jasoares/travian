@@ -76,22 +76,6 @@ module Travian
     def server_data
       @server_data ||= Travian::ServerData(Agent.server_data(host))
     end
-
-    class << self
-
-      def [](obj, code="")
-        hub, server = if obj.respond_to?(:hub) && obj.respond_to?(:code) && obj.hub.respond_to?(:code)
-          [obj.hub.code, obj.code]
-        elsif obj.is_a?(String) || obj.is_a?(Symbol) and code.is_a?(String) || code.is_a?(Symbol)
-          [obj, code]
-        else
-          raise ArgumentError
-        end
-        Travian.hubs[hub.to_sym].servers[server.to_sym]
-      end
-
-    end
-
   end
 
   def Server(obj)
