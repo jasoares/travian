@@ -1,5 +1,6 @@
 require 'travian/version'
 require 'travian/exceptions'
+require 'travian/uri_helper'
 require 'travian/agent'
 require 'travian/parsers/hubs_data'
 require 'travian/hubs_hash'
