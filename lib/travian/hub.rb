@@ -27,7 +27,7 @@ module Travian
     end
 
     def servers
-      @servers ||= ServersHash.build(redirected? ? mirrored_hub : self)
+      @servers ||= ServersHash.build(self)
     end
 
     def mirror?

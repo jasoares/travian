@@ -122,8 +122,8 @@ module Travian
       before(:all) do
         fake 'www.travian.net'
         fake 'www.travian.net/serverLogin.php', :post
-        fake_redirection 'www.travian.co.nz' => 'www.travian.com.au'
-        fake_redirection 'www.travian.co.kr' => 'www.travian.com'
+        fake_redirection({'www.travian.co.nz/serverLogin.php' => 'www.travian.com.au'}, :post)
+        fake_redirection({'www.travian.co.kr' => 'www.travian.com/serverLogin.php'}, :post)
         fake 'www.travian.com/serverLogin.php', :post
         fake 'www.travian.com.au/serverLogin.php', :post
       end
@@ -143,16 +143,6 @@ module Travian
       it 'passes itself to ServersHash.build when called on the spanish hub' do
         ServersHash.should_receive(:build).with(net_hub)
         net_hub.servers
-      end
-
-      it 'passes the mirrored hub to ServersHash.build when called on the korean hub' do
-        ServersHash.should_receive(:build).with(com_hub)
-        kr_hub.servers
-      end
-
-      it 'passes the mirrored hub to ServersHash.build when called on the new zealand hub' do
-        ServersHash.should_receive(:build).with(au_hub)
-        nz_hub.servers
       end
 
       it 'should proxy the call to ServersHash' do
