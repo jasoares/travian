@@ -19,7 +19,6 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency('httparty', '~> 0.9.0')
   gem.add_dependency('nokogiri', '~> 1.5.5')
-  gem.add_dependency('activesupport', '~> 3.2.9')
 
   gem.add_development_dependency("rspec", '~> 2.12')
   gem.add_development_dependency("simplecov", '~> 0.7.1')
