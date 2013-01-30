@@ -11,6 +11,11 @@ Feature: Fetch Hubs
     Then I should have 55 hubs
     And I should have 4 mirror hubs
 
+  Scenario: Loading mirror hub's servers
+    Given the Mexico hub borrows servers from the Chile hub
+    When I fetch Mexico's servers
+    Then I should get the same servers as those from the Chile hub
+
   Scenario Outline: Hub information
     Given the hub with code <code>
     Then its host should be <host>
