@@ -7,25 +7,27 @@ Given /^the hub with code (\w+)$/ do |code|
   @hub.should_not be_nil
 end
 
-Given /^the (\w+) hub$/ do |name|
+Given /^the (\w+(?:\s\w+)?) hub$/ do |name|
   code = Travian::Hub::CODES.find {|k,v| v[:hub] == name }.first
   @hub = Travian.hubs[code]
 end
 
-Given /^the (\w+) hub borrows servers from the (\w+) hub$/ do |borrower, lender|
-  step "the #{borrower} hub"
-  @borrower = @hub
-  @borrower.send(:borrows_servers?).should be true
-  step "the #{lender} hub"
-  @lender = @hub
-  @borrower.mirrored_hub.should == @lender
+Given /^the (\w+(?:\s\w+)?) hub (borrows servers|redirects) (?:from|to) the (\w+) hub$/ do |mirror, borrow_redirect, main_hub|
+  step "the #{mirror} hub"
+  @mirror = @hub
+  borrow_redirect = "redirected" if borrow_redirect == 'redirects'
+  method = "#{borrow_redirect}?".gsub(' ', '_').to_sym
+  @mirror.send(method).should be true
+  step "the #{main_hub} hub"
+  @main_hub = @hub
+  @mirror.mirrored_hub.should == @main_hub
 end
 
 When /^I fetch its servers$/ do
   @servers = @hub.servers
 end
 
-When /^I fetch (\w+)'s servers$/ do |name|
+When /^I fetch (\w+(?:\s\w+)?)'s servers$/ do |name|
   step "the #{name} hub"
   step "I fetch its servers"
 end
@@ -43,12 +45,12 @@ Then /^its mirrored host should be (.+)$/ do |value|
   @hub.mirrored_host.should == value
 end
 
-Then /^its (\w+) status should be (\w+)$/ do |method, value|
+Then /^its (mirror|redirected) status should be (\w+)$/ do |method, value|
   value = value == "true"
   @hub.send("#{method}?".to_sym).should be value
 end
 
-Then /^its (\w+) should be (.+)$/ do |attr, value|
+Then /^its (host|name|language) should be (.+)$/ do |attr, value|
   @hub.send(attr.to_sym).should == value
 end
 
