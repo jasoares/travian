@@ -11,5 +11,6 @@ doc/
 lib/bundler/man
 pkg
 rdoc
+rerun.txt
 spec/reports
 tmp
