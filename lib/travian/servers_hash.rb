@@ -19,6 +19,10 @@ module Travian
       end
     end
 
+    def ==(other)
+      self.zip(other).all? {|server1, server2| server1 == server2 }
+    end
+
     class << self
 
       def build(hub)

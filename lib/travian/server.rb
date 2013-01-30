@@ -65,6 +65,10 @@ module Travian
       start_date ? true : false
     end
 
+    def ==(other)
+      host == other.host
+    end
+
     protected
 
     def login_data
