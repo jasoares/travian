@@ -11,4 +11,9 @@ else
   tlds.each {|tld| fake_hub "www.travian.#{tld}" }
   fake 'arabia.travian.com'
   fake 'arabia.travian.com/serverLogin.php', :post
+  fake 'tx3.travian.pt'
+  fake 'arabiatx4.travian.com'
+  fake 'ts4.travian.de'
+  fake 'ts5.travian.de'
+  fake 'ts6.travian.de'
 end
