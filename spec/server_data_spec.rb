@@ -1,3 +1,4 @@
+#encoding: utf-8
 require 'spec_helper'
 
 module Travian
@@ -6,6 +7,7 @@ module Travian
     let(:pt_tx3) { ServerData.new(load_server_data 'tx3.travian.pt') }
     let(:de_ts4) { ServerData.new(load_server_data 'ts4.travian.de') }
     let(:arabia_tx4) { ServerData.new(load_server_data 'arabiatx4.travian.com') }
+    let(:ae_ts6) { ServerData.new(load_server_data 'ts6.travian.ae') }
 
     describe '#world_id' do
       it 'returns "ptx18" when called on tx3.travian.pt' do
@@ -49,6 +51,10 @@ module Travian
       it 'returns nil if the server has no restart page' do
         pt_tx3.restart_date.should be nil
       end
+
+      it 'returns the restart time on the server restart page' do
+        ae_ts6.restart_date.should == DateTime.new(2013,2,4,7,0,0,"+02:00")
+      end
     end
 
     describe '.sanitize_date_format' do
@@ -58,6 +64,10 @@ module Travian
 
       it 'returns "21.01.13 06:00 +01:00" when passed "21.01.13 06:00 (Gmt +01:00)"' do
         klass.sanitize_date_format("21.01.13 06:00 (Gmt +01:00)").should == "21.01.13 06:00 +01:00"
+      end
+
+      it 'returns "04.02.13 07:00 +02:00" when passed "04.02.13 07:00 (توقيت غرينتش +02:00)"' do
+        klass.sanitize_date_format("04.02.13 07:00 (توقيت غرينتش +02:00)").should == "04.02.13 07:00 +02:00"
       end
     end
 

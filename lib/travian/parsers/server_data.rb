@@ -37,7 +37,7 @@ module Travian
     class << self
 
       def sanitize_date_format(date_str)
-        date_str.strip.gsub(/[\(\)]|gmt\s|\.$/i, '')
+        date_str.strip.gsub(/[^\d\.\s:+]|\.$/i, '').gsub(/\s+/, ' ')
       end
 
     end
