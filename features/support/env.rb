@@ -7,6 +7,7 @@ require 'travian'
 if ENV['ONLINE']
   FakeWeb.allow_net_connect = true
 else
+  Timecop.freeze(Time.utc(2012,12,30,23,0,0))
   tlds = %w{ co.kr com pt de net com.mx com.ar cl co.nz com.au in }
   tlds.each {|tld| fake_hub "www.travian.#{tld}" }
   fake 'arabia.travian.com'

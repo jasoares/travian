@@ -41,7 +41,7 @@ Then /^its going to restart at (.+)$/ do |restart_date|
   @server.restart_date.should == restart_date
 end
 
-Then /^it started on (.+)$/ do |start_date|
+Then /^(?:I should know)? it started on (.+)$/ do |start_date|
   start_date = start_date == 'nil' ? nil : DateTime.strptime(start_date, "%d/%m/%Y %H:%M %:z")
   @server.start_date.should == start_date
 end

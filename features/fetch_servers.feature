@@ -12,8 +12,8 @@ Feature: Fetch Servers
 
   Scenario Outline: Server State
     Given I fetch the server <host>
-    Then the running status is <running>
-    And it started on <start_date>
+    Then I should know it started on <start_date>
+    And the running status is <running>
     And its ended status should be <ended>
     And its restarting status should be <restarting>
     And its going to restart at <restart date>
@@ -21,9 +21,9 @@ Feature: Fetch Servers
 
     Examples:
       | host                          | start_date              | running | ended | restarting | restart date            | players |
-      | http://tx3.travian.pt/        | 07/10/2012 00:00 +00:00 | true    | false | false      | nil                     | 3101    |
-      | http://arabiatx4.travian.com/ | 29/11/2012 00:00 +00:00 | true    | false | false      | nil                     | 9732    |
-      | http://ts5.travian.de/        | 26/12/2012 00:00 +00:00 | true    | false | false      | nil                     | 8516    |
+      | http://tx3.travian.pt/        | 06/09/2012 00:00 +00:00 | true    | false | false      | nil                     | 3101    |
+      | http://arabiatx4.travian.com/ | 25/11/2012 00:00 +00:00 | true    | false | false      | nil                     | 9732    |
+      | http://ts5.travian.de/        | 25/11/2012 00:00 +00:00 | true    | false | false      | nil                     | 8516    |
       | http://ts4.travian.de/        | nil                     | false   | true  | true       | 21/01/2013 06:00 +01:00 | nil     |
       | http://ts6.travian.de/        | nil                     | false   | true  | false      | nil                     | nil     |
 
