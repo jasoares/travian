@@ -51,5 +51,50 @@ module Travian
         obj.subdomain.should == 'arabiats4'
       end
     end
+
+    describe '#hub_code' do
+      it 'returns "kr" when uri is "http://www.travian.co.kr/"' do
+        obj.stub(host: 'http://www.travian.co.kr/')
+        obj.hub_code.should == "kr"
+      end
+
+      it 'returns "arabia" when uri is "http://arabia.travian.com"' do
+        obj.stub(host: 'http://arabia.travian.com/')
+        obj.hub_code.should == "arabia"
+      end
+
+      it 'returns "arabia" when uri is "http://arabiatcx3.travian.com"' do
+        obj.stub(host: 'http://arabiatcx3.travian.com/')
+        obj.hub_code.should == "arabia"
+      end
+
+      it 'returns "cn" when uri is "http://www.travian.cc/"' do
+        obj.stub(host: 'http://www.travian.cc')
+        obj.hub_code.should == 'cn'
+      end
+    end
+
+    describe '#server_code' do
+      it 'returns nil when uri is "http://www.travian.com/"' do
+        obj.stub(host: 'http://www.travian.com/')
+        obj.server_code.should == nil
+      end
+
+      it 'returns nil when uri is "http://arabia.travian.com/"' do
+        obj.stub(host: 'http://arabia.travian.com/')
+        obj.server_code.should == nil
+      end
+
+      it 'returns "tx3" when uri is "http://tx3.travian.com.br"' do
+        obj.stub(host: 'http://tx3.travian.com.br/')
+        obj.server_code.should == "tx3"
+      end
+
+      it 'returns "arabia" when uri is "http://arabiatcx3.travian.com"' do
+        obj.stub(host: 'http://arabiatcx3.travian.com/')
+        obj.server_code.should == "arabiatcx3"
+      end
+
+    end
   end
 end
