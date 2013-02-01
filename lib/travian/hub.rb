@@ -3,7 +3,6 @@ require 'yaml'
 
 module Travian
   class Hub
-    include Agent
     include UriHelper
 
     CODES = YAML.load_file(
@@ -53,7 +52,7 @@ module Travian
 
     def location
       unless @location
-        location = redirected_location(host)
+        location = Agent.redirected_location(host)
         @location = location[/\/$/] ? location : location + '/'
       end
       @location
