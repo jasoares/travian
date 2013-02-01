@@ -17,7 +17,7 @@ module Travian
       UriHelper.server_code(host)
     end
 
-    class << self
+    module ClassMethods
 
       def tld(host)
         host[/travian\.(\w+(?:\.\w+)?)\/?$/]; $1
@@ -40,5 +40,7 @@ module Travian
       end
 
     end
+
+    extend ClassMethods
   end
 end
