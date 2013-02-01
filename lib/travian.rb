@@ -11,11 +11,12 @@ require 'travian/server'
 
 module Travian
   extend self
+  extend Agent
 
   MAIN_HUB = 'http://www.travian.com/'
 
   def hubs(options={})
-    @@hubs ||= HubsHash.build
+    @@hubs ||= HubsHash.build(HubsData.parse(hubs_data))
     options[:preload] && preload(options[:preload])
     @@hubs
   end
