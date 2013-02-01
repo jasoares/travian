@@ -6,16 +6,11 @@ module Travian
     extend Forwardable
     include UriHelper
 
-    def_delegators :server_data, :world_id, :speed, :version, :restart_date
+    attr_reader :host, :hub, :name, :start_date, :players
 
-    attr_reader :hub
-
-    def initialize(hub, login_data, host = nil)
-      raise ArgumentError, "hub can't be nil." unless hub
-      raise ArgumentError, "Either login_data or host must have a value." unless login_data or host
-      @hub = hub
-      @login_data = login_data ? Travian::LoginData(login_data) : nil
-      @host = host
+    def initialize(host, name=nil, start_date=nil, players=nil)
+      raise ArgumentError, "Must provide a host." unless host
+      @host, @name, @start_date, @players = host, name, start_date, players
     end
 
     def attributes
@@ -28,25 +23,22 @@ module Travian
       }
     end
 
-    def host
-      # attemps to retrieve host from instance variable first for
-      # performance, instead of making an external call in case of
-      # an externally built server
-      @host ? @host : login_data.host
-    end
-
     alias :code :subdomain
 
-    def name
-      login_data ? login_data.name : nil
+    def world_id
+      @world_id || server_data and @world_id
     end
 
-    def start_date
-      login_data ? login_data.start_date : nil
+    def speed
+      @speed || server_data and @speed
     end
 
-    def players
-      login_data ? login_data.players : nil
+    def version
+      @version || server_data and @version
+    end
+
+    def restart_date
+      @restart_date || server_data and @restart_date
     end
 
     def classic?
@@ -69,16 +61,11 @@ module Travian
       host == other.host
     end
 
-    protected
-
-    def login_data
-      @login_data ||= hub.servers[code.to_sym] ? hub.servers[code.to_sym].login_data : nil
-    end
-
     private
 
     def server_data
-      @server_data ||= Travian::ServerData(Agent.server_data(host))
+      server_data = ServerData.parse(Agent.server_data(host))
+      @version, @world_id, @speed, @restart_date = server_data
     end
   end
 
