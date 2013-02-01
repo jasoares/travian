@@ -68,14 +68,4 @@ module Travian
       @version, @world_id, @speed, @restart_date = server_data
     end
   end
-
-  def Server(obj)
-    error_msg = "Object passed must be a string host or respond to :host"
-    raise ArgumentError, error_msg unless obj.respond_to?(:host) or obj.is_a?(String)
-    host = obj.is_a?(String) ? obj : obj.host
-    hub_code = UriHelper.hub_code(host)
-    server_code = UriHelper.server_code(host)
-    login_data = Travian.hubs[hub_code.to_sym].login_data(server_code)
-    login_data ? Server.new(*login_data.values) : Server.new(host)
-  end
 end
