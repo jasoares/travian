@@ -58,22 +58,6 @@ module Travian
     after(:all) { unfake }
   end
 
-  describe '::LoginData' do
-    let(:pt_data) { load_servers_login_data('www.travian.pt') }
-
-    it 'returns a LoginData object loaded with the data passed as argument' do
-      Travian::LoginData(pt_data[8]).should be_a LoginData
-    end
-  end
-
-  describe '::ServerData' do
-    let(:ptx_data) { load_server_data('tx3.travian.pt') }
-
-    it 'returns a ServerData object loaded with the data passed as argument' do
-      Travian::ServerData(ptx_data).should be_a ServerData
-    end
-  end
-
   describe '::Hub' do
     it 'returns a Travian::Hub object when passed a valid object' do
       hub = double('Hub', code: 'de', host: 'http://www.travian.de/')
