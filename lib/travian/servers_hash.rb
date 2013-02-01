@@ -3,7 +3,6 @@ require 'forwardable'
 module Travian
   class ServersHash
     extend Forwardable
-    extend Agent
     include Enumerable
 
     def_delegators :@hash, :[], :empty?, :size, :keys, :has_key?, :values, :each_pair
@@ -26,13 +25,12 @@ module Travian
     class << self
 
       def build(hub)
-        data = Agent.login_data(hub.host)
-        servers_hash = LoginData.split_servers(data).inject({}) do |hash,login_data|
-          server = Server.new(hub, login_data)
-          hash[server.code.to_sym] = server unless server.classic?
-          hash
+        hash = {}
+        hub.servers_hash.each_pair do |code, login_data|
+          server = Server.new(*login_data.values)
+          hash[code] = server unless server.classic?
         end
-        ServersHash.new(servers_hash)
+        ServersHash.new(hash)
       end
 
     end
