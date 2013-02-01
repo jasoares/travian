@@ -1,50 +1,45 @@
 module Travian
-  class ServerData
+  module ServerData
+    extend self
 
-    attr_reader :server
-
-    def initialize(data)
-      @data = data
+    def parse(data)
+      version = parse_version(data)
+      world_id = parse_world_id(data)
+      speed = parse_speed(data)
+      restart_date = parse_restart_date(data)
+      [version, world_id, speed, restart_date]
     end
 
-    def version
-      info[/Travian\.Game\.version = '(.+)';/]; $1
+    def parse_version(data)
+      select_info(data)[/Travian\.Game\.version = '(.+)';/]; $1
     end
 
-    def world_id
-      info[/Travian\.Game\.worldId = '(.+)';/]; $1
+    def parse_world_id(data)
+      select_info(data)[/Travian\.Game\.worldId = '(.+)';/]; $1
     end
 
-    def speed
-      info[/Travian\.Game\.speed = (.+);/]; $1.to_i
+    def parse_speed(data)
+      select_info(data)[/Travian\.Game\.speed = (.+);/]; $1.to_i
     end
 
-    def restart_date
-      date_str = select_world_start_info
-      date_str.empty? ? nil : DateTime.strptime(self.class.sanitize_date_format(date_str), "%d.%m.%y %H:%M %:z")
+    def parse_restart_date(data)
+      date_str = select_world_start_info(data)
+      date_str.empty? ? nil : DateTime.strptime(sanitize_date_format(date_str), "%d.%m.%y %H:%M %:z")
     end
 
     private
 
-    def info
-      @data.css('head script').last.text
+    def select_info(data)
+      data.css('head script').last.text
     end
 
-    def select_world_start_info
-      @data.css('div#worldStartInfo span.date').text
+    def select_world_start_info(data)
+      data.css('div#worldStartInfo span.date').text
     end
 
-    class << self
-
-      def sanitize_date_format(date_str)
-        date_str.strip.gsub(/[^\d\.\s:+]|\.$/i, '').gsub(/\s+/, ' ')
-      end
-
+    def sanitize_date_format(date_str)
+      date_str.strip.gsub(/[^\d\.\s:+]|\.$/i, '').gsub(/\s+/, ' ')
     end
 
-  end
-
-  def ServerData(data)
-    ServerData.new(data)
   end
 end
