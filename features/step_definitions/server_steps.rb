@@ -1,5 +1,5 @@
 Given /^I (?:fetch|have) the server (http:\/\/.+\/)$/ do |uri|
-  @server = Travian.server(uri)
+  @server = Travian::Server(uri)
   @server.should_not be nil
   @server.host.should == uri
 end

@@ -92,17 +92,24 @@ module Travian
   end
 
   describe '::Server' do
-    it 'returns a Travian::Server object when passed a valid object' do
-      hub = double('Hub', code: 'de', host: 'http://www.travian.de/')
-      server = double('Server', hub: hub, host: 'http://tx3.travian.de/')
+    before(:each) do
+      @login_data = { host: 'http://tx3.travian.de', name: 'Speed 3x', start_date: Date.today.to_datetime, players: 2023}
+      Travian.stub_chain(:hubs, :[], :login_data).and_return(@login_data)
+    end
+
+    it 'returns a Travian::Server object when passed a valid string host' do
+      Travian::Server('http://tx3.travian.de/').should be_a Server
+    end
+
+    it 'returns a Travian::Server object when passed an object that respond to :host' do
+      server = double('Server', host: 'http://tx3.travian.de/')
       Travian::Server(server).should be_a Server
     end
 
-    it 'raises ArgumentError when passed an object that does not respond to :hub' do
-      server = double('Server', host: 'http://tx3.travian.de/')
-      expect { Travian::Server(server) }.to raise_error(
+    it 'raises ArgumentError when passed an object that does not respond to :host or is a valid string host' do
+      expect { Travian::Server(:tx3) }.to raise_error(
         ArgumentError,
-        /Object\spassed\smust\srespond\sto\s.+hub/
+        /Object passed must be a string host/
       )
     end
 
@@ -110,15 +117,20 @@ module Travian
       server = double('Server', hub: nil)
       expect { Travian::Server(server) }.to raise_error(
         ArgumentError,
-        /Object\spassed\smust\srespond\sto\s.+host/
+        /Object passed must .+ respond to :host/
       )
     end
 
-    it 'it calls Server.new with a Travian::Hub object and a String host' do
-      Server.should_receive(:new).with(kind_of(Travian::Hub), nil, kind_of(String))
-      hub = double('Hub', code: 'de', host: 'http://www.travian.de/')
-      server = double('Server', hub: hub, host: 'http://tx3.travian.de/')
+    it 'calls Server.new with host, name, start date and player params' do
+      Server.should_receive(:new).with(*@login_data.values)
+      server = double('Server', host: 'http://tx3.travian.de/')
       Travian::Server(server)
+    end
+
+    it 'calls Server.new with only the host if the server has no login data' do
+      Travian.stub_chain(:hubs, :[], :login_data).and_return(nil)
+      Server.should_receive(:new).with('http://ts4.travian.de/')
+      Travian::Server('http://ts4.travian.de/')
     end
   end
 end

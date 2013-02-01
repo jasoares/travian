@@ -19,14 +19,6 @@ module Travian
     @@hubs
   end
 
-  def server(host)
-    hub_code = Travian::UriHelper.tld(host).to_sym
-    server_code = Travian::UriHelper.subdomain(host).to_sym
-    hub_code = :arabia if server_code.to_s.include?('arabia')
-    server = Travian.hubs[hub_code].servers[server_code]
-    server ||= Server.new(hubs[hub_code], nil, host)
-  end
-
   def clear
     @@hubs = nil
   end
