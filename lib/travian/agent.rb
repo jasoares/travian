@@ -29,6 +29,10 @@ module Travian
       Nokogiri::HTML(get("#{host}").body)
     end
 
+    def status_data
+      Nokogiri::HTML(get('http://status.travian.com'))
+    end
+
     def redirected_location(host)
       begin
         get(host, limit: 1)
