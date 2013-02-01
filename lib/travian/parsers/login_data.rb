@@ -1,39 +1,40 @@
 module Travian
-  class LoginData
+  module LoginData
+    extend UriHelper::ClassMethods
+    extend self
 
-    def initialize(data)
-      raise ArgumentError, "Data Missing" if data.nil?
-      @data = data
+    def parse(data)
+      split_servers(data).inject({}) do |hash, login_data|
+        host = parse_host(login_data)
+        name = parse_name(login_data)
+        start_date = parse_start_date(login_data)
+        players = parse_players(login_data)
+        key = server_code(host).to_sym
+        hash[key] = [host, name, start_date, players]
+        hash
+      end
     end
 
-    def host
-      @data.css('a.link').first['href']
+    def parse_host(data)
+      data.css('a.link').first['href']
     end
 
-    def name
-      @data.css('div')[0].text.strip
+    def parse_name(data)
+      data.css('div')[0].text.strip
     end
 
-    def players
-      @data.css('div')[1].text.gsub(/[^\d]/, '').to_i
-    end
-
-    def start_date
-      days_ago = @data.css('div')[2].text.gsub(/[^\d]/, '').to_i
+    def parse_start_date(data)
+      days_ago = data.css('div')[2].text.gsub(/[^\d]/, '').to_i
       (Date.today - days_ago).to_datetime
     end
 
-    class << self
-
-      def split_servers(data)
-        data.css('div[class~="server"]')
-      end
-
+    def parse_players(data)
+      data.css('div')[1].text.gsub(/[^\d]/, '').to_i
     end
 
-  end
+    def split_servers(data)
+      data.css('div[class~="server"]')
+    end
 
-  def LoginData(data)
-    LoginData.new(data)
   end
 end

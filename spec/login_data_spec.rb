@@ -7,47 +7,71 @@ module Travian
     let(:de_data) { load_servers_login_data('www.travian.de') }
     let(:arabia_data) { load_servers_login_data('arabia.travian.com') }
 
-    let(:pt_tx3) { LoginData.new(pt_data[8]) }
-    let(:de_tx3) { LoginData.new(de_data[6]) }
-    let(:arabia_tx4) { LoginData.new(arabia_data[1]) }
+    let(:pt_tx3) { pt_data[8] }
+    let(:de_tx3) { de_data[6] }
+    let(:arabia_tx4) { arabia_data[1] }
 
-    describe '#host' do
-      it 'returns "http://tx3.travian.pt/" when called on tx3.travian.pt LoginData' do
-        pt_tx3.host.should == "http://tx3.travian.pt/"
+    describe '.parse' do
+      it 'returns a hash' do
+        klass.parse(pt_data).should be_a Hash
       end
 
-      it 'returns "http://arabiatx4.travian.com/" when called on arabiatx4.travianc.com LoginData' do
-        arabia_tx4.host.should == "http://arabiatx4.travian.com/"
-      end
-    end
-
-    describe '#name' do
-      it 'returns "Speed 3x" when called on tx3.travian.de LoginData' do
-        de_tx3.name.should == "Speed 3x"
+      it 'should have symbol keys' do
+        klass.parse(pt_data).keys.all? {|k| k.should be_a Symbol }
       end
 
-      it 'returns "arabia 4x" when called on arabiatx4.travian.com LoginData' do
-        arabia_tx4.name.should == "arabia 4x"
+      it 'should call split_servers to split data by server' do
+        klass.should_receive(:split_servers).with(pt_data).and_return([])
+        klass.parse(pt_data)
       end
-    end
 
-    describe '#players' do
-      it 'returns 2039 when called on tx3.travian.pt LoginData' do
-        pt_tx3.players.should == 3101
+      it 'should call each of the parse methods for each element of split_servers returned array' do
+        klass.should_receive(:split_servers).with(pt_data).and_return([pt_tx3, pt_tx3, pt_tx3])
+        klass.should_receive(:parse_host).with(pt_tx3).exactly(3).times.and_return('http://tx3.travian.pt/')
+        klass.should_receive(:parse_name).with(pt_tx3).exactly(3).times.and_return('Speed 3x')
+        klass.should_receive(:parse_start_date).with(pt_tx3).exactly(3).times.and_return(Date.new(2012,2,10,).to_datetime)
+        klass.should_receive(:parse_players).with(pt_tx3).exactly(3).times.and_return(3101)
+        klass.parse(pt_data)
       end
     end
 
-    describe '#start_date' do
+    describe '.parse_host' do
+      it 'returns "http://tx3.travian.pt/" when passed tx3.travian.pt login data' do
+        klass.parse_host(pt_tx3).should == "http://tx3.travian.pt/"
+      end
+
+      it 'returns "http://arabiatx4.travian.com/" when passed arabiatx4.travianc.com login data' do
+        klass.parse_host(arabia_tx4).should == "http://arabiatx4.travian.com/"
+      end
+    end
+
+    describe '.parse_name' do
+      it 'returns "Speed 3x" when passed tx3.travian.de login data' do
+        klass.parse_name(de_tx3).should == "Speed 3x"
+      end
+
+      it 'returns "arabia 4x" when passed arabiatx4.travian.com login data' do
+        klass.parse_name(arabia_tx4).should == "arabia 4x"
+      end
+    end
+
+    describe '.parse_players' do
+      it 'returns 3101 when passed tx3.travian.pt login data' do
+        klass.parse_players(pt_tx3).should == 3101
+      end
+    end
+
+    describe '.parse_start_date' do
       before(:all) do
         Timecop.freeze(Time.utc(2012,12,27,10,20,0))
       end
 
       it 'returns a DateTime object' do
-        pt_tx3.start_date.should be_a DateTime
+        klass.parse_start_date(pt_tx3).should be_a DateTime
       end
 
       it 'returns "29/09/2012" when passed the tx3 server' do
-        pt_tx3.start_date.should == Date.new(2012,9,3).to_datetime
+        klass.parse_start_date(pt_tx3).should == Date.new(2012,9,3).to_datetime
       end
 
       after(:all) { Timecop.return }
@@ -55,18 +79,15 @@ module Travian
 
     describe '.split_servers' do
       it 'returns an array with 6 login data chunks when passed data from arabia.travian.com' do
-        data = load_login_data('arabia.travian.com')
-        klass.split_servers(data).should have(6).login_data_chunks
+        klass.split_servers(arabia_data).should have(6).login_data_chunks
       end
 
       it 'returns an array with 10 login data chunks when passed data from www.travian.pt' do
-        data = load_login_data('www.travian.pt')
-        klass.split_servers(data).should have(10).login_data_chunks
+        klass.split_servers(pt_data).should have(10).login_data_chunks
       end
 
       it 'returns an array with 8 login data chunks when passed data from www.travian.de' do
-        data = load_login_data('www.travian.de')
-        klass.split_servers(data).should have(8).login_data_chunks
+        klass.split_servers(de_data).should have(8).login_data_chunks
       end
     end
   end
