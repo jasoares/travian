@@ -98,6 +98,28 @@ module Travian
       after(:all) { unfake }
     end
 
+    describe '#login_data' do
+      it 'returns a hash of servers login data when no argument is parsed' do
+        hub.should_receive(:servers_hash).with(no_args).and_return({})
+        hub.login_data.should be_a Hash
+      end
+
+      it 'returns the login_data hash for the server code passed' do
+        hub.should_receive(:servers_hash).and_return({ :ts1 => { host: 'http://ts1.travian.pt/', name: "Servidor 1", start_date: Date.today.to_datetime, players: 1298} })
+        hub.login_data('ts1').should == { host: 'http://ts1.travian.pt/', name: "Servidor 1", start_date: Date.today.to_datetime, players: 1298 }
+      end
+    end
+
+    describe '#servers_hash' do
+      it 'proxies the data from calling LoginData.parse on Agent.login_data' do
+        data = load_servers_login_data 'www.travian.net'
+        Agent.should_receive(:login_data).with('http://www.travian.net/').and_return(data)
+        LoginData.should_receive(:parse).with(data).and_return({ :ts1 => { host: 'http://ts1.travian.pt/', name: "Servidor 1", start_date: Date.today.to_datetime, players: 1298} })
+        hub.servers_hash
+        hub.servers_hash
+      end
+    end
+
     describe '#servers' do
       it 'calls ServersHash.build passing self' do
         ServersHash.should_receive(:build).with(hub)

@@ -31,6 +31,14 @@ module Travian
       @servers ||= ServersHash.build(self)
     end
 
+    def servers_hash
+      @servers_hash ||= LoginData.parse(Agent.login_data(host))
+    end
+
+    def login_data(server_code=nil)
+      server_code ? servers_hash[server_code.to_sym] : servers_hash
+    end
+
     def mirror?
       redirected? || borrows_servers?
     end
