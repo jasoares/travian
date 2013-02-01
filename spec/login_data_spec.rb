@@ -33,6 +33,13 @@ module Travian
         klass.should_receive(:parse_players).with(pt_tx3).exactly(3).times.and_return(3101)
         klass.parse(pt_data)
       end
+
+      it 'returns an inner hash with keys :host, :name, :start_date and :players' do
+        klass.parse(pt_data).values.first.should have_key(:host)
+        klass.parse(pt_data).values.first.should have_key(:name)
+        klass.parse(pt_data).values.first.should have_key(:start_date)
+        klass.parse(pt_data).values.first.should have_key(:players)
+      end
     end
 
     describe '.parse_host' do

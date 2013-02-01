@@ -5,12 +5,14 @@ module Travian
 
     def parse(data)
       split_servers(data).inject({}) do |hash, login_data|
-        host = parse_host(login_data)
-        name = parse_name(login_data)
-        start_date = parse_start_date(login_data)
-        players = parse_players(login_data)
-        key = server_code(host).to_sym
-        hash[key] = [host, name, start_date, players]
+        data_hash = {
+          host: parse_host(login_data),
+          name: parse_name(login_data),
+          start_date: parse_start_date(login_data),
+          players: parse_players(login_data)
+        }
+        key = server_code(data_hash[:host]).to_sym
+        hash[key] = data_hash
         hash
       end
     end
