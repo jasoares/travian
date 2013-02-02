@@ -28,6 +28,11 @@ module Travian
         obj.stub(host: 'http://www.travian.com.au/')
         obj.tld.should == 'com.au'
       end
+
+      it 'returns "com" when uri is "ts1.travianteam.com"' do
+        obj.stub(host: 'ts1.travianteam.com')
+        obj.tld.should == 'com'
+      end
     end
 
     describe '#subdomain' do

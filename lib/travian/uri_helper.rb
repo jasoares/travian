@@ -20,7 +20,7 @@ module Travian
     module ClassMethods
 
       def tld(host)
-        host[/travian\.(\w+(?:\.\w+)?)\/?$/]; $1
+        host[/travian\w*\.(\w+(?:\.\w+)?)\/?$/]; $1
       end
 
       def subdomain(host)
