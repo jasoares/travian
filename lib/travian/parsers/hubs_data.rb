@@ -6,7 +6,8 @@ module Travian
       js_hash = parse_hubs_js_hash(data)
       hash = js_hash_to_ruby_hash(js_hash)
       hash = flat_nested_hash(hash)
-      uris_to_hosts(hash)
+      hash = uris_to_hosts(hash)
+      force_taiwan_addition(hash)
     end
 
     private
@@ -27,6 +28,11 @@ module Travian
       hosts_hash = {}
       hash.each {|key, uri| hosts_hash[key] = UriHelper.strip_protocol(uri) }
       hosts_hash
+    end
+
+    # Add the Taiwan hub manually
+    def force_taiwan_addition(hash)
+      hash.merge({tw: 'www.travian.tw'})
     end
   end
 end

@@ -8,7 +8,7 @@ Feature: Fetch Hubs
   @slow @online
   Scenario: Loading all hubs
     Given I load all travian hubs
-    Then I should have 55 hubs
+    Then I should have 56 hubs
     And I should have 4 mirror hubs
 
   Scenario: Loading mirror which borrows servers

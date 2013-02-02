@@ -12,7 +12,7 @@ module Travian
       end
 
       it 'calls Hub.new for every hub' do
-        Hub.should_receive(:new).exactly(55).times
+        Hub.should_receive(:new).exactly(56).times
         klass.build(hubs_data)
       end
 
