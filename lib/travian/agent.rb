@@ -5,6 +5,7 @@ require 'nokogiri'
 module Travian
   module Agent
     extend self
+    extend UriHelper::ClassMethods
 
     MAX_TRIES = 3
     DEFAULT_OPTIONS = {timeout: 6}
@@ -14,13 +15,12 @@ module Travian
     end
 
     def login_data(host)
-      uri = URI(host)
       begin
-        uri.path = '/serverLogin.php'
+        uri = "#{host}/serverLogin.php"
         resp = post(uri.to_s, limit: 1)
         Nokogiri::HTML(resp.body) if resp
       rescue HTTParty::RedirectionTooDeep => e
-        uri = URI(e.response.header['Location'])
+        host = URI(e.response.header['Location']).host
         retry
       end
     end
@@ -30,7 +30,7 @@ module Travian
     end
 
     def status_data
-      Nokogiri::HTML(get('http://status.travian.com'))
+      Nokogiri::HTML(get('status.travian.com'))
     end
 
     def redirected_location(host)
@@ -56,7 +56,7 @@ module Travian
       try = 0
       options.merge!(DEFAULT_OPTIONS)
       begin
-        HTTParty.send(req, path, options, &block)
+        HTTParty.send(req, "http://#{path}", options, &block)
       rescue Timeout::Error, Errno::ETIMEDOUT, Errno::ECONNREFUSED, SocketError => e
         try += 1
         retry unless try == MAX_TRIES

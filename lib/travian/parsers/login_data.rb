@@ -18,7 +18,7 @@ module Travian
     end
 
     def parse_host(data)
-      data.css('a.link').first['href']
+      strip_protocol(data.css('a.link').first['href'])
     end
 
     def parse_name(data)

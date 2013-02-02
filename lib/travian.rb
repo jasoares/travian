@@ -13,7 +13,7 @@ module Travian
   extend self
   extend Agent
 
-  MAIN_HUB = 'http://www.travian.com/'
+  MAIN_HUB = 'www.travian.com'
 
   def hubs(options={})
     @@hubs ||= HubsHash.build(HubsData.parse(hubs_data))

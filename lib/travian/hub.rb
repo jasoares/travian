@@ -53,7 +53,7 @@ module Travian
     def location
       unless @location
         location = Agent.redirected_location(host)
-        @location = location[/\/$/] ? location : location + '/'
+        @location = UriHelper.strip_protocol(location)
       end
       @location
     end
@@ -69,7 +69,7 @@ module Travian
     def mirrored_host
       return nil unless mirror?
       return location if redirected?
-      "http://www.travian.#{servers.first.tld}/"
+      "www.travian.#{servers.first.tld}"
     end
 
     private

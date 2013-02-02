@@ -9,7 +9,7 @@ module Travian
         ts2: { host: 'http://ts2.travian.pt/', name: 'Servidor 2', start_date: Date.today.to_datetime, players: 1670 }
       }
     end
-    let(:hub) { double('Hub', :host => 'http://www.travian.pt/', servers_hash: servers_hash) }
+    let(:hub) { double('Hub', :host => 'www.travian.pt', servers_hash: servers_hash) }
     let(:instance) { ServersHash.new(servers_hash) }
 
     it 'should respond_to each' do
@@ -53,7 +53,7 @@ module Travian
       end
 
       it 'passed login data params to Server.new' do
-        login_data = { host: 'http://tx3.travian.de/', name: 'Speed 3x', start_date: Date.today.to_datetime, players: 2301 }
+        login_data = { host: 'tx3.travian.de', name: 'Speed 3x', start_date: Date.today.to_datetime, players: 2301 }
         hub.stub(:servers_hash => { :tx3 => login_data })
         server = double('Server', classic?: false)
         Server.should_receive(:new).with(*login_data.values).and_return server

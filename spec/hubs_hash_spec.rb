@@ -17,7 +17,7 @@ module Travian
       end
 
       it 'passes the hub code and the hub host to every call to Hub.new' do
-        Hub.should_receive(:new).with(:ba, 'http://www.travian.ba/')
+        Hub.should_receive(:new).with(:ba, 'www.travian.ba')
         klass.build([hubs_data.first])
       end
     end
@@ -28,7 +28,7 @@ module Travian
       end
 
       it 'returns false if it contains hubs' do
-        hubs_hash = klass.new(pt: Hub.new(:pt, 'http://www.travian.pt/'), net: Hub.new(:net, 'http://www.travian.net'))
+        hubs_hash = klass.new(pt: Hub.new(:pt, 'www.travian.pt'), net: Hub.new(:net, 'http://www.travian.net'))
         hubs_hash.should_not be_empty
       end
     end

@@ -5,7 +5,8 @@ module Travian
     def parse(data)
       js_hash = parse_hubs_js_hash(data)
       hash = js_hash_to_ruby_hash(js_hash)
-      flat_nested_hash(hash)
+      hash = flat_nested_hash(hash)
+      uris_to_hosts(hash)
     end
 
     private
@@ -20,6 +21,12 @@ module Travian
 
     def flat_nested_hash(hash)
       hash[:flags].values.inject(&:merge)
+    end
+
+    def uris_to_hosts(hash)
+      hosts_hash = {}
+      hash.each {|key, uri| hosts_hash[key] = UriHelper.strip_protocol(uri) }
+      hosts_hash
     end
   end
 end

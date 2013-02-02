@@ -1,4 +1,4 @@
-Given /^I (?:fetch|have) the server (http:\/\/.+\/)$/ do |uri|
+Given /^I (?:fetch|have) the server (\w+\.travian\.\w+(?:\.\w+)?)$/ do |uri|
   @server = Travian::Server(uri)
   @server.should_not be nil
   @server.host.should == uri
