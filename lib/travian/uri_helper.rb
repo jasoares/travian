@@ -39,6 +39,10 @@ module Travian
         server_code == 'www' || server_code == 'arabia' ? nil : server_code
       end
 
+      def strip_protocol(uri)
+        uri.gsub(/\/$/, '')[/(\w+\.travian\w*\.[\w\.\/]+)/]
+      end
+
     end
 
     extend ClassMethods

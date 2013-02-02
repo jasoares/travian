@@ -101,5 +101,33 @@ module Travian
       end
 
     end
+
+    describe '.strip_protocol' do
+      it 'returns "www.travian.com" when passed "http://www.travian.com/"' do
+        UriHelper.strip_protocol('http://www.travian.com/').should == 'www.travian.com'
+      end
+
+      it 'returns "tx3.travianteam.co.kr" when passed "http://tx3.travianteam.co.kr/"' do
+        UriHelper.strip_protocol('http://tx3.travianteam.co.kr/'). should == 'tx3.travianteam.co.kr'
+      end
+
+      it 'returns "tcx8.travian.com.au" when passed "http://tcx8.travian.com.au/"' do
+        UriHelper.strip_protocol('http://tcx8.travian.com.au/').should == 'tcx8.travian.com.au'
+      end
+
+      it 'returns "tx3.travian.pt" when passed "http://tx3.travian.pt/' do
+        UriHelper.strip_protocol('http://tx3.travian.pt/').should == 'tx3.travian.pt'
+      end
+
+      it 'returns "tx3.travian.pt" when passed "http://tx3.travian.pt' do
+        UriHelper.strip_protocol('http://tx3.travian.pt').should == 'tx3.travian.pt'
+      end
+
+      it 'returns "tx3.travian.pt/serverLogin.php" when passed "http://tx3.travian.pt/serverLogin.php' do
+        UriHelper.strip_protocol('http://tx3.travian.pt/serverLogin.php').should == 'tx3.travian.pt/serverLogin.php'
+      end
+
+    end
+
   end
 end
