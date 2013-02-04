@@ -90,6 +90,10 @@ module Travian
       it 'returns "04.02.13 07:00 +02:00" when passed "04.02.13 07:00 (توقيت غرينتش +02:00)"' do
         klass.send(:sanitize_date_format, "04.02.13 07:00 (توقيت غرينتش +02:00)").should == "04.02.13 07:00 +02:00"
       end
+
+      it 'returns "25.01.13 12:00 -03:00" when passed "25.01.13 12:00 (Gmt -03:00)"' do
+        klass.send(:sanitize_date_format, "25.01.13 12:00 (Gmt -03:00)").should == "25.01.13 12:00 -03:00"
+      end
     end
   end
 end
