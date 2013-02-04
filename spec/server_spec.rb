@@ -18,16 +18,37 @@ module Travian
 
     its(:players) { should be 3103 }
 
+    shared_examples 'a proxy to .server_data' do
+      before(:each) do
+        Agent.stub(:server_data)
+        ServerData.stub(parse: ["4.0", "ptx18", 3, nil])
+      end
+
+      it 'only calls server_data once on successive calls' do
+        instance.should_receive(:server_data).and_call_original
+        instance.send(method)
+        instance.send(method)
+      end
+    end
+
     describe '#world_id' do
+      let(:method) { :world_id }
+      it_behaves_like 'a proxy to .server_data'
     end
 
     describe '#speed' do
+      let(:method) { :speed }
+      it_behaves_like 'a proxy to .server_data'
     end
 
     describe '#version' do
+      let(:method) { :version }
+      it_behaves_like 'a proxy to .server_data'
     end
 
     describe '#restart_date' do
+      let(:method) { :restart_date }
+      it_behaves_like 'a proxy to .server_data'
     end
 
     describe '#code' do

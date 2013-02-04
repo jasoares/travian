@@ -26,19 +26,19 @@ module Travian
     alias :code :subdomain
 
     def world_id
-      @world_id || server_data and @world_id
+      server_data unless @world_id; @world_id
     end
 
     def speed
-      @speed || server_data and @speed
+      server_data unless @speed; @speed
     end
 
     def version
-      @version || server_data and @version
+      server_data unless @version; @version
     end
 
     def restart_date
-      @restart_date || server_data and @restart_date
+      server_data unless @world_id; @restart_date
     end
 
     def classic?
