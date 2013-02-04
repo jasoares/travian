@@ -30,7 +30,8 @@ module Travian
     private
 
     def select_info(data)
-      data.css('head script').last.text
+      script = data.css('head script').last
+      script ? script.text : ""
     end
 
     def select_world_start_info(data)

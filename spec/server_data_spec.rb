@@ -5,6 +5,7 @@ module Travian
   describe ServerData do
     let(:klass) { ServerData }
     let(:pt_tx3) { load_server_data 'tx3.travian.pt' }
+    let(:ph_ts2) { load_server_data 'ts2.travian.ph' }
     let(:de_ts4) { load_server_data 'ts4.travian.de' }
     let(:arabia_tx4) { load_server_data 'arabiatx4.travian.com' }
     let(:ae_ts6) { load_server_data 'ts6.travian.ae' }
@@ -64,6 +65,16 @@ module Travian
 
       it 'returns the restart time on the server restart page' do
         klass.parse_restart_date(ae_ts6).should == DateTime.new(2013,2,4,7,0,0,"+02:00")
+      end
+    end
+
+    describe '.select_info' do
+      it 'returns the script string when passed valid data' do
+        klass.send(:select_info, pt_tx3).should_not be_empty
+      end
+
+      it 'returns an empty string when passed invalid data' do
+        klass.send(:select_info, ph_ts2).should be_empty
       end
     end
 
