@@ -26,6 +26,10 @@ module Travian
     hubs(preload: :servers).reject(&:mirror?).map {|hub| hub.servers.to_a }.inject(&:+)
   end
 
+  def status_servers
+    status.values.inject(&:+).map {|s| Server(s) }
+  end
+
   def clear
     @@hubs = nil
   end
@@ -66,6 +70,10 @@ module Travian
         pool << Thread.new { server.attributes }
       end.each(&:join)
     end
+  end
+
+  def status
+    @@status_data ||= StatusData.parse(status_data)
   end
 
 end
