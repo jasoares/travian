@@ -1,0 +1,198 @@
+<h1>تسجيل</h1>
+
+
+			<div class="greenbox registrationBox">
+				<div class="greenbox-top"></div>
+				<div class="greenbox-content">
+		
+<div id="registrationSuccess">
+	شكراً لتسجيلك في ترافيان. ستصلك رسالة منا ببيانات العضوية ورابط تفعيل العضوية	<a class="popcon"  href="#activation"></a>
+</div>
+
+<form name="registration" id="registration">
+	<div id="registrationForm" class="registrationForm">
+		<div class="serverList">
+			
+<div class="activeServer currentServer">
+	<input id="activeServerId" type="hidden" name="activeServerId" value="2" />
+	<div class="server serverOdd serverBig serverNew serverBigNew ">
+	<div class="name">
+		arabia 2	</div>
+			<div class="player">
+		<img class="playerIcon" src="img/x.gif" />
+				<span class="playerLabel">اللاعب: </span>3711			</div>
+			<div class="start  ">
+		بدأ اللعب قبل 14 يوماً/أيام	</div>
+			<div class="mark">
+		جديد	</div>
+							<a class="link hide" title="سجّل على السيرفر arabia 2"  onclick="return Travian.Main.switchActiveServer(2);" href="#"></a>
+			</div>
+
+	<div class="clear"></div>
+			<div id="otherServerSwitch" class="switchButton" onclick="Travian.Main.switchButtonToggle(
+			[
+				{'element':$$('#popup.register .greenbox'), 'className':'registrationBox'},
+				{'element':$$('#popup.register .greenbox'), 'className':'serverListBox'},
+				{'element':$('otherServers'), 'className':'hide'},
+				{'element':$('registerForm'), 'className':'hide'},
+				{'element':$$('#popup.register .serverList .activeServer .server a.link'), 'className':'hide'},
+				{'element':$$('#otherServerSwitch .roundArrow'), 'className':'closed'},
+				{'element':$$('#otherServerSwitch .roundArrow'), 'className':'opened'}
+			]
+		);">
+			<img class="roundArrow closed" src="img/x.gif" />اِلعب على سيرفر آخر			<div class="clear"></div>
+		</div>
+	</div>
+
+<div class="subContent hide" id="otherServers">
+	<div class="serverList currentServer">
+		<h3 class="chooseAServer">اختر أحد السيرفرات رجاء</h3>
+					<div class="server serverEven serverSmall serverNormal serverSmallNormal ">
+	<div class="name">
+		arabia 1	</div>
+			<div class="player">
+		<img class="playerIcon" src="img/x.gif" />
+				<span class="playerLabel">اللاعب: </span>2220			</div>
+			<div class="start  ">
+		<img class="durationIcon" src="img/x.gif" /> 89 يوماً/أيام	</div>
+								<a class="link" title="سجّل على السيرفر arabia 1"  onclick="return Travian.Main.switchActiveServer(1);" href="#"></a>
+			</div>
+
+					<div class="server serverOdd serverSmall serverNormal serverSmallNormal ">
+	<div class="name">
+		arabia 3x	</div>
+			<div class="player">
+		<img class="playerIcon" src="img/x.gif" />
+				<span class="playerLabel">اللاعب: </span>2835			</div>
+			<div class="start  ">
+		<img class="durationIcon" src="img/x.gif" /> 110 يوماً/أيام	</div>
+								<a class="link" title="سجّل على السيرفر arabia 3x"  onclick="return Travian.Main.switchActiveServer(18);" href="#"></a>
+			</div>
+
+					<div class="server serverEven serverSmall serverNormal serverSmallNormal ">
+	<div class="name">
+		arabia 7	</div>
+			<div class="player">
+		<img class="playerIcon" src="img/x.gif" />
+				<span class="playerLabel">اللاعب: </span>1687			</div>
+			<div class="start  ">
+		<img class="durationIcon" src="img/x.gif" /> 152 يوماً/أيام	</div>
+								<a class="link" title="سجّل على السيرفر arabia 7"  onclick="return Travian.Main.switchActiveServer(7);" href="#"></a>
+			</div>
+
+					<div class="server serverOdd serverSmall serverNormal serverSmallNormal ">
+	<div class="name">
+		arabia 5	</div>
+			<div class="player">
+		<img class="playerIcon" src="img/x.gif" />
+				<span class="playerLabel">اللاعب: </span>874			</div>
+			<div class="start  ">
+		<img class="durationIcon" src="img/x.gif" /> 208 يوماً/أيام	</div>
+								<a class="link" title="سجّل على السيرفر arabia 5"  onclick="return Travian.Main.switchActiveServer(5);" href="#"></a>
+			</div>
+
+				<div class="clear"></div>
+	</div>
+
+	</div>
+		</div>
+				<div id="oldRegistrationLink">
+			<a class="toRegistration" id="toRegistration" target="register">
+				<img class="squareArrow" src="img/x.gif">
+				سجّل عضوية على هذا السيرفر			</a>
+		</div>
+
+
+				<div class="subContent" id="registerForm">
+						<div class="error" id="showErrorsDiv">&nbsp;</div>
+
+
+			<table class="transparent" id="registerFormTable">
+				<tr>
+					<th class="playerName"><label for="playerName">اسم العضوية:</label></th>
+					<td class="spacer">&nbsp;</td>
+					<td class="playerName">
+						<input id="playerName" class="text" type="text" name="playerName" onfocus="Travian.Main.Registration.showInfoString('ثلاثة أحرف على الأقل', 'playerNameInfo')" onblur="Travian.Main.Registration.hideInfoString('playerNameInfo')"/><br />
+						<div class="error" id="playerNameInfo"></div>
+					</td>
+				</tr>
+				<tr>
+					<th class="password"><label for="registerPassword">كلمة السر:</label></th>
+					<td class="spacer">&nbsp;</td>
+					<td class="password">
+						<input id="registerPassword" class="text" type="password" name="password"  onfocus="Travian.Main.Registration.showInfoString('على الأقل أربعة خانات، لا تضمّن اسم العضوية في كلمة السر!', 'passwordInfo')" onblur="Travian.Main.Registration.hideInfoString('passwordInfo')"/><br />
+						<div class="error" id="passwordInfo"></div>
+					</td>
+				</tr>
+				<tr>
+					<th class="email"><label for="email">البريد الالكتروني:</label></th>
+					<td class="spacer">&nbsp;</td>
+					<td class="email">
+						<input id="email" class="text" type="text" name="email" onfocus="Travian.Main.Registration.showInfoString('من أجل إكمال التسجيل وتفعيل العضوية، يجب أن تدخل عنوان بريد الكتروني يعمل', 'emailInfo')" onblur="Travian.Main.Registration.hideInfoString('emailInfo')"/><br />
+						<div class="error" id="emailInfo"></div>
+					</td>
+				</tr>
+				<tr id="preRegistrationCode"  class="hide">
+					<th class="preRegistrationCode"><label for="preRegistrationCode">المفتاح:</label></th>
+					<td class="spacer">&nbsp;</td>
+					<td class="preRegistrationCode">
+						<input id="preRegistrationCode" class="text" type="text" name="preRegistrationCode" onfocus="Travian.Main.Registration.showInfoString('لا يمكنك التسجيل في هذا السيرفر إلا إذا كنت تملك كود دعوة', 'preRegistrationCodeInfo')" onblur="Travian.Main.Registration.hideInfoString('preRegistrationCodeInfo')"/><br />
+						<div class="info"></div>
+						<div class="error" id="preRegistrationCodeInfo"></div>
+					</td>
+				</tr>
+				<tr>
+					<th class="generalTermsAndConditions"></th>
+					<td class="spacer">&nbsp;</td>
+					<td class="generalTermsAndConditions">
+						<div class="checkboxfield">
+							<input id="generalTermsAndConditions" class="check" type="checkbox" name="generalTermsAndConditions" value="1"  checked  />
+							<label for="generalTermsAndConditions">أوافق على  <a href="http://arabia.travian.com/agb.php" target="_blank">الشروط والأحكام العامة، أمان الخصوصية</a> و<a href="http://arabia.travian.com/spielregeln.php" target="_blank">فواعد اللعبة</a>.
+</label>
+							<div class="clear"></div>
+						</div>
+						<div class="error"></div>
+					</td>
+				</tr>
+				<tr>
+					<th class="newsletter"></th>
+					<td class="spacer">&nbsp;</td>
+					<td class="newsletter">
+						<div class="checkboxfield">
+							<input id="newsletter" class="check" type="checkbox" name="newsletter" value="1" />
+							<label for="newsletter">أنا موافق على إستلام إعلانات هامة عما هو حديث وجديد من شركة ترافيان للألعاب المحدودة.</label>
+							<div class="clear"></div>
+						</div>
+					</td>
+				</tr>
+								<tr>
+					<th class="submit"></th>
+					<td class="spacer">&nbsp;</td>
+					<td class="submit">
+						<br />
+						
+			<button class="fixedSizeBigButton" type="submit">
+				<div class="bigButtonText play white bold">
+						تسجيل
+				</div>
+	        </button>					</td>
+				</tr>
+			</table>
+			<a class="alreadyRegistered" href="activation.php" >
+				هل قمت بالتسجيل من قبل؟ اضغط هنا للمتابعة إلى تفعيل العضوية				<span class="clear"></span>
+			</a>
+		</div>
+	</div>
+</form>
+
+
+				</div>
+				<div class="greenbox-bottom"></div>
+				<div class="clear"></div>
+			</div>
+		
+<script type="text/javascript">
+	var registration = new Travian.Main.Registration();
+		handleOldAndNewRegistration(1, 'http://arabiats2.travian.com/');
+</script>
+
