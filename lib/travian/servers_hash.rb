@@ -22,6 +22,11 @@ module Travian
       self.zip(other).all? {|server1, server2| server1 == server2 }
     end
 
+    def <<(server)
+      @hash[server.code.to_sym] = server
+      @hash
+    end
+
     class << self
 
       def build(hub)

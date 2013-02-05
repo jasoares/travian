@@ -76,9 +76,9 @@ module Travian
   end
 
   describe '::Server' do
-    before(:each) do
-      @login_data = { host: 'tx3.travian.de', name: 'Speed 3x', start_date: Date.today.to_datetime, players: 2023}
-      Travian.stub_chain(:hubs, :[], :login_data).and_return(@login_data)
+    before(:all) do
+      fake 'www.travian.com'
+      fake 'www.travian.de/serverLogin.php', :post
     end
 
     it 'returns a Travian::Server object when passed a valid string host' do
@@ -105,15 +105,19 @@ module Travian
       )
     end
 
-    it 'calls Server.new with host, name, start date and player params' do
-      Server.should_receive(:new).with(*@login_data.values)
-      server = double('Server', host: 'tx3.travian.de')
-      Travian::Server(server)
+    it 'calls Server.new with host when server was not loaded from login data and loads it' do
+      server = Server.new('ts10.travian.de')
+      Travian.hubs[:de].servers.should_receive(:<<).with(server)
+      Server.should_receive(:new).with('ts10.travian.de').and_return(server)
+      Travian::Server('ts10.travian.de')
     end
 
-    it 'calls Server.new with only the host if the server has no login data' do
-      Travian.stub_chain(:hubs, :[], :login_data).and_return(nil)
-      Server.should_receive(:new).with('ts4.travian.de')
+    it 'returns the server when found in the hub\'s server list' do
+      server = Server.new('ts4.travian.de')
+      servers = { :ts4 => server }
+      servers.should_not_receive(:<<)
+      Travian.stub_chain(:hubs, :[], :servers).and_return(servers)
+      Server.should_not_receive(:new).with('ts4.travian.de')
       Travian::Server('ts4.travian.de')
     end
   end
