@@ -58,6 +58,13 @@ module Travian
     after(:all) { unfake }
   end
 
+  describe '.servers' do
+    it 'calls .hubs with { preload: :servers } as options' do
+      Travian.should_receive(:hubs).with(preload: :servers).and_return([])
+      Travian.servers
+    end
+  end
+
   describe '::Hub' do
     it 'returns a Travian::Hub object when passed a valid object' do
       hub = double('Hub', code: 'de', host: 'www.travian.de')

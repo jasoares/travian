@@ -22,6 +22,10 @@ module Travian
     @@hubs
   end
 
+  def servers
+    hubs(preload: :servers).reject(&:mirror?).map {|hub| hub.servers.to_a }.inject(&:+)
+  end
+
   def clear
     @@hubs = nil
   end
