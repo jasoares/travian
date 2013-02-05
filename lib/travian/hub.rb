@@ -34,6 +34,11 @@ module Travian
       @servers_hash ||= LoginData.parse(Agent.login_data(host))
     end
 
+    def registerable_servers
+      @register_servers ||= load_registerable_servers
+      @register_servers.map {|k, v| Server.new(v[:host]) }
+    end
+
     def login_data(server_code=nil)
       server_code ? servers_hash[server_code.to_sym] : servers_hash
     end
@@ -76,6 +81,12 @@ module Travian
 
     def borrows_servers?
       !servers.empty? && self.tld != servers.first.tld
+    end
+
+    def load_registerable_servers
+      servers = RegisterData.parse(Agent.register_data(host), self)
+      servers_hash.merge!(servers)
+      servers
     end
 
     class << self

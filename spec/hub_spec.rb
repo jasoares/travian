@@ -120,6 +120,43 @@ module Travian
       end
     end
 
+    describe '#registerable_servers' do
+      before(:all) { fake 'www.travian.com.sa/register.php', :post }
+
+      it 'calls RegisterData.parse with Agent.register_data' do
+        hub = Hub.new(:sa, 'www.travian.com.sa')
+        data = load_register_data 'www.travian.com.sa'
+        hub.stub(:servers_hash => {})
+        Agent.should_receive(:register_data).with('www.travian.com.sa').and_return(data)
+        RegisterData.should_receive(:parse).with(data, hub).and_return({ ts4: { host: 'ts4.travian.com.sa' } })
+        hub.registerable_servers
+      end
+
+      it 'proxies the hash returned from RegisterData.parse in an instance variable' do
+        hub = Hub.new(:sa, 'www.travian.com.sa')
+        hub.stub(:servers_hash => {})
+        data = load_register_data 'www.travian.com.sa'
+        Agent.stub(:register_data => data)
+        RegisterData.should_receive(:parse).with(data, hub).once.and_return({ ts4: { host: 'ts4.travian.com.sa' } })
+        hub.registerable_servers
+        hub.registerable_servers
+      end
+
+      it 'adds the servers loaded to the @servers_hash instance variable' do
+        hub = Hub.new(:sa, 'www.travian.com.sa')
+        data = load_register_data 'www.travian.com.sa'
+        Agent.stub(:register_data => data, :login_data => data)
+        RegisterData.stub(:parse => { ts4: { host: 'ts4.travian.com.sa' } })
+        servers_hash = {}
+        servers_hash.should_receive(:merge!)
+        hub.stub(:servers_hash => servers_hash)
+        hub.should_receive(:servers_hash).and_return(servers_hash)
+        hub.registerable_servers
+      end
+
+      after(:all) { unfake }
+    end
+
     describe '#servers' do
       it 'calls ServersHash.build passing self' do
         ServersHash.should_receive(:build).with(hub)
