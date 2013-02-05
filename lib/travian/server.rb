@@ -6,7 +6,7 @@ module Travian
     extend Forwardable
     include UriHelper
 
-    attr_reader :host, :hub, :name, :start_date, :players
+    attr_reader :host, :name, :start_date, :players
 
     def initialize(host, name=nil, start_date=nil, players=nil)
       raise ArgumentError, "Must provide a host." unless host
@@ -21,6 +21,10 @@ module Travian
         world_id:   world_id,
         speed:      speed
       }
+    end
+
+    def hub
+      Travian.hubs[hub_code.to_sym]
     end
 
     alias :code :subdomain

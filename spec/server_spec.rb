@@ -31,6 +31,14 @@ module Travian
       end
     end
 
+    describe '#hub' do
+      before(:all) { fake 'www.travian.com' }
+
+      it 'returns the hub object based on the hub_code' do
+        instance.hub.should == Hub.new(:pt, 'www.travian.pt')
+      end
+    end
+
     describe '#world_id' do
       let(:method) { :world_id }
       it_behaves_like 'a proxy to .server_data'
