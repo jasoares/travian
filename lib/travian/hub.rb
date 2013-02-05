@@ -27,20 +27,7 @@ module Travian
     end
 
     def servers
-      @servers ||= ServersHash.build(self)
-    end
-
-    def servers_hash
-      @servers_hash ||= LoginData.parse(Agent.login_data(host))
-    end
-
-    def registerable_servers
-      @register_servers ||= load_registerable_servers
-      @register_servers.map {|k, v| Server.new(v[:host]) }
-    end
-
-    def login_data(server_code=nil)
-      server_code ? servers_hash[server_code.to_sym] : servers_hash
+      @servers ||= ServersHash.build(login_data.merge(register_data))
     end
 
     def mirror?
@@ -83,10 +70,12 @@ module Travian
       !servers.empty? && self.tld != servers.first.tld
     end
 
-    def load_registerable_servers
-      servers = RegisterData.parse(Agent.register_data(host), self)
-      servers_hash.merge!(servers)
-      servers
+    def register_data
+      RegisterData.parse(Agent.register_data(host), self)
+    end
+
+    def login_data
+      LoginData.parse(Agent.login_data(host))
     end
 
     class << self

@@ -29,10 +29,10 @@ module Travian
 
     class << self
 
-      def build(hub)
+      def build(servers_hash)
         hash = {}
-        hub.servers_hash.each_pair do |code, login_data|
-          server = Server.new(*login_data.values)
+        servers_hash.each_pair do |code, server_data|
+          server = Server.new(*server_data.values)
           hash[code] = server unless server.classic?
         end
         ServersHash.new(hash)
