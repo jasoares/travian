@@ -4,15 +4,27 @@ require 'spec_helper'
 module Travian
   describe RegisterData do
     let(:klass) { RegisterData }
+    let(:pt_data) { load_register_data 'www.travian.pt' }
     let(:sa_data) { load_register_data 'www.travian.com.sa' }
     let(:restarting_server_data) { sa_data.css('div[class~="serverPreRegister"]') }
-    let(:hub) { double('Hub', tld: 'com.sa') }
+    let(:hub) { double('Hub', tld: 'com.sa', code: 'sa') }
 
     before(:all) { fake 'ts4.travian.com.sa' }
 
     describe '.parse' do
-      it 'returns an array of restarting server hosts' do
-        klass.parse(sa_data, hub).should == ["ts4.travian.com.sa"]
+      it 'returns a hash of restarting servers with only the host' do
+        klass.parse(sa_data, hub).should == { ts4: { host: "ts4.travian.com.sa" } }
+      end
+
+      it 'returns an empty hash when no restarting servers are found' do
+        hub = double('Hub', :tld => 'pt', code: 'pt')
+        klass.parse(pt_data, hub).should == {}
+      end
+
+      it 'supports the arabia edge case' do
+        fake 'arabiats4.travian.com', :get, 'ts4.travian.com.sa'
+        hub = double('Hub', :tld => 'com', code: 'arabia')
+        klass.parse(sa_data, hub).should == { arabiats4: { host: "arabiats4.travian.com" } }
       end
     end
 
@@ -25,6 +37,11 @@ module Travian
     describe '.find_restarting_host' do
       it 'returns the restarting host for the given number and hub' do
         klass.find_restarting_host(restarting_server_data, hub).should == "ts4.travian.com.sa"
+      end
+
+      it 'returns nil if the restarting host is not found' do
+        Server.stub_chain(:new, :restarting?).and_return(false)
+        klass.find_restarting_host(restarting_server_data, hub).should == nil
       end
     end
 

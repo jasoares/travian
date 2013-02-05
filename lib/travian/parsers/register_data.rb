@@ -4,8 +4,10 @@ module Travian
     extend self
 
     def parse(data, hub)
-      select_restarting_servers(data).map do |server|
-        find_restarting_host(server, hub)
+      select_restarting_servers(data).inject({}) do |hash, server|
+        host = find_restarting_host(server, hub)
+        hash[server_code(host).to_sym] = { host: host } if host
+        hash
       end
     end
 
@@ -15,10 +17,12 @@ module Travian
 
     def find_restarting_host(server, hub)
       name = parse_name(server)
-      server_code = possible_codes(name).find do |code|
+      codes = possible_codes(name)
+      codes.map! {|c| "arabia#{c}" } if hub.code == 'arabia'
+      server_code = codes.find do |code|
         Server.new("#{code}.travian.#{hub.tld}").restarting?
       end
-      server_code ? "#{server_code}.travian.#{hub.tld}" : hub.host
+      server_code ? "#{server_code}.travian.#{hub.tld}" : nil
     end
 
     def select_restarting_servers(data)

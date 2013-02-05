@@ -17,7 +17,7 @@ def proxy_response(host, method, file)
 end
 
 def fake(host, method=:get, file=nil)
-  file ||= "#{File.expand_path('../fakeweb_pages/', __FILE__)}/#{host.gsub(/\//, '_')}.html"
+  file = "#{File.expand_path('../fakeweb_pages/', __FILE__)}/#{file ? file : host.gsub(/\//, '_')}.html"
   proxy_response(host, method, file) unless File.exists?(file)
   FakeWeb.register_uri(
     method,
