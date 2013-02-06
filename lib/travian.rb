@@ -22,8 +22,17 @@ module Travian
     hubs(preload: :servers).reject(&:mirror?).map {|hub| hub.servers.to_a }.inject(&:+)
   end
 
+  def preregisterable_servers
+    hubs.map(&:preregisterable_servers).inject(&:+)
+  end
+
+  def restarting_servers
+    status_restarting = status_servers.reject(&:running?).select(&:restarting?)
+    (status_restarting + preregisterable_servers).uniq {|s| s.host }
+  end
+
   def status_servers
-    status.values.inject(&:+).map {|s| Server(s) }
+    status_data.values.inject(&:+).map {|s| Server(s) }
   end
 
   def clear
@@ -65,7 +74,7 @@ module Travian
     end
   end
 
-  def status
+  def status_data
     @@status_data ||= StatusData.parse(Agent.status_data)
   end
 

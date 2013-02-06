@@ -58,6 +58,31 @@ module Travian
     after(:all) { unfake }
   end
 
+  describe '.preregisterable_servers' do
+    it 'returns a flat array with all the preregisterable servers from each hub' do
+      server = double('Server')
+      hubs = [double('Hub'), double('Hub')].each do |hub|
+        hub.should_receive(:preregisterable_servers).and_return([server, server])
+      end
+      Travian.stub(hubs: hubs)
+      Travian.preregisterable_servers.should == [server] * 4
+    end
+  end
+
+  describe '.restarting_servers' do
+    let(:restarting1) { double('Server', running?: false, restarting?: true,  host: 'ts4.travian.ee')     }
+    let(:restarting2) { double('Server', running?: false, restarting?: true,  host: 'ts3.travian.pl')     }
+    let(:restarting3) { double('Server', running?: false, restarting?: true,  host: 'ts2.travian.ru')     }
+    let(:running)     { double('Server', running?: true,  restarting?: false, host: 'tx3.travian.pt')     }
+    let(:ended)       { double('Server', running?: false, restarting?: false, host: 'ts5.travian.com.sa') }
+
+    it 'returns an array containing all the restarting servers' do
+      Travian.stub(status_servers: [restarting1, restarting2, running, ended])
+      Travian.stub(preregisterable_servers: [restarting2, restarting3])
+      Travian.restarting_servers.should == [restarting1, restarting2, restarting3]
+    end
+  end
+
   describe '.servers' do
     it 'calls .hubs with { preload: :servers } as options' do
       Travian.should_receive(:hubs).with(preload: :servers).and_return([])
