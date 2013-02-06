@@ -86,6 +86,7 @@ module Travian
     before(:all) do
       fake 'www.travian.com'
       fake 'www.travian.de/serverLogin.php', :post
+      fake 'www.travian.de/register.php', :post
     end
 
     it 'returns a Travian::Server object when passed a valid string host' do
