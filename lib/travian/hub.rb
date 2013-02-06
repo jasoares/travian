@@ -32,6 +32,10 @@ module Travian
       @servers ||= ServersHash.build(login_data.merge(register_data))
     end
 
+    def preregisterable_servers
+      register_data.values.map {|server| Travian::Server(server[:host]) }
+    end
+
     def mirror?
       redirected? || borrows_servers?
     end

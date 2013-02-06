@@ -93,6 +93,21 @@ module Travian
       after(:all) { unfake }
     end
 
+    describe '#preregisterable_servers' do
+      it 'calls the register_data for the preregisterable_servers' do
+        hub.should_receive(:register_data).and_return({ ts4: { host: 'ts4.travian.com.sa' } })
+        Travian.stub_chain(:hubs, :[], :servers, :[]).and_return({ ts4: double('Server')})
+        hub.preregisterable_servers
+      end
+
+      it 'returns an array of servers which are open for preregister' do
+        hub.stub(register_data: { ts4: { host: 'ts4.travian.com.sa' } })
+        server = double('Server')
+        Travian.stub_chain(:hubs, :[], :servers).and_return({ ts4: server})
+        hub.preregisterable_servers.should == [ server ]
+      end
+    end
+
     describe '#servers' do
       it 'calls ServersHash.build with login_data and register_data merged' do
         hub.should_receive(:register_data).and_return({ ts1: { host: 'ts1.travian.pt' } })
