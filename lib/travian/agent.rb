@@ -43,10 +43,10 @@ module Travian
 
     def redirected_location(host)
       begin
-        get(host, limit: 1)
+        post("#{host}/register.php", limit: 1)
         host
       rescue HTTParty::RedirectionTooDeep => e
-        e.response.header['Location']
+        URI(e.response.header['Location']).host
       end
     end
 

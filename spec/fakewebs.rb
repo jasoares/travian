@@ -34,7 +34,6 @@ def fake_redirection(hosts, method=:get)
     "http://#{hosts.keys.first}",
     redirection
   )
-  fake hosts.values.first, method
 end
 
 def unfake
@@ -47,7 +46,6 @@ def fake_hub(host)
   if %w{ co.kr co.nz }.include?(tld)
     fake_redirection_of(tld)
   else
-    fake "www.travian.#{tld}"
     fake "www.travian.#{tld}/serverLogin.php", :post
     fake "www.travian.#{tld}/register.php", :post
   end
@@ -56,11 +54,9 @@ end
 def fake_redirection_of(tld)
   case tld
   when "co.kr" then
-    fake_redirection({'www.travian.co.kr' => 'www.travian.com'})
     fake_redirection({'www.travian.co.kr/serverLogin.php' => 'www.travian.com/serverLogin.php'}, :post)
     fake_redirection({'www.travian.co.kr/register.php' => 'www.travian.com/register.php'}, :post)
   when "co.nz" then
-    fake_redirection({'www.travian.co.nz' => 'www.travian.com.au'})
     fake_redirection({'www.travian.co.nz/serverLogin.php' => 'www.travian.com.au'}, :post)
     fake_redirection({'www.travian.co.nz/register.php' => 'www.travian.com.au'}, :post)
   end
