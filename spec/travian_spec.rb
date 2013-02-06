@@ -84,8 +84,8 @@ module Travian
   end
 
   describe '.servers' do
-    it 'calls .hubs with { preload: :servers } as options' do
-      Travian.should_receive(:hubs).with(preload: :servers).and_return([])
+    it 'calls .hubs with no options' do
+      Travian.should_receive(:hubs).with(no_args).and_return([])
       Travian.servers
     end
   end
