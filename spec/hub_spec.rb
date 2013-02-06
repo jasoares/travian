@@ -79,17 +79,12 @@ module Travian
     end
 
     describe '#location' do
-      it 'returns #redirected_location unchanged when the value contains de trailing slash' do
+      it 'returns the value from Agent.redirected_location unchanged' do
         Agent.stub(redirected_location: hub.host)
         hub.location.should == hub.host
       end
 
-      it 'returns #redirected_location with the trailing slash added if not included' do
-        Agent.stub(redirected_location: 'http://www.travian.com.au')
-        hub.location.should == 'www.travian.com.au'
-      end
-
-      it 'proxies the return value on successive calls' do
+      it 'proxies the return value of Agent.redirected_location on successive calls' do
         Agent.should_receive(:redirected_location).with(hub.host).once.and_return(hub.host)
         hub.location
         hub.location

@@ -43,11 +43,7 @@ module Travian
     end
 
     def location
-      unless @location
-        location = Agent.redirected_location(host)
-        @location = UriHelper.strip_protocol(location)
-      end
-      @location
+      @location ||= Agent.redirected_location(host)
     end
 
     def ==(other)

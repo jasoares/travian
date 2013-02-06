@@ -37,6 +37,29 @@ module Travian
       after(:all) { unfake }
     end
 
+    describe '#redirected_location' do
+      it 'calls post with the host plus the "/register.php" path and limit: 1 option' do
+        fake 'www.travian.com/register.php', :post
+        agent.should_receive(:post).with('www.travian.com/register.php', limit: 1).and_call_original
+        agent.redirected_location('www.travian.com')
+      end
+
+      it 'returns the host when no redirection happens' do
+        fake 'www.travian.com/register.php', :post
+        agent.redirected_location('www.travian.com').should == 'www.travian.com'
+      end
+
+      it 'returns the new location when it receives a redirected response' do
+        fake_redirection({'www.travian.co.nz/register.php' => 'www.travian.com.au'}, :post)
+        agent.redirected_location('www.travian.co.nz').should == 'www.travian.com.au'
+      end
+
+      it 'strips the protocol and the path or trailing root slash' do
+        fake_redirection({'www.travian.co.kr/register.php' => 'www.travian.com/register.php'}, :post)
+        agent.redirected_location('www.travian.co.kr').should == 'www.travian.com'
+      end
+    end
+
     describe '#hubs_data' do
       before(:all) { fake 'www.travian.com' }
 
