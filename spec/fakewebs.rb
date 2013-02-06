@@ -17,7 +17,7 @@ def proxy_response(host, method, file)
 end
 
 def fake(host, method=:get, file=nil)
-  file ||= "#{File.expand_path('../fakeweb_pages/', __FILE__)}/#{host.gsub(/\//, '_')}.html"
+  file = "#{File.expand_path('../fakeweb_pages/', __FILE__)}/#{file ? file : host.gsub(/\//, '_')}.html"
   proxy_response(host, method, file) unless File.exists?(file)
   FakeWeb.register_uri(
     method,
@@ -49,6 +49,7 @@ def fake_hub(host)
   else
     fake "www.travian.#{tld}"
     fake "www.travian.#{tld}/serverLogin.php", :post
+    fake "www.travian.#{tld}/register.php", :post
   end
 end
 
@@ -57,8 +58,10 @@ def fake_redirection_of(tld)
   when "co.kr" then
     fake_redirection({'www.travian.co.kr' => 'www.travian.com'})
     fake_redirection({'www.travian.co.kr/serverLogin.php' => 'www.travian.com/serverLogin.php'}, :post)
+    fake_redirection({'www.travian.co.kr/register.php' => 'www.travian.com/register.php'}, :post)
   when "co.nz" then
     fake_redirection({'www.travian.co.nz' => 'www.travian.com.au'})
     fake_redirection({'www.travian.co.nz/serverLogin.php' => 'www.travian.com.au'}, :post)
+    fake_redirection({'www.travian.co.nz/register.php' => 'www.travian.com.au'}, :post)
   end
 end

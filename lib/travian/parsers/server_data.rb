@@ -30,7 +30,8 @@ module Travian
     private
 
     def select_info(data)
-      data.css('head script').last.text
+      script = data.css('head script').last
+      script ? script.text : ""
     end
 
     def select_world_start_info(data)
@@ -38,7 +39,7 @@ module Travian
     end
 
     def sanitize_date_format(date_str)
-      date_str.strip.gsub(/[^\d\.\s:+]|\.$/i, '').gsub(/\s+/, ' ')
+      date_str.strip.gsub(/[^\d\.\s:+-]|\.$/i, '').gsub(/\s+/, ' ')
     end
 
   end

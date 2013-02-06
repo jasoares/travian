@@ -20,7 +20,7 @@ module Travian
     module ClassMethods
 
       def tld(host)
-        host[/travian\.(\w+(?:\.\w+)?)\/?$/]; $1
+        host[/travian\w*\.(\w+(?:\.\w+)?)\/?$/]; $1
       end
 
       def subdomain(host)
@@ -37,6 +37,10 @@ module Travian
       def server_code(host)
         server_code = subdomain(host)
         server_code == 'www' || server_code == 'arabia' ? nil : server_code
+      end
+
+      def strip_protocol(uri)
+        uri.gsub(/\/$/, '')[/(\w+\.travian\w*\.[\w\.\/]+)/]
       end
 
     end

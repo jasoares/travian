@@ -3,14 +3,29 @@ require 'spec_helper'
 module Travian
   describe StatusData do
     let(:data) { load_server_data 'status.travian.com' }
+
     describe '.parse' do
       subject { StatusData.parse(data) }
 
       it { should be_a Hash }
 
-      it { should have(52).hubs }
+      it { should have(51).hubs }
 
       it { should have_key :pt }
+
+      it { should have_key :in }
+
+      it { should have_key :net }
+
+      it { should have_key :asia }
+
+      it { should_not have_key :th }
+
+      it { should_not have_key :ine }
+
+      it { should_not have_key :es }
+
+      it { should_not have_key :gq }
 
     end
 

@@ -22,12 +22,17 @@ module Travian
       self.zip(other).all? {|server1, server2| server1 == server2 }
     end
 
+    def <<(server)
+      @hash[server.code.to_sym] = server
+      @hash
+    end
+
     class << self
 
-      def build(hub)
+      def build(servers_hash)
         hash = {}
-        hub.servers_hash.each_pair do |code, login_data|
-          server = Server.new(*login_data.values)
+        servers_hash.each_pair do |code, server_data|
+          server = Server.new(*server_data.values)
           hash[code] = server unless server.classic?
         end
         ServersHash.new(hash)

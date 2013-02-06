@@ -5,6 +5,7 @@ module Travian
   describe ServerData do
     let(:klass) { ServerData }
     let(:pt_tx3) { load_server_data 'tx3.travian.pt' }
+    let(:ph_ts2) { load_server_data 'ts2.travian.ph' }
     let(:de_ts4) { load_server_data 'ts4.travian.de' }
     let(:arabia_tx4) { load_server_data 'arabiatx4.travian.com' }
     let(:ae_ts6) { load_server_data 'ts6.travian.ae' }
@@ -67,6 +68,16 @@ module Travian
       end
     end
 
+    describe '.select_info' do
+      it 'returns the script string when passed valid data' do
+        klass.send(:select_info, pt_tx3).should_not be_empty
+      end
+
+      it 'returns an empty string when passed invalid data' do
+        klass.send(:select_info, ph_ts2).should be_empty
+      end
+    end
+
     describe '.sanitize_date_format' do
       it 'returns "25.01.13 12:00 +05:30" when passed "25.01.13 12:00 (GMT +05:30).  "' do
         klass.send(:sanitize_date_format, "   25.01.13 12:00 (GMT +05:30).  ").should == "25.01.13 12:00 +05:30"
@@ -78,6 +89,10 @@ module Travian
 
       it 'returns "04.02.13 07:00 +02:00" when passed "04.02.13 07:00 (توقيت غرينتش +02:00)"' do
         klass.send(:sanitize_date_format, "04.02.13 07:00 (توقيت غرينتش +02:00)").should == "04.02.13 07:00 +02:00"
+      end
+
+      it 'returns "25.01.13 12:00 -03:00" when passed "25.01.13 12:00 (Gmt -03:00)"' do
+        klass.send(:sanitize_date_format, "25.01.13 12:00 (Gmt -03:00)").should == "25.01.13 12:00 -03:00"
       end
     end
   end

@@ -3,28 +3,23 @@ require 'spec_helper'
 module Travian
   describe HubsHash do
     let(:klass) { HubsHash }
-
-    it 'should extend HubsData' do
-      klass.should respond_to :parse
-    end
-
-    it 'should extend Agent' do
-      klass.should respond_to :hubs_data
-    end
+    let(:data) { load_server_data 'www.travian.com' }
+    let(:hubs_data) { HubsData.parse(data) }
 
     describe '.build' do
-      before(:all) { fake 'www.travian.com' }
-
-      it 'delegates hubs data parsing to HubsData.parse' do
-        klass.should_receive(:parse).and_return({})
-        klass.build
-      end
-
       it 'returns a HubsHash' do
-        klass.build.should be_a HubsHash
+        klass.build(hubs_data).should be_a HubsHash
       end
 
-      after(:all) { unfake }
+      it 'calls Hub.new for every hub' do
+        Hub.should_receive(:new).exactly(56).times
+        klass.build(hubs_data)
+      end
+
+      it 'passes the hub code and the hub host to every call to Hub.new' do
+        Hub.should_receive(:new).with(:ba, 'www.travian.ba')
+        klass.build([hubs_data.first])
+      end
     end
 
     describe '#empty?' do
@@ -33,7 +28,7 @@ module Travian
       end
 
       it 'returns false if it contains hubs' do
-        hubs_hash = klass.new(pt: Hub.new(:pt, 'http://www.travian.pt/'), net: Hub.new(:net, 'http://www.travian.net'))
+        hubs_hash = klass.new(pt: Hub.new(:pt, 'www.travian.pt'), net: Hub.new(:net, 'http://www.travian.net'))
         hubs_hash.should_not be_empty
       end
     end

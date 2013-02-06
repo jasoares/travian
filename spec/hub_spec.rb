@@ -2,13 +2,13 @@ require 'spec_helper'
 
 module Travian
   describe Hub do
-    let(:hub) { Hub.new(:net, 'http://www.travian.net/') }
+    let(:hub) { Hub.new(:net, 'www.travian.net') }
 
     subject { hub }
 
     its(:code) { should == :net }
 
-    its(:host) { should == 'http://www.travian.net/' }
+    its(:host) { should == 'www.travian.net' }
 
     its(:name) { should == 'Spain' }
 
@@ -53,8 +53,8 @@ module Travian
       end
 
       it 'returns the mirrored hub when called on a mirror hub' do
-        hub.stub(mirror?: true, mirrored_host: 'http://www.travian.com/')
-        mirrored = Hub.new(:com, 'http://www.travian.com/')
+        hub.stub(mirror?: true, mirrored_host: 'www.travian.com')
+        mirrored = Hub.new(:com, 'www.travian.com')
         Travian.stub_chain(:hubs, :find).and_return(mirrored)
         hub.mirrored_hub.should == mirrored
       end
@@ -67,30 +67,30 @@ module Travian
       end
 
       it 'returns the location when called on a redirected hub' do
-        hub.stub(mirror?: true, redirected?: true, location: "http://www.travian.com.au/")
-        hub.mirrored_host.should == "http://www.travian.com.au/"
+        hub.stub(mirror?: true, redirected?: true, location: "www.travian.com.au")
+        hub.mirrored_host.should == "www.travian.com.au"
       end
 
-      it 'returns a base host "http://www.travian." plus a server tld when called on a non redirected mirror' do
+      it 'returns a base host "www.travian." plus a server tld when called on a non redirected mirror' do
         hub.stub(mirror?: true, redirected?: false)
         hub.stub_chain(:servers, :first, :tld).and_return("cl")
-        hub.mirrored_host.should == "http://www.travian.cl/"
+        hub.mirrored_host.should == "www.travian.cl"
       end
     end
 
     describe '#location' do
       it 'returns #redirected_location unchanged when the value contains de trailing slash' do
-        hub.stub(redirected_location: hub.host)
+        Agent.stub(redirected_location: hub.host)
         hub.location.should == hub.host
       end
 
       it 'returns #redirected_location with the trailing slash added if not included' do
-        hub.stub(redirected_location: 'http://www.travian.com.au')
-        hub.location.should == 'http://www.travian.com.au/'
+        Agent.stub(redirected_location: 'http://www.travian.com.au')
+        hub.location.should == 'www.travian.com.au'
       end
 
       it 'proxies the return value on successive calls' do
-        hub.should_receive(:redirected_location).with(hub.host).once.and_return(hub.host)
+        Agent.should_receive(:redirected_location).with(hub.host).once.and_return(hub.host)
         hub.location
         hub.location
       end
@@ -98,36 +98,17 @@ module Travian
       after(:all) { unfake }
     end
 
-    describe '#login_data' do
-      it 'returns a hash of servers login data when no argument is parsed' do
-        hub.should_receive(:servers_hash).with(no_args).and_return({})
-        hub.login_data.should be_a Hash
-      end
-
-      it 'returns the login_data hash for the server code passed' do
-        hub.should_receive(:servers_hash).and_return({ :ts1 => { host: 'http://ts1.travian.pt/', name: "Servidor 1", start_date: Date.today.to_datetime, players: 1298} })
-        hub.login_data('ts1').should == { host: 'http://ts1.travian.pt/', name: "Servidor 1", start_date: Date.today.to_datetime, players: 1298 }
-      end
-    end
-
-    describe '#servers_hash' do
-      it 'proxies the data from calling LoginData.parse on Agent.login_data' do
-        data = load_servers_login_data 'www.travian.net'
-        Agent.should_receive(:login_data).with('http://www.travian.net/').and_return(data)
-        LoginData.should_receive(:parse).with(data).and_return({ :ts1 => { host: 'http://ts1.travian.pt/', name: "Servidor 1", start_date: Date.today.to_datetime, players: 1298} })
-        hub.servers_hash
-        hub.servers_hash
-      end
-    end
-
     describe '#servers' do
-      it 'calls ServersHash.build passing self' do
-        ServersHash.should_receive(:build).with(hub)
+      it 'calls ServersHash.build with login_data and register_data merged' do
+        hub.should_receive(:register_data).and_return({ ts1: { host: 'ts1.travian.pt' } })
+        hub.should_receive(:login_data).and_return({ ts2: { host: 'ts2.travian.pt' } })
+        ServersHash.should_receive(:build).with({ ts1: { host: 'ts1.travian.pt' }, ts2: { host: 'ts2.travian.pt' } })
         hub.servers
       end
 
-      it 'proxies the call to ServersHash.build on successive calls' do
-        ServersHash.should_receive(:build).once.and_return('servers')
+      it 'proxies the return value' do
+        hub.stub(login_data: {}, register_data: {})
+        ServersHash.should_receive(:build).once.and_return({})
         hub.servers
         hub.servers
       end
@@ -135,18 +116,18 @@ module Travian
 
     describe '#==' do
       it 'should compare based on code and host' do
-        hub.should == Hub.new(:net, 'http://www.travian.net/')
+        hub.should == Hub.new(:net, 'www.travian.net')
       end
     end
 
     describe '#redirected?' do
       it 'returns false when location and host are equal' do
-        hub.stub(location: 'http://www.travian.net/')
+        hub.stub(location: 'www.travian.net')
         hub.should_not be_redirected
       end
 
       it 'returns true when location and host are different' do
-        hub.stub(location: 'http://www.travian.com.au/')
+        hub.stub(location: 'www.travian.com.au')
         hub.should be_redirected
       end
     end
@@ -174,16 +155,16 @@ module Travian
 
     describe '.new' do
       it 'raises an ArgumentError when passed an invalid code' do
-        expect { Hub.new(:ic, 'http://www.travian.ic/') }.to raise_error(ArgumentError)
+        expect { Hub.new(:ic, 'www.travian.ic') }.to raise_error(ArgumentError)
       end
 
       it 'accepts a string code' do
-        hub = double('Hub', code: 'de', host: 'http://www.travian.de/')
-        expect { Hub.new(:de, 'http://www.travian.de/') }.not_to raise_error
+        hub = double('Hub', code: 'de', host: 'www.travian.de')
+        expect { Hub.new(:de, 'www.travian.de') }.not_to raise_error
       end
 
       it 'accepts a symbol code' do
-        expect { Hub.new('de', 'http://www.travian.de/') }.not_to raise_error
+        expect { Hub.new('de', 'www.travian.de') }.not_to raise_error
       end
     end
 

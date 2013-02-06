@@ -27,7 +27,7 @@ module Travian
 
       it 'should call each of the parse methods for each element of split_servers returned array' do
         klass.should_receive(:split_servers).with(pt_data).and_return([pt_tx3, pt_tx3, pt_tx3])
-        klass.should_receive(:parse_host).with(pt_tx3).exactly(3).times.and_return('http://tx3.travian.pt/')
+        klass.should_receive(:parse_host).with(pt_tx3).exactly(3).times.and_return('tx3.travian.pt')
         klass.should_receive(:parse_name).with(pt_tx3).exactly(3).times.and_return('Speed 3x')
         klass.should_receive(:parse_start_date).with(pt_tx3).exactly(3).times.and_return(Date.new(2012,2,10,).to_datetime)
         klass.should_receive(:parse_players).with(pt_tx3).exactly(3).times.and_return(3101)
@@ -43,12 +43,12 @@ module Travian
     end
 
     describe '.parse_host' do
-      it 'returns "http://tx3.travian.pt/" when passed tx3.travian.pt login data' do
-        klass.parse_host(pt_tx3).should == "http://tx3.travian.pt/"
+      it 'returns "tx3.travian.pt" when passed tx3.travian.pt login data' do
+        klass.parse_host(pt_tx3).should == "tx3.travian.pt"
       end
 
-      it 'returns "http://arabiatx4.travian.com/" when passed arabiatx4.travianc.com login data' do
-        klass.parse_host(arabia_tx4).should == "http://arabiatx4.travian.com/"
+      it 'returns "arabiatx4.travian.com" when passed arabiatx4.travianc.com login data' do
+        klass.parse_host(arabia_tx4).should == "arabiatx4.travian.com"
       end
     end
 

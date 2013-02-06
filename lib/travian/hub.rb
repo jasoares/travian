@@ -3,7 +3,6 @@ require 'yaml'
 
 module Travian
   class Hub
-    include Agent
     include UriHelper
 
     CODES = YAML.load_file(
@@ -28,15 +27,7 @@ module Travian
     end
 
     def servers
-      @servers ||= ServersHash.build(self)
-    end
-
-    def servers_hash
-      @servers_hash ||= LoginData.parse(Agent.login_data(host))
-    end
-
-    def login_data(server_code=nil)
-      server_code ? servers_hash[server_code.to_sym] : servers_hash
+      @servers ||= ServersHash.build(login_data.merge(register_data))
     end
 
     def mirror?
@@ -53,8 +44,8 @@ module Travian
 
     def location
       unless @location
-        location = redirected_location(host)
-        @location = location[/\/$/] ? location : location + '/'
+        location = Agent.redirected_location(host)
+        @location = UriHelper.strip_protocol(location)
       end
       @location
     end
@@ -70,13 +61,21 @@ module Travian
     def mirrored_host
       return nil unless mirror?
       return location if redirected?
-      "http://www.travian.#{servers.first.tld}/"
+      "www.travian.#{servers.first.tld}"
     end
 
     private
 
     def borrows_servers?
       !servers.empty? && self.tld != servers.first.tld
+    end
+
+    def register_data
+      RegisterData.parse(Agent.register_data(host), self)
+    end
+
+    def login_data
+      LoginData.parse(Agent.login_data(host))
     end
 
     class << self
@@ -93,10 +92,5 @@ module Travian
 
     end
 
-  end
-
-  def Hub(obj)
-    raise ArgumentError unless obj.respond_to?(:code) && obj.respond_to?(:host)
-    Hub.new(obj.code.to_sym, obj.host)
   end
 end

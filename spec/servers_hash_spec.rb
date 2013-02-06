@@ -9,7 +9,6 @@ module Travian
         ts2: { host: 'http://ts2.travian.pt/', name: 'Servidor 2', start_date: Date.today.to_datetime, players: 1670 }
       }
     end
-    let(:hub) { double('Hub', :host => 'http://www.travian.pt/', servers_hash: servers_hash) }
     let(:instance) { ServersHash.new(servers_hash) }
 
     it 'should respond_to each' do
@@ -32,6 +31,13 @@ module Travian
 
     its(:keys) { should === [:ts1, :ts2] }
 
+    describe '#<<' do
+      it 'adds the passed server to the hash' do
+        server = Server.new('ts3.travian.pt')
+        expect { instance << server }.to change { instance[:ts3] }.from(nil).to(server)
+      end
+    end
+
     describe '.new' do
       it 'raises ArgumentError when passed an argument that is not a Hash' do
         expect { klass.new(123) }.to raise_error(ArgumentError)
@@ -43,21 +49,21 @@ module Travian
 
       it 'returns a ServersHash object' do
         Server.stub(:new => server)
-        klass.build(hub).should be_a ServersHash
+        klass.build(servers_hash).should be_a ServersHash
       end
       
       it 'calls Server.new to create server objects to store in the hash' do
         Server.stub(:new => server)
         klass.should_receive(:new).with(kind_of(Hash)).once
-        klass.build(hub)
+        klass.build(servers_hash)
       end
 
       it 'passed login data params to Server.new' do
-        login_data = { host: 'http://tx3.travian.de/', name: 'Speed 3x', start_date: Date.today.to_datetime, players: 2301 }
-        hub.stub(:servers_hash => { :tx3 => login_data })
         server = double('Server', classic?: false)
-        Server.should_receive(:new).with(*login_data.values).and_return server
-        klass.build(hub)
+        server_data = servers_hash.map {|k,v| v.values }
+        Server.should_receive(:new).with(*server_data.first).and_return server
+        Server.should_receive(:new).with(*server_data.last).and_return server
+        klass.build(servers_hash)
       end
     end
   end

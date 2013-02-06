@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Travian
   describe Server do
-    let(:instance) { Server.new('http://tx3.travian.pt/', 'Speed 3x', Date.today.to_datetime, 3103) }
+    let(:instance) { Server.new('tx3.travian.pt', 'Speed 3x', Date.today.to_datetime, 3103) }
 
     it 'should include UriHelper' do
       instance.should respond_to :tld, :subdomain, :hub_code, :server_code
@@ -10,7 +10,7 @@ module Travian
 
     subject { instance }
 
-    its(:host) { should == 'http://tx3.travian.pt/'}
+    its(:host) { should == 'tx3.travian.pt'}
 
     its(:name) { should == 'Speed 3x' }
 
@@ -18,35 +18,64 @@ module Travian
 
     its(:players) { should be 3103 }
 
+    shared_examples 'a proxy to .server_data' do
+      before(:each) do
+        Agent.stub(:server_data)
+        ServerData.stub(parse: ["4.0", "ptx18", 3, nil])
+      end
+
+      it 'only calls server_data once on successive calls' do
+        instance.should_receive(:server_data).and_call_original
+        instance.send(method)
+        instance.send(method)
+      end
+    end
+
+    describe '#hub' do
+      before(:all) { fake 'www.travian.com' }
+
+      it 'returns the hub object based on the hub_code' do
+        instance.hub.should == Hub.new(:pt, 'www.travian.pt')
+      end
+    end
+
     describe '#world_id' do
+      let(:method) { :world_id }
+      it_behaves_like 'a proxy to .server_data'
     end
 
     describe '#speed' do
+      let(:method) { :speed }
+      it_behaves_like 'a proxy to .server_data'
     end
 
     describe '#version' do
+      let(:method) { :version }
+      it_behaves_like 'a proxy to .server_data'
     end
 
     describe '#restart_date' do
+      let(:method) { :restart_date }
+      it_behaves_like 'a proxy to .server_data'
     end
 
     describe '#code' do
-      it 'returns tx3 when host is "http://tx3.travian.pt/"' do
-        instance.stub(host: 'http://tx3.travian.pt/')
+      it 'returns tx3 when host is "tx3.travian.pt"' do
+        instance.stub(host: 'tx3.travian.pt')
         instance.code.should == 'tx3'
       end
 
-      it 'returns arabiatx4 when host is "http://arabiatx4.travian.com/' do
-        instance.stub(host: 'http://arabiatx4.travian.pt/')
+      it 'returns arabiatx4 when host is "arabiatx4.travian.com' do
+        instance.stub(host: 'arabiatx4.travian.pt')
         instance.code.should == 'arabiatx4'
       end
     end
 
     describe '#attributes' do
       it 'returns a hash with the server\'s attributes' do
-        instance.stub(host: 'http://tx3.travian.pt/', code: 'tx3', name: 'Speed 3x', world_id: 'ptx18', speed: 3)
+        instance.stub(host: 'tx3.travian.pt', code: 'tx3', name: 'Speed 3x', world_id: 'ptx18', speed: 3)
         instance.attributes.should == {
-          host: 'http://tx3.travian.pt/',
+          host: 'tx3.travian.pt',
           code: 'tx3',
           name: 'Speed 3x',
           world_id: 'ptx18',

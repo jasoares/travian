@@ -3,8 +3,6 @@ require 'forwardable'
 module Travian
   class HubsHash
     extend Forwardable
-    extend HubsData
-    extend Agent
     include Enumerable
 
     def_delegators :@hash, :[], :size, :empty?, :keys, :has_key?, :values, :each_pair
@@ -22,14 +20,10 @@ module Travian
 
     class << self
 
-      def build
-        hubs = parse(hubs_data)
-        HubsHash.new(
-          hubs.inject({}) do |hash,hub|
-            hash[hub[0]] = Hub.new(hub[0], hub[1])
-            hash
-          end
-        )
+      def build(hubs_hash)
+        hash = {}
+        hubs_hash.each {|code, host| hash[code] = Hub.new(code, host) }
+        HubsHash.new(hash)
       end
 
     end
