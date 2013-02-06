@@ -7,6 +7,7 @@ module Travian
 
   describe Agent do
     let(:agent) { AgentIncluder.new }
+    let(:default_options) { AgentIncluder::DEFAULT_OPTIONS }
 
     describe '#login_data' do
       before(:all) { fake 'www.travian.pt/serverLogin.php', :post }
@@ -74,14 +75,14 @@ module Travian
       context 'given connection is successfull' do
         it 'calls HTTParty.get when passed :get' do
           fake 'www.travian.com'
-          HTTParty.should_receive(:get).with('http://www.travian.com', timeout: 6)
+          HTTParty.should_receive(:get).with('http://www.travian.com', default_options)
           agent.send(:request, :get, 'www.travian.com')
           unfake
         end
 
         it 'calls HTTParty.post when passed :post' do
           fake 'www.travian.com/serverLogin.php', :post
-          HTTParty.should_receive(:post).with('http://www.travian.com/serverLogin.php', timeout: 6)
+          HTTParty.should_receive(:post).with('http://www.travian.com/serverLogin.php', default_options)
           agent.send(:request, :post, 'www.travian.com/serverLogin.php')
           unfake
         end

@@ -8,7 +8,8 @@ module Travian
     extend UriHelper::ClassMethods
 
     MAX_TRIES = 3
-    DEFAULT_OPTIONS = {timeout: 6}
+    USER_AGENT = "Mozilla/5.0 (Windows NT 6.2; Win64; x64; rv:16.0.1) Gecko/20121011 Firefox/16.0.1"
+    DEFAULT_OPTIONS = { timeout: 6, headers: { 'User-Agent' => USER_AGENT } }
 
     def hubs_data
       Nokogiri::HTML(get(MAIN_HUB).body)
