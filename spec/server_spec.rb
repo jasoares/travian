@@ -18,7 +18,7 @@ module Travian
 
     its(:players) { should be 3103 }
 
-    shared_examples 'a proxy to .server_data' do
+    shared_examples 'a proxy to #server_data' do
       before(:each) do
         Agent.stub(:server_data)
         ServerData.stub(parse: ["4.0", "ptx18", 3, nil])
@@ -41,22 +41,66 @@ module Travian
 
     describe '#world_id' do
       let(:method) { :world_id }
-      it_behaves_like 'a proxy to .server_data'
+
+      it 'returns nil when called on a classic server' do
+        Server.new('tc4.travian.pt').world_id.should be nil
+      end
+
+      it_behaves_like 'a proxy to #server_data'
     end
 
     describe '#speed' do
       let(:method) { :speed }
-      it_behaves_like 'a proxy to .server_data'
+
+      it 'calls #classic_speed when called on a classic server' do
+        instance.stub(code: 'tc4')
+        instance.should_receive('classic_speed').and_return(1)
+        instance.speed
+      end
+
+      it_behaves_like 'a proxy to #server_data'
     end
 
     describe '#version' do
       let(:method) { :version }
-      it_behaves_like 'a proxy to .server_data'
+
+      it 'returns "3.6" when called on a classic server' do
+        instance.stub(code: 'tc4')
+        instance.version.should == "3.6"
+      end
+
+      it_behaves_like 'a proxy to #server_data'
     end
 
     describe '#restart_date' do
       let(:method) { :restart_date }
-      it_behaves_like 'a proxy to .server_data'
+
+      it 'returns nil when called on a classic server' do
+        instance.stub(code: 'tc4')
+        instance.restart_date.should be nil
+      end
+
+      it_behaves_like 'a proxy to #server_data'
+    end
+
+    describe '#server_data' do
+      it 'sets @version, @world_id, @speed and @restart_date values' do
+        values = ["4.0", "ptx18", 3, Date.today.to_datetime]
+        Agent.stub(:server_data)
+        ServerData.stub(parse: values)
+        expect {
+          instance.send(:server_data)
+        }.to change {
+          instance.instance_eval("[@version, @world_id, @speed, @restart_date]")
+        }.from([nil] * 4).to(values)
+      end
+
+      it 'returns an array of values' do
+        values = ["4.0", "ptx18", 3, Date.today.to_datetime]
+        Agent.stub(:server_data)
+        ServerData.stub(parse: values)
+        instance.send(:server_data).should == values
+      end
     end
 
     describe '#code' do
@@ -146,6 +190,18 @@ module Travian
       it 'returns false when both #restarting is false and #start_date is not nil' do
         instance.stub(restarting?: false, start_date: Date.today.to_datetime)
         instance.should_not be_ended
+      end
+    end
+
+    describe '#classic_speed' do
+      it 'returns 8 given the code is "tcx8"' do
+        instance.stub(code: 'tcx8')
+        instance.send(:classic_speed).should == 8
+      end
+
+      it 'returns 1 given the code is "tc4"' do
+        instance.stub(code: 'tc4')
+        instance.send(:classic_speed).should == 1
       end
     end
 

@@ -30,19 +30,19 @@ module Travian
     alias :code :subdomain
 
     def world_id
-      server_data unless @world_id; @world_id
+      @world_id ||= classic? ? nil : server_data[1]
     end
 
     def speed
-      server_data unless @speed; @speed
+      @speed ||= classic? ? classic_speed : server_data[2]
     end
 
     def version
-      server_data unless @version; @version
+      @version ||= classic? ? "3.6" : server_data[0]
     end
 
     def restart_date
-      server_data unless @world_id; @restart_date
+      @restart_date ||= classic? ? nil : (@world_id ? nil : server_data[3])
     end
 
     def classic?
@@ -68,8 +68,11 @@ module Travian
     private
 
     def server_data
-      server_data = ServerData.parse(Agent.server_data(host))
-      @version, @world_id, @speed, @restart_date = server_data
+      @version, @world_id, @speed, @restart_date = ServerData.parse(Agent.server_data(host))
+    end
+
+    def classic_speed
+      code[/tcx(\d+)/] ? $1.to_i : 1
     end
   end
 end
