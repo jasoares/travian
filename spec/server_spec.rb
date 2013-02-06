@@ -150,12 +150,21 @@ module Travian
     end
 
     describe '.new' do
-      it 'raises ArgumentError when passed nil as the hub' do
+      it 'raises ArgumentError when passed nil as the host' do
         expect { Server.new(nil) }.to raise_error(
           ArgumentError,
           /Must provide a host./
         )
       end
+
+      subject { Server.new('ts1.travian.pt') }
+
+      its(:name) { should be nil }
+
+      its(:start_date) { should be nil }
+
+      its(:players) { should be 0 }
+
     end
   end
 end

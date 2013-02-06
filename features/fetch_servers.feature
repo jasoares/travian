@@ -24,8 +24,8 @@ Feature: Fetch Servers
       | tx3.travian.pt        | 06/09/2012 00:00 +00:00 | true    | false | false      | nil                     | 3101    |
       | arabiatx4.travian.com | 25/11/2012 00:00 +00:00 | true    | false | false      | nil                     | 9732    |
       | ts5.travian.de        | 25/11/2012 00:00 +00:00 | true    | false | false      | nil                     | 8516    |
-      | ts4.travian.de        | nil                     | false   | true  | true       | 21/01/2013 06:00 +01:00 | nil     |
-      | ts6.travian.de        | nil                     | false   | true  | false      | nil                     | nil     |
+      | ts4.travian.de        | nil                     | false   | true  | true       | 21/01/2013 06:00 +01:00 | 0       |
+      | ts6.travian.de        | nil                     | false   | true  | false      | nil                     | 0       |
 
   Scenario Outline: Server information
     Given I have the server <host>

@@ -8,7 +8,7 @@ module Travian
 
     attr_reader :host, :name, :start_date, :players
 
-    def initialize(host, name=nil, start_date=nil, players=nil)
+    def initialize(host, name=nil, start_date=nil, players=0)
       raise ArgumentError, "Must provide a host." unless host
       @host, @name, @start_date, @players = host, name, start_date, players
     end

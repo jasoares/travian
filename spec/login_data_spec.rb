@@ -6,10 +6,12 @@ module Travian
     let(:pt_data) { load_servers_login_data('www.travian.pt') }
     let(:de_data) { load_servers_login_data('www.travian.de') }
     let(:arabia_data) { load_servers_login_data('arabia.travian.com') }
+    let(:ir_data) { load_servers_login_data('www.travian.ir') }
 
     let(:pt_tx3) { pt_data[8] }
     let(:de_tx3) { de_data[6] }
     let(:arabia_tx4) { arabia_data[1] }
+    let(:ir_ts1) { ir_data[0] }
 
     describe '.parse' do
       it 'returns a hash' do
@@ -65,6 +67,10 @@ module Travian
     describe '.parse_players' do
       it 'returns 3101 when passed tx3.travian.pt login data' do
         klass.parse_players(pt_tx3).should == 3101
+      end
+
+      it 'returns 0 when passed the field is empty' do
+        klass.parse_players(ir_ts1).should == 0
       end
     end
 
