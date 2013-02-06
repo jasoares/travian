@@ -1,5 +1,7 @@
-require 'travian/parsers/login_data'
+require 'travian/agent'
+require 'travian/uri_helper'
 require 'travian/parsers/server_data'
+require 'forwardable'
 
 module Travian
   class Server

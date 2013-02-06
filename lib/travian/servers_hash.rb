@@ -1,3 +1,4 @@
+require 'travian/server'
 require 'forwardable'
 
 module Travian
@@ -30,7 +31,7 @@ module Travian
           server = Server.new(*server_data.values)
           hash[code] = server unless server.classic?
         end
-        ServersHash.new(hash)
+        self.new(hash)
       end
 
     end

@@ -1,3 +1,4 @@
+require 'travian/hub'
 require 'forwardable'
 
 module Travian

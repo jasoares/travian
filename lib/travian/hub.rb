@@ -1,4 +1,6 @@
 require 'travian/servers_hash'
+require 'travian/parsers/register_data'
+require 'travian/parsers/login_data'
 require 'yaml'
 
 module Travian

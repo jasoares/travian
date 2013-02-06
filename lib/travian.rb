@@ -1,13 +1,10 @@
 require 'travian/version'
-require 'travian/exceptions'
 require 'travian/uri_helper'
 require 'travian/agent'
-require 'travian/parsers/register_data'
 require 'travian/parsers/status_data'
 require 'travian/parsers/hubs_data'
 require 'travian/hubs_hash'
 require 'travian/hub'
-require 'travian/servers_hash'
 require 'travian/server'
 
 module Travian
