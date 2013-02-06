@@ -163,33 +163,6 @@ module Travian
       end
     end
 
-    describe '.[]' do
-      before(:all) { fake 'www.travian.com' }
-      it 'returns a hub when passed an object that responds to :code with a valid string' do
-        obj = double('Object', code: 'pt')
-        Hub[obj].should == Travian.hubs[:pt]
-      end
-
-      it 'returns a hub when passed a valid hub code as a Symbol' do
-        Hub[:pt].should == Travian.hubs[:pt]
-      end
-
-      it 'returns a hub when passed a valid hub code as a String' do
-        Hub['pt'].should == Travian.hubs[:pt]
-      end
-
-      it 'returns an array of keys when passed an invalid symbol or string' do
-        Hub['es'].should == Hub::CODES.keys
-      end
-
-      it 'raises ArgumentError when passed an object thad does not respond to :code' do
-        obj = double('Object')
-        expect { Hub[obj] }.to raise_error(ArgumentError)
-      end
-
-      after(:all) { unfake }
-    end
-
     describe '.valid?' do
       it 'returns true when passed a valid code Symbol' do
         Hub.valid?(:pt).should be true
