@@ -44,8 +44,9 @@ module Travian
   end
 
   def Hub(obj)
-    raise ArgumentError unless obj.respond_to?(:code) && obj.respond_to?(:host)
-    Hub.new(obj.code.to_sym, obj.host)
+    raise ArgumentError unless obj.is_a?(String) || obj.respond_to?(:host)
+    hub_code = UriHelper.hub_code(obj.is_a?(String) ? obj : obj.host).to_sym
+    Travian.hubs[hub_code]
   end
 
   def Server(obj)

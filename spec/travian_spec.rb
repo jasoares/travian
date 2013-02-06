@@ -91,17 +91,25 @@ module Travian
   end
 
   describe '::Hub' do
+    it 'gets the hub object from the loaded HubsHash' do
+      Hub.should_not_receive(:new)
+      Travian.should_receive(:hubs).and_return({ com: 'www.travian.com'})
+      Travian::Hub('www.travian.com')
+    end
+
     it 'returns a Travian::Hub object when passed a valid object' do
-      hub = double('Hub', code: 'de', host: 'www.travian.de')
+      hub = double('Hub', host: 'www.travian.de')
+      Travian.stub_chain(:hubs, :[]).and_return(Hub.new(:de, 'www.travian.de'))
       Travian::Hub(hub).should be_a Hub
     end
 
-    it 'raises ArgumentError when passed an object that does not respond to :code' do
-      hub = double('Hub', host: 'www.travian.de')
-      expect { Travian::Hub(hub) }.to raise_error(ArgumentError)
+    it 'returns a Travian::Hub object when passed a valid string host' do
+      hub = 'www.travian.com'
+      Travian.stub_chain(:hubs, :[]).and_return(Hub.new(:com, 'www.travian.com'))
+      Travian::Hub(hub).should be_a Hub
     end
 
-    it 'raises ArgumentError when passed an object that does not respond to :host' do
+    it 'raises ArgumentError when passed an object that does not respond to :host and is not a string' do
       hub = double('Hub', code: 'de')
       expect { Travian::Hub(hub) }.to raise_error(ArgumentError)
     end
