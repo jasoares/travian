@@ -113,9 +113,9 @@ module Travian
       )
     end
 
-    it 'calls Server.new with host when server was not loaded from login data and loads it' do
+    it 'calls Server.new with host when server was not loaded by Hub\'s login or register data' do
       server = Server.new('ts10.travian.de')
-      Travian.hubs[:de].servers.should_receive(:<<).with(server)
+      Travian.stub_chain(:hubs, :[], :servers).and_return({})
       Server.should_receive(:new).with('ts10.travian.de').and_return(server)
       Travian::Server('ts10.travian.de')
     end
@@ -123,7 +123,6 @@ module Travian
     it 'returns the server when found in the hub\'s server list' do
       server = Server.new('ts4.travian.de')
       servers = { :ts4 => server }
-      servers.should_not_receive(:<<)
       Travian.stub_chain(:hubs, :[], :servers).and_return(servers)
       Server.should_not_receive(:new).with('ts4.travian.de')
       Travian::Server('ts4.travian.de')

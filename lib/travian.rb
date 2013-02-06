@@ -49,10 +49,7 @@ module Travian
     host = obj.is_a?(String) ? obj : obj.host
     hub_code = UriHelper.hub_code(host).to_sym
     server_code = UriHelper.server_code(host).to_sym
-    servers = Travian.hubs[hub_code].servers
-    server = servers[server_code] ? servers[server_code] : Server.new(host)
-    servers << server unless servers[server_code]
-    server
+    Travian.hubs[hub_code].servers[server_code] or Server.new(host)
   end
 
   private

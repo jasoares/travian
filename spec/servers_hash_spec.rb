@@ -31,13 +31,6 @@ module Travian
 
     its(:keys) { should === [:ts1, :ts2] }
 
-    describe '#<<' do
-      it 'adds the passed server to the hash' do
-        server = Server.new('ts3.travian.pt')
-        expect { instance << server }.to change { instance[:ts3] }.from(nil).to(server)
-      end
-    end
-
     describe '.new' do
       it 'raises ArgumentError when passed an argument that is not a Hash' do
         expect { klass.new(123) }.to raise_error(ArgumentError)
