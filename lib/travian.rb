@@ -19,7 +19,7 @@ module Travian
   end
 
   def servers
-    hubs.reject(&:mirror?).map {|hub| hub.servers.to_a }.inject(&:+)
+    hubs.reject(&:mirror?).inject([]) {|sum,hub| sum += hub.servers.to_a }
   end
 
   def preregisterable_servers
