@@ -154,42 +154,38 @@ module Travian
 
     describe '#restarting?' do
       it 'returns true if #restart_date is not nil' do
-        instance.stub(restart_date: Date.today.to_datetime)
+        instance.stub(ended?: true, restart_date: Date.today.to_datetime)
         instance.should be_restarting
       end
 
       it 'returns false if #restart_date is nil' do
-        instance.stub(restart_date: nil)
+        instance.stub(ended?: true, restart_date: nil)
         instance.should_not be_restarting
+      end
+
+      it 'does not check the restart date if the server is running' do
+        instance.stub(ended?: false)
+        instance.should_not_receive(:restart_date)
+        instance.restarting?
       end
     end
 
     describe '#running?' do
-      it 'returns true if #start_date is not nil' do
-        instance.stub(start_date: Date.today.to_datetime)
+      it 'returns the opposite of ended?' do
+        instance.stub(ended?: false)
         instance.should be_running
-      end
-
-      it 'returns false if #start_date is nil' do
-        instance.stub(start_date: nil)
-        instance.should_not be_running
       end
     end
 
     describe '#ended?' do
-      it 'returns true if #restarting? is true' do
-        instance.stub(restarting?: true)
-        instance.should be_ended
-      end
-
       it 'returns true if #start_date is nil' do
-        instance.stub(restarting?: false, start_date: nil)
-        instance.should be_ended
+        instance.stub(start_date: nil)
+        instance.ended?.should be true
       end
 
-      it 'returns false when both #restarting is false and #start_date is not nil' do
-        instance.stub(restarting?: false, start_date: Date.today.to_datetime)
-        instance.should_not be_ended
+      it 'returns false when #start_date is not nil' do
+        instance.stub(start_date: Date.today.to_datetime)
+        instance.ended?.should be false
       end
     end
 

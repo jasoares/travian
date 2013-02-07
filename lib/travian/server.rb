@@ -52,15 +52,15 @@ module Travian
     end
 
     def ended?
-      restarting? or start_date.nil?
+      start_date.nil?
     end
 
     def restarting?
-      restart_date ? true : false
+      ended? && !restart_date.nil?
     end
 
     def running?
-      start_date ? true : false
+      !ended?
     end
 
     def ==(other)
