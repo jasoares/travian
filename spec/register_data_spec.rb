@@ -12,8 +12,8 @@ module Travian
     before(:all) { fake 'ts4.travian.com.sa' }
 
     describe '.parse' do
-      it 'returns a hash of restarting servers with only the host' do
-        klass.parse(sa_data, hub).should == { ts4: { host: "ts4.travian.com.sa" } }
+      it 'returns a hash of restarting servers with only host and name' do
+        klass.parse(sa_data, hub).should == { ts4: { host: "ts4.travian.com.sa", name: 'السيرفر 4' } }
       end
 
       it 'returns an empty hash when no restarting servers are found' do
@@ -24,7 +24,7 @@ module Travian
       it 'supports the arabia edge case' do
         fake 'arabiats4.travian.com', :get, 'ts4.travian.com.sa'
         hub = double('Hub', :tld => 'com', code: 'arabia')
-        klass.parse(sa_data, hub).should == { arabiats4: { host: "arabiats4.travian.com" } }
+        klass.parse(sa_data, hub).should == { arabiats4: { host: "arabiats4.travian.com", name: 'السيرفر 4'} }
       end
     end
 
@@ -36,12 +36,12 @@ module Travian
 
     describe '.find_restarting_host' do
       it 'returns the restarting host for the given number and hub' do
-        klass.find_restarting_host(restarting_server_data, hub).should == "ts4.travian.com.sa"
+        klass.find_restarting_host("السيرفر 4", hub).should == "ts4.travian.com.sa"
       end
 
       it 'returns nil if the restarting host is not found' do
         Server.stub_chain(:new, :restarting?).and_return(false)
-        klass.find_restarting_host(restarting_server_data, hub).should == nil
+        klass.find_restarting_host("السيرفر 4", hub).should == nil
       end
     end
 

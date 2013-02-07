@@ -5,8 +5,9 @@ module Travian
 
     def parse(data, hub)
       select_restarting_servers(data).inject({}) do |hash, server|
-        host = find_restarting_host(server, hub)
-        hash[server_code(host).to_sym] = { host: host } if host
+        name = parse_name(server)
+        host = find_restarting_host(name, hub)
+        hash[server_code(host).to_sym] = { host: host, name: name} if host
         hash
       end
     end
@@ -15,8 +16,7 @@ module Travian
       data.css('div.name').text.strip
     end
 
-    def find_restarting_host(server, hub)
-      name = parse_name(server)
+    def find_restarting_host(name, hub)
       codes = possible_codes(name)
       codes.map! {|c| "arabia#{c}" } if hub.code == 'arabia'
       server_code = codes.find do |code|
