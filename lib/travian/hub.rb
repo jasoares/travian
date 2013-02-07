@@ -29,7 +29,11 @@ module Travian
     end
 
     def servers
-      @servers ||= ServersHash.build(login_data.merge(register_data))
+      ServersHash.build(login_data.merge(register_data))
+    end
+
+    def loginable_servers
+      login_data.values.map {|server| Travian::Server(server[:host]) }
     end
 
     def preregisterable_servers
@@ -73,11 +77,11 @@ module Travian
     end
 
     def register_data
-      RegisterData.parse(Agent.register_data(host), self)
+      @register_data ||= RegisterData.parse(Agent.register_data(host), self)
     end
 
     def login_data
-      LoginData.parse(Agent.login_data(host))
+      @login_data ||= LoginData.parse(Agent.login_data(host))
     end
 
     class << self

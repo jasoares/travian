@@ -93,8 +93,23 @@ module Travian
       after(:all) { unfake }
     end
 
+    describe '#loginable_servers' do
+      it 'calls .login_data for the hash of loginable servers' do
+        hub.should_receive(:login_data).and_return({ ts4: { host: 'ts4.travian.com.sa' } })
+        Travian.stub_chain(:hubs, :[], :servers, :[]).and_return({ ts4: double('Server') })
+        hub.loginable_servers
+      end
+
+      it 'returns an array of running servers' do
+        hub.stub(login_data: { ts4: { host: 'ts4.travian.com' } })
+        server = double('Server')
+        Travian.stub_chain(:hubs, :[], :servers).and_return({ ts4: server })
+        hub.loginable_servers.should == [ server ]
+      end
+    end
+
     describe '#preregisterable_servers' do
-      it 'calls the register_data for the preregisterable_servers' do
+      it 'calls .register_data for the preregisterable_servers' do
         hub.should_receive(:register_data).and_return({ ts4: { host: 'ts4.travian.com.sa' } })
         Travian.stub_chain(:hubs, :[], :servers, :[]).and_return({ ts4: double('Server')})
         hub.preregisterable_servers
@@ -113,13 +128,6 @@ module Travian
         hub.should_receive(:register_data).and_return({ ts1: { host: 'ts1.travian.pt' } })
         hub.should_receive(:login_data).and_return({ ts2: { host: 'ts2.travian.pt' } })
         ServersHash.should_receive(:build).with({ ts1: { host: 'ts1.travian.pt' }, ts2: { host: 'ts2.travian.pt' } })
-        hub.servers
-      end
-
-      it 'proxies the return value' do
-        hub.stub(login_data: {}, register_data: {})
-        ServersHash.should_receive(:build).once.and_return({})
-        hub.servers
         hub.servers
       end
     end
