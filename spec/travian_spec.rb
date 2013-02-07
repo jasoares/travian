@@ -61,7 +61,7 @@ module Travian
   describe '.preregisterable_servers' do
     it 'returns a flat array with all the preregisterable servers from each hub' do
       server = double('Server')
-      hubs = [double('Hub'), double('Hub')].each do |hub|
+      hubs = [double('Hub', mirror?: false), double('Hub', mirror?: false)].each do |hub|
         hub.should_receive(:preregisterable_servers).and_return([server, server])
       end
       Travian.stub(hubs: hubs)
@@ -79,14 +79,23 @@ module Travian
     it 'returns an array containing all the restarting servers' do
       Travian.stub(status_servers: [restarting1, restarting2, running, ended])
       Travian.stub(preregisterable_servers: [restarting2, restarting3])
-      Travian.restarting_servers.should == [restarting1, restarting2, restarting3]
+      Travian.restarting_servers.should == [restarting2, restarting3, restarting1]
     end
   end
 
   describe '.servers' do
-    it 'calls .hubs with no options' do
-      Travian.should_receive(:hubs).with(no_args).and_return([])
+    it 'includes status, running and preregisterable servers' do
+      Travian.should_receive(:status_servers).and_return([])
+      Travian.should_receive(:running_servers).and_return([])
+      Travian.should_receive(:preregisterable_servers).and_return([])
       Travian.servers
+    end
+
+    it 'should not return duplicate servers' do
+      Travian.stub(status_servers: [Server.new('tx3.travian.pt')])
+      Travian.stub(running_servers: [Server.new('tx3.travian.pt')])
+      Travian.stub(preregisterable_servers: [])
+      Travian.servers.should == Travian.servers.uniq {|s| s.host }
     end
   end
 

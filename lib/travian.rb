@@ -19,16 +19,19 @@ module Travian
   end
 
   def servers
-    hubs.reject(&:mirror?).inject([]) {|sum,hub| sum += hub.servers.to_a }
+    (running_servers + preregisterable_servers + status_servers).uniq(&:host)
   end
 
   def preregisterable_servers
-    hubs.map(&:preregisterable_servers).inject(&:+)
+    hubs.reject(&:mirror?).inject([]) {|sum,hub| sum += hub.preregisterable_servers }
+  end
+
+  def running_servers
+    hubs.reject(&:mirror?).inject([]) {|sum,hub| sum += hub.loginable_servers }
   end
 
   def restarting_servers
-    status_restarting = status_servers.reject(&:running?).select(&:restarting?)
-    (status_restarting + preregisterable_servers).uniq {|s| s.host }
+    (preregisterable_servers + status_servers.select(&:restarting?)).uniq {|s| s.host }
   end
 
   def status_servers
