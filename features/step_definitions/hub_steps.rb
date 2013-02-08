@@ -1,15 +1,15 @@
 Given /^I (?:have|load) all travian hubs$/ do
-  @hubs = Travian.hubs
+  @hubs = Travian.hubs(mirrors: true)
 end
 
 Given /^the hub with code (\w+)$/ do |code|
-  @hub = Travian.hubs[code.to_sym]
+  @hub = Travian.data[code.to_sym]
   @hub.should_not be_nil
 end
 
 Given /^the (\w+(?:\s\w+)?) hub$/ do |name|
   code = Travian::Hub::CODES.find {|k,v| v[:hub] == name }.first
-  @hub = Travian.hubs[code]
+  @hub = Travian.data[code]
 end
 
 Given /^the (\w+(?:\s\w+)?) hub (borrows servers|redirects) (?:from|to) the (\w+) hub$/ do |mirror, borrow_redirect, main_hub|
@@ -24,7 +24,7 @@ Given /^the (\w+(?:\s\w+)?) hub (borrows servers|redirects) (?:from|to) the (\w+
 end
 
 When /^I fetch its servers$/ do
-  @servers = @hub.servers
+  @servers = @hub.loginable_servers
 end
 
 When /^I fetch (\w+(?:\s\w+)?)'s servers$/ do |name|
@@ -55,7 +55,7 @@ Then /^its (host|name|language) should be (.+)$/ do |attr, value|
 end
 
 Then /^I should get the same servers as those from the (\w+) hub$/ do |name|
-  servers = @hub.servers
+  servers = @hub.loginable_servers
   step "the #{name} hub"
   step "I fetch its servers"
   servers.should == @servers

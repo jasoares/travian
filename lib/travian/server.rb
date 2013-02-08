@@ -26,7 +26,7 @@ module Travian
     end
 
     def hub
-      Travian.hubs[hub_code.to_sym]
+      Travian.data[hub_code.to_sym]
     end
 
     alias :code :subdomain

@@ -8,7 +8,7 @@ Feature: Fetch Servers
   Scenario: Loading portuguese servers
     Given the Portugal hub
     When I fetch its servers
-    Then I should have 9 servers
+    Then I should have 10 servers
 
   Scenario Outline: Server State
     Given I fetch the server <host>

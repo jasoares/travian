@@ -96,39 +96,49 @@ module Travian
     describe '#loginable_servers' do
       it 'calls .login_data for the hash of loginable servers' do
         hub.should_receive(:login_data).and_return({ ts4: { host: 'ts4.travian.com.sa' } })
-        Travian.stub_chain(:hubs, :[], :servers, :[]).and_return({ ts4: double('Server') })
+        hub.stub(:data).and_return({ ts4: double('Server') })
+        hub.loginable_servers
+      end
+
+      it 'calls data to get the server objects' do
+        hub.stub(:login_data).and_return({ ts4: { host: 'ts4.travian.com.sa' } })
+        hub.should_receive(:data).and_return({ ts4: double('Server') })
         hub.loginable_servers
       end
 
       it 'returns an array of running servers' do
         hub.stub(login_data: { ts4: { host: 'ts4.travian.com' } })
         server = double('Server')
-        Travian.stub_chain(:hubs, :[], :servers).and_return({ ts4: server })
+        hub.stub(:data).and_return({ ts4: server })
         hub.loginable_servers.should == [ server ]
       end
     end
 
     describe '#preregisterable_servers' do
-      it 'calls .register_data for the preregisterable_servers' do
+      it 'calls .register_data for the preregisterable_servers hash' do
         hub.should_receive(:register_data).and_return({ ts4: { host: 'ts4.travian.com.sa' } })
-        Travian.stub_chain(:hubs, :[], :servers, :[]).and_return({ ts4: double('Server')})
+        hub.stub(:data).and_return({})
         hub.preregisterable_servers
       end
 
-      it 'returns an array of servers which are open for preregister' do
+      it 'calls data for the server objects hash' do
         hub.stub(register_data: { ts4: { host: 'ts4.travian.com.sa' } })
         server = double('Server')
-        Travian.stub_chain(:hubs, :[], :servers).and_return({ ts4: server})
+        hub.should_receive(:data).and_return({ ts4: server})
         hub.preregisterable_servers.should == [ server ]
       end
     end
 
     describe '#servers' do
-      it 'calls ServersHash.build with login_data and register_data merged' do
-        hub.should_receive(:register_data).and_return({ ts1: { host: 'ts1.travian.pt' } })
-        hub.should_receive(:login_data).and_return({ ts2: { host: 'ts2.travian.pt' } })
-        ServersHash.should_receive(:build).with({ ts1: { host: 'ts1.travian.pt' }, ts2: { host: 'ts2.travian.pt' } })
+      it 'calls data to get the servers hash' do
+        hub.should_receive(:data).and_return({ ts1: double('Server'), ts2: double('Server') })
         hub.servers
+      end
+
+      it 'returns the values from the data hash' do
+        server = double('Server')
+        hub.stub(:data).and_return({ ts1: server, ts2: server })
+        hub.servers.should == [server, server]
       end
     end
 

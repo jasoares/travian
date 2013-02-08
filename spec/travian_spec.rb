@@ -7,55 +7,40 @@ module Travian
     it { should == 'www.travian.com' }
   end
 
-  describe '.hubs' do
+  describe '.data' do
     before(:all) { fake 'www.travian.com' }
 
-    let(:hubs) { Travian.hubs }
+    let(:data) { Travian.data }
 
-    subject { hubs }
+    subject { data }
 
-    it { should be_a HubsHash }
+    it { should be_a Hash }
 
     it { should have_key :pt }
 
     its(:size) { should be 56 }
 
     it 'each value should be a Hub' do
-      hubs.values.all? {|v| v.should be_a Hub }
-    end
-
-    context 'when no options are passed' do
-      before(:each) do
-        Travian.clear
-      end
-
-      it 'only fetches the hub list' do
-        expect{ Travian.hubs }.not_to raise_exception
-      end
-    end
-
-    context 'when passed :preload => :servers' do
-      it 'fetches every hub servers list in advance' do
-        Travian.hubs.each {|hub| hub.should_receive(:servers) }
-        Travian.hubs(:preload => :servers)
-      end
-    end
-
-    context 'when passed :preload => :all' do
-      before(:each) do
-        @server = double('Server', attributes: nil)
-      end
-
-      it 'fetches every hub location, servers and its attributes in advance' do
-        Travian.hubs.each do |hub|
-          hub.should_receive(:servers).twice.and_return([@server])
-        end
-        @server.should_receive(:attributes)
-        Travian.hubs(:preload => :all)
-      end
+      data.values.all? {|v| v.should be_a Hub }
     end
 
     after(:all) { unfake }
+  end
+
+  describe '.hubs' do
+    context 'when no options are passed' do
+      it 'should not include mirrors' do
+        Travian.stub(:data).and_return({ kr: double('Hub', mirror?: true), com: double('Hub', mirror?: false) })
+        Travian.hubs.size.should be 1
+      end
+    end
+
+    context 'when passed { mirrors: true }' do
+      it 'should include mirrors' do
+        Travian.stub(:data).and_return({ kr: double('Hub', mirror?: true), com: double('Hub', mirror?: false) })
+        Travian.hubs(mirrors: true).size.should be 2
+      end
+    end
   end
 
   describe '.preregisterable_servers' do
@@ -100,21 +85,20 @@ module Travian
   end
 
   describe '::Hub' do
-    it 'gets the hub object from the loaded HubsHash' do
-      Hub.should_not_receive(:new)
-      Travian.should_receive(:hubs).and_return({ com: 'www.travian.com'})
+    it 'gets the hub object from the data hash' do
+      Travian.should_receive(:data).and_return({ com: double('Hub') })
       Travian::Hub('www.travian.com')
     end
 
     it 'returns a Travian::Hub object when passed a valid object' do
       hub = double('Hub', host: 'www.travian.de')
-      Travian.stub_chain(:hubs, :[]).and_return(Hub.new(:de, 'www.travian.de'))
+      Travian.stub(:data).and_return({ de: Hub.new(:de, 'www.travian.de') })
       Travian::Hub(hub).should be_a Hub
     end
 
     it 'returns a Travian::Hub object when passed a valid string host' do
       hub = 'www.travian.com'
-      Travian.stub_chain(:hubs, :[]).and_return(Hub.new(:com, 'www.travian.com'))
+      Travian.stub(:data).and_return({ com: Hub.new(:com, 'www.travian.com') })
       Travian::Hub(hub).should be_a Hub
     end
 
@@ -157,15 +141,14 @@ module Travian
 
     it 'calls Server.new with host when server was not loaded by Hub\'s login or register data' do
       server = Server.new('ts10.travian.de')
-      Travian.stub_chain(:hubs, :[], :servers).and_return({})
-      Server.should_receive(:new).with('ts10.travian.de').and_return(server)
+      Travian.stub(:data).and_return({ de: {} })
+      Server.should_receive(:new).with('ts10.travian.de')
       Travian::Server('ts10.travian.de')
     end
 
     it 'returns the server when found in the hub\'s server list' do
       server = Server.new('ts4.travian.de')
-      servers = { :ts4 => server }
-      Travian.stub_chain(:hubs, :[], :servers).and_return(servers)
+      Travian.stub(:data).and_return({ de: { ts4: server} })
       Server.should_not_receive(:new).with('ts4.travian.de')
       Travian::Server('ts4.travian.de')
     end

@@ -3,7 +3,6 @@ require 'travian/uri_helper'
 require 'travian/agent'
 require 'travian/parsers/status_data'
 require 'travian/parsers/hubs_data'
-require 'travian/hubs_hash'
 require 'travian/hub'
 require 'travian/server'
 
@@ -12,10 +11,15 @@ module Travian
 
   MAIN_HUB = 'www.travian.com'
 
+  def data
+    @@data ||= hubs_data.inject({}) do |hash, hub|
+      hash[hub[0]] = Hub.new(*hub)
+      hash
+    end
+  end
+
   def hubs(options={})
-    @@hubs ||= HubsHash.build(HubsData.parse(Agent.hubs_data))
-    options[:preload] && preload(options[:preload])
-    @@hubs
+    options[:mirrors] ? data.values : data.values.reject(&:mirror?)
   end
 
   def servers
@@ -23,11 +27,11 @@ module Travian
   end
 
   def preregisterable_servers
-    hubs.reject(&:mirror?).inject([]) {|sum,hub| sum += hub.preregisterable_servers }
+    hubs.inject([]) {|sum,hub| sum += hub.preregisterable_servers }
   end
 
   def running_servers
-    hubs.reject(&:mirror?).inject([]) {|sum,hub| sum += hub.loginable_servers }
+    hubs.inject([]) {|sum,hub| sum += hub.loginable_servers }
   end
 
   def restarting_servers
@@ -39,7 +43,7 @@ module Travian
   end
 
   def clear
-    @@hubs = nil
+    @@data = nil
   end
 
   def preload(options=:all)
@@ -49,7 +53,7 @@ module Travian
   def Hub(obj)
     raise ArgumentError unless obj.is_a?(String) || obj.respond_to?(:host)
     hub_code = UriHelper.hub_code(obj.is_a?(String) ? obj : obj.host).to_sym
-    Travian.hubs[hub_code]
+    data[hub_code]
   end
 
   def Server(obj)
@@ -58,28 +62,32 @@ module Travian
     host = obj.is_a?(String) ? obj : obj.host
     hub_code = UriHelper.hub_code(host).to_sym
     server_code = UriHelper.server_code(host).to_sym
-    Travian.hubs[hub_code].servers[server_code] or Server.new(host)
+    data[hub_code][server_code] or Server.new(host)
   end
 
   private
 
   def preload_servers
-    @@hubs.map do |hub|
+    hubs.map do |hub|
       Thread.new { hub.servers }
     end.each(&:join)
   end
 
   def preload_server_attributes
     preload_servers
-    @@hubs.each do |hub|
-      hub.servers.inject([]) do |pool,server|
-        pool << Thread.new { server.attributes }
+    hubs.each do |hub|
+      hub.servers.map do |server|
+        Thread.new { server.attributes }
       end.each(&:join)
     end
   end
 
   def status_data
     @@status_data ||= StatusData.parse(Agent.status_data)
+  end
+
+  def hubs_data
+    @@hubs_data ||= HubsData.parse(Agent.hubs_data)
   end
 
 end

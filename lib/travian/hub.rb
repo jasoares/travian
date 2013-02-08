@@ -1,4 +1,3 @@
-require 'travian/servers_hash'
 require 'travian/parsers/register_data'
 require 'travian/parsers/login_data'
 require 'yaml'
@@ -29,15 +28,19 @@ module Travian
     end
 
     def servers
-      ServersHash.build(login_data.merge(register_data))
+      data.values
+    end
+
+    def [](server_code)
+      data[server_code.to_sym]
     end
 
     def loginable_servers
-      login_data.values.map {|server| Travian::Server(server[:host]) }
+      login_data.keys.map {|server_code| data[server_code] }.reject(&:nil?)
     end
 
     def preregisterable_servers
-      register_data.values.map {|server| Travian::Server(server[:host]) }
+      register_data.keys.map {|server_code| data[server_code] }
     end
 
     def mirror?
@@ -46,7 +49,7 @@ module Travian
 
     def mirrored_hub
       @mirrored_hub ||= if mirror?
-        Travian.hubs.find {|h| h.host == mirrored_host }
+        Travian.hubs(mirrors: true).find {|h| h.host == mirrored_host }
       else
         nil
       end
@@ -74,6 +77,18 @@ module Travian
 
     def borrows_servers?
       !servers.empty? && self.tld != servers.first.tld
+    end
+
+    def data
+      @data ||= all_data.values.inject({}) do |hash, server_data|
+        server = Server.new(*server_data.values)
+        hash[server.code.to_sym] = server
+        hash
+      end
+    end
+
+    def all_data
+      login_data.merge(register_data)
     end
 
     def register_data
