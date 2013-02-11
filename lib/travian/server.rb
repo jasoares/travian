@@ -8,7 +8,7 @@ module Travian
     extend Forwardable
     include UriHelper
 
-    attr_reader :host, :name, :start_date, :players
+    attr_reader :host, :start_date, :players
 
     def initialize(host, name=nil, start_date=nil, players=0)
       raise ArgumentError, "Must provide a host." unless host
@@ -29,6 +29,10 @@ module Travian
       Travian.data[hub_code.to_sym]
     end
 
+    def name
+      @name ||= restarting? ? server_register_data : nil
+    end
+
     alias :code :subdomain
 
     def world_id
@@ -45,6 +49,10 @@ module Travian
 
     def restart_date
       @restart_date ||= classic? ? nil : (@world_id ? nil : server_data[3])
+    end
+
+    def server_id
+      @server_id ||= server_data[4]
     end
 
     def classic?
@@ -70,7 +78,11 @@ module Travian
     private
 
     def server_data
-      @version, @world_id, @speed, @restart_date = ServerData.parse(Agent.server_data(host))
+      @version, @world_id, @speed, @restart_date, @server_id = ServerData.parse(Agent.server_data(host))
+    end
+
+    def server_register_data
+      RegisterData.parse_selected_name(Agent.register_data(hub.host, server_id))
     end
 
     def classic_speed

@@ -32,13 +32,14 @@ Feature: Fetch Servers
     Then I should know it is <speed> times fast
     And that its name is <name>
     And its identifier is <world id>
+    And its internal identifier is <server id>
     And its on v<version>
     And <code> should be its code
 
     Examples:
-      | host                  | code      | name         | speed | world id | version |
-      | tx3.travian.pt        | tx3       | Speed 3x     | 3     | ptx18    | 4.0     |
-      | arabiatx4.travian.com | arabiatx4 | arabia 4x    | 4     | sy1717   | 4.0     |
-      | ts5.travian.de        | ts5       | Welt 5       | 1     | de55     | 4.0     |
-      | ts4.travian.de        | ts4       | nil          | 1     | de44     | 4.0     |
-      | ts6.travian.de        | ts6       | nil          | 1     | de66     | 4.0     |
+      | host                  | code      | name         | speed | world id | server id | version |
+      | tx3.travian.pt        | tx3       | Speed 3x     | 3     | ptx18    | ptx       | 4.0     |
+      | arabiatx4.travian.com | arabiatx4 | arabia 4x    | 4     | sy1717   | sy17      | 4.0     |
+      | ts5.travian.de        | ts5       | Welt 5       | 1     | de55     | de5       | 4.0     |
+      | ts4.travian.de        | ts4       | Welt 4       | 1     | de44     | de4       | 4.0     |
+      | ts6.travian.de        | ts6       | nil          | 1     | de66     | de6       | 4.0     |

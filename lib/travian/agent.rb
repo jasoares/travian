@@ -19,8 +19,9 @@ module Travian
       hub_data(host, "/serverLogin.php")
     end
 
-    def register_data(host)
-      hub_data(host, "/register.php")
+    def register_data(host, server_id=nil)
+      path = "/register.php" + (server_id ? "?server=#{server_id}" : "")
+      hub_data(host, path)
     end
 
     def hub_data(host, path)

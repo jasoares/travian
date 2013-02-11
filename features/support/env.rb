@@ -16,6 +16,8 @@ else
   fake 'tx3.travian.pt'
   fake 'arabiatx4.travian.com'
   fake 'ts4.travian.de'
+  fake 'www.travian.de/register.php?server=de4', :post
   fake 'ts5.travian.de'
   fake 'ts6.travian.de'
+  fake 'www.travian.de/register.php?server=de6', :post
 end

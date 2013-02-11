@@ -29,6 +29,11 @@ module Travian
       data.css('div[class~="serverPreRegister"]')
     end
 
+    def parse_selected_name(data)
+      server_data = data.css('div[class~="server"]').first
+      parse_name(server_data)
+    end
+
     def possible_codes(name)
       n = name[/\d+/]
       has_x = name[/x/]

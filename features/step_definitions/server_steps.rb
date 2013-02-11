@@ -24,6 +24,10 @@ Then /^its identifier is (\w+\d+)$/ do |world_id|
   @server.world_id.should == world_id
 end
 
+Then /^its internal identifier is (\w+)$/ do |server_id|
+  @server.server_id.should == server_id
+end
+
 Then /^its on v(\d\.\d)$/ do |version|
   @server.version.should == version
 end

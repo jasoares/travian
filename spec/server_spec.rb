@@ -96,10 +96,20 @@ module Travian
       end
 
       it 'returns an array of values' do
-        values = ["4.0", "ptx18", 3, Date.today.to_datetime]
+        values = ["4.0", "ptx18", 3, Date.today.to_datetime, 'server=ptx']
         Agent.stub(:server_data)
         ServerData.stub(parse: values)
         instance.send(:server_data).should == values
+      end
+    end
+
+    describe '#server_register_data' do
+      it 'calls Agent.register_data with the hub\'s host and the server_id' do
+        instance.stub(server_id: 'server=pt4')
+        instance.stub(hub: double('Hub', host: 'www.travian.pt'))
+        RegisterData.stub(:parse_selected_name)
+        Agent.should_receive(:register_data).with('www.travian.pt', 'server=pt4')
+        instance.send(:server_register_data)
       end
     end
 
@@ -210,8 +220,6 @@ module Travian
       end
 
       subject { Server.new('ts1.travian.pt') }
-
-      its(:name) { should be nil }
 
       its(:start_date) { should be nil }
 

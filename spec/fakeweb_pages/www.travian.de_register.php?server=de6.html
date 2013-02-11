@@ -1,0 +1,177 @@
+<h1>Registrieren</h1>
+
+
+			<div class="greenbox registrationBox">
+				<div class="greenbox-top"></div>
+				<div class="greenbox-content">
+		
+<div id="registrationSuccess">
+	Vielen Dank für deine Registrierung. Accountdaten und Aktivierungscode werden dir geschickt.	<a class="popcon"  href="#activation"></a>
+</div>
+
+<form name="registration" id="registration">
+	<div id="registrationForm" class="registrationForm">
+		<div class="serverList">
+			
+<div class="activeServer currentServer">
+	<input id="activeServerId" type="hidden" name="activeServerId" value="6" />
+	<div class="server serverOdd serverBig serverNormal serverBigNormal ">
+	<div class="name">
+		Welt 6	</div>
+			<div class="player">
+		<img class="playerIcon" src="img/x.gif" />
+				<span class="playerLabel">Spieler: </span>2041			</div>
+			<div class="start  ">
+		Rundenstart vor 316 Tagen	</div>
+			<div class="mark">
+			</div>
+							<a class="link hide" title="Auf Welt 6 registrieren"  onclick="return Travian.Main.switchActiveServer(6);" href="#"></a>
+			</div>
+
+	<div class="clear"></div>
+			<div id="otherServerSwitch" class="switchButton" onclick="Travian.Main.switchButtonToggle(
+			[
+				{'element':$$('#popup.register .greenbox'), 'className':'registrationBox'},
+				{'element':$$('#popup.register .greenbox'), 'className':'serverListBox'},
+				{'element':$('otherServers'), 'className':'hide'},
+				{'element':$('registerForm'), 'className':'hide'},
+				{'element':$$('#popup.register .serverList .activeServer .server a.link'), 'className':'hide'},
+				{'element':$$('#otherServerSwitch .roundArrow'), 'className':'closed'},
+				{'element':$$('#otherServerSwitch .roundArrow'), 'className':'opened'}
+			]
+		);">
+			<img class="roundArrow closed" src="img/x.gif" />Auf einer anderen Welt spielen			<div class="clear"></div>
+		</div>
+	</div>
+
+<div class="subContent hide" id="otherServers">
+	<div class="serverList currentServer">
+		<h3 class="chooseAServer">Bitte wähle einen Server</h3>
+					<div class="server serverOdd serverBig serverNew serverBigNew ">
+	<div class="name">
+		Welt 4	</div>
+			<div class="player">
+		<img class="playerIcon" src="img/x.gif" />
+				<span class="playerLabel">Spieler: </span>9972			</div>
+			<div class="start  ">
+		Rundenstart vor 22 Tagen	</div>
+			<div class="mark">
+		NEU	</div>
+							<a class="link" title="Auf Welt 4 registrieren"  onclick="return Travian.Main.switchActiveServer(4);" href="#"></a>
+			</div>
+
+					<div class="server serverEven serverSmall serverNormal serverSmallNormal ">
+	<div class="name">
+		Welt 5	</div>
+			<div class="player">
+		<img class="playerIcon" src="img/x.gif" />
+				<span class="playerLabel">Spieler: </span>6093			</div>
+			<div class="start  ">
+		<img class="durationIcon" src="img/x.gif" /> 78 Tage	</div>
+								<a class="link" title="Auf Welt 5 registrieren"  onclick="return Travian.Main.switchActiveServer(5);" href="#"></a>
+			</div>
+
+				<div class="clear"></div>
+	</div>
+
+	</div>
+		</div>
+				<div id="oldRegistrationLink">
+			<a class="toRegistration" id="toRegistration" target="register">
+				<img class="squareArrow" src="img/x.gif">
+				Auf dieser Welt registrieren			</a>
+		</div>
+
+
+				<div class="subContent" id="registerForm">
+						<div class="error" id="showErrorsDiv">&nbsp;</div>
+
+
+			<table class="transparent" id="registerFormTable">
+				<tr>
+					<th class="playerName"><label for="playerName">Accountname:</label></th>
+					<td class="spacer">&nbsp;</td>
+					<td class="playerName">
+						<input id="playerName" class="text" type="text" name="playerName" onfocus="Travian.Main.Registration.showInfoString('Mindestens 3 Zeichen', 'playerNameInfo')" onblur="Travian.Main.Registration.hideInfoString('playerNameInfo')"/><br />
+						<div class="error" id="playerNameInfo"></div>
+					</td>
+				</tr>
+				<tr>
+					<th class="password"><label for="registerPassword">Passwort:</label></th>
+					<td class="spacer">&nbsp;</td>
+					<td class="password">
+						<input id="registerPassword" class="text" type="password" name="password"  onfocus="Travian.Main.Registration.showInfoString('Mindestens 4 Zeichen und nicht der Accountname.', 'passwordInfo')" onblur="Travian.Main.Registration.hideInfoString('passwordInfo')"/><br />
+						<div class="error" id="passwordInfo"></div>
+					</td>
+				</tr>
+				<tr>
+					<th class="email"><label for="email">E-Mail-Adresse:</label></th>
+					<td class="spacer">&nbsp;</td>
+					<td class="email">
+						<input id="email" class="text" type="text" name="email" onfocus="Travian.Main.Registration.showInfoString('Die E-Mail-Adresse wird für die Aktivierung benötigt.', 'emailInfo')" onblur="Travian.Main.Registration.hideInfoString('emailInfo')"/><br />
+						<div class="error" id="emailInfo"></div>
+					</td>
+				</tr>
+				<tr id="preRegistrationCode"  class="hide">
+					<th class="preRegistrationCode"><label for="preRegistrationCode">Key:</label></th>
+					<td class="spacer">&nbsp;</td>
+					<td class="preRegistrationCode">
+						<input id="preRegistrationCode" class="text" type="text" name="preRegistrationCode" onfocus="Travian.Main.Registration.showInfoString('Dieser Server ist nur mit einem Key spielbar.', 'preRegistrationCodeInfo')" onblur="Travian.Main.Registration.hideInfoString('preRegistrationCodeInfo')"/><br />
+						<div class="info"></div>
+						<div class="error" id="preRegistrationCodeInfo"></div>
+					</td>
+				</tr>
+				<tr>
+					<th class="generalTermsAndConditions"></th>
+					<td class="spacer">&nbsp;</td>
+					<td class="generalTermsAndConditions">
+						<div class="checkboxfield">
+							<input id="generalTermsAndConditions" class="check" type="checkbox" name="generalTermsAndConditions" value="1"  />
+							<label for="generalTermsAndConditions">Die <a href="http://www.travian.de/agb.php" target="_blank">AGB</a>, die <a href="http://www.travian.de/agb.php" target="_blank">Datenschutzerklärung</a> und die <a href="http://www.travian.de/agb.php" target="_blank">MYGAME Nutzungsbedingungen</a> wurden von mir gelesen und akzeptiert.</label>
+							<div class="clear"></div>
+						</div>
+						<div class="error"></div>
+					</td>
+				</tr>
+				<tr>
+					<th class="newsletter"></th>
+					<td class="spacer">&nbsp;</td>
+					<td class="newsletter">
+						<div class="checkboxfield">
+							<input id="newsletter" class="check" type="checkbox" name="newsletter" value="1" />
+							<label for="newsletter">Ich bin damit einverstanden, von der Travian Games GmbH über interessante Spielinformationen und Neuigkeiten informiert zu werden.</label>
+							<div class="clear"></div>
+						</div>
+					</td>
+				</tr>
+								<tr>
+					<th class="submit"></th>
+					<td class="spacer">&nbsp;</td>
+					<td class="submit">
+						<br />
+						
+			<button class="fixedSizeBigButton" type="submit">
+				<div class="bigButtonText play white bold">
+						Registrieren
+				</div>
+	        </button>					</td>
+				</tr>
+			</table>
+			<a class="alreadyRegistered" href="activation.php" >
+				Du bist bereits registriert? Hier weiter zur Aktivierung.				<span class="clear"></span>
+			</a>
+		</div>
+	</div>
+</form>
+
+
+				</div>
+				<div class="greenbox-bottom"></div>
+				<div class="clear"></div>
+			</div>
+		
+<script type="text/javascript">
+	var registration = new Travian.Main.Registration();
+		handleOldAndNewRegistration(1, 'http://ts6.travian.de/');
+</script>
+

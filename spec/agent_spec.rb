@@ -38,6 +38,13 @@ module Travian
       after(:all) { unfake }
     end
 
+    describe 'register_data' do
+      it 'calls hub_data with "www.travian.de" and "/register.php?server=de4" when passed "www.travian.de and "server=de4"' do
+        agent.should_receive(:hub_data).with('www.travian.de', '/register.php?server=de4')
+        agent.register_data('www.travian.de', 'de4')
+      end
+    end
+
     describe '#redirected_location' do
       it 'calls post with the host plus the "/register.php" path and limit: 1 option' do
         fake 'www.travian.com/register.php', :post

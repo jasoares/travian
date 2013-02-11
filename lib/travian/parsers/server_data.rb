@@ -7,7 +7,8 @@ module Travian
       world_id = parse_world_id(data)
       speed = parse_speed(data)
       restart_date = parse_restart_date(data)
-      [version, world_id, speed, restart_date]
+      server_id = parse_server_id(data)
+      [version, world_id, speed, restart_date, server_id]
     end
 
     def parse_version(data)
@@ -25,6 +26,13 @@ module Travian
     def parse_restart_date(data)
       date_str = select_world_start_info(data)
       date_str.empty? ? nil : DateTime.strptime(sanitize_date_format(date_str), "%d.%m.%y %H:%M %:z")
+    end
+
+    def parse_server_id(data)
+      links = data.css('div#side_navi li:nth-child(3) a')
+      return nil if links.empty?
+      uri = URI(links.first['href'])
+      uri.query[/server=(\w+)$/]; $1
     end
 
     private
