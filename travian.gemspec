@@ -17,8 +17,8 @@ Gem::Specification.new do |gem|
   gem.test_files    = `git ls-files -- spec/*`.split($/)
   gem.require_path  = "lib"
 
-  gem.add_dependency('httparty', '~> 0.9.0')
-  gem.add_dependency('nokogiri', '~> 1.5.5')
+  gem.add_dependency('httparty', '~> 0.10.2')
+  gem.add_dependency('nokogiri', '~> 1.5.6')
 
   gem.add_development_dependency("rspec", '~> 2.12')
   gem.add_development_dependency("cucumber", '~> 1.2.1')
