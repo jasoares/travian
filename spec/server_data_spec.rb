@@ -10,6 +10,7 @@ module Travian
     let(:arabia_tx4) { load_server_data 'arabiatx4.travian.com' }
     let(:ae_ts6) { load_server_data 'ts6.travian.ae' }
     let(:de_tcx8) { load_server_data 'tcx8.travian.de' }
+    let(:it_beta) { load_server_data 'beta.travian.it' }
 
     describe '.parse' do
       it 'returns an Array' do
@@ -116,12 +117,24 @@ module Travian
     end
 
     describe '.select_info' do
-      it 'returns the script string when passed valid data' do
-        klass.send(:select_info, pt_tx3).should_not be_empty
+      let(:attributes) { %w{ version worldId speed } }
+
+      context 'given the common site structure where there is only one script' do
+        it 'returns the script tags content with the "Travian.Game.*" lines' do
+          str = klass.send(:select_info, pt_tx3)
+          attributes.each { |attr| str.should match(/Travian.Game.#{attr}/) }
+        end
+
+        it 'returns an empty string when passed invalid data' do
+          klass.send(:select_info, ph_ts2).should be_empty
+        end
       end
 
-      it 'returns an empty string when passed invalid data' do
-        klass.send(:select_info, ph_ts2).should be_empty
+      context 'given the edge case of the beta.travian.it' do
+        it 'returns the script tags content with the "Travian.Game.*" lines' do
+          str = klass.send(:select_info, it_beta)
+          attributes.each { |attr| str.should match(/Travian.Game.#{attr}/) }
+        end
       end
     end
 
