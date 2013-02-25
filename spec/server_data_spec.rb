@@ -114,6 +114,10 @@ module Travian
       it 'returns the nil when passed data from tcx8.travian.de' do
         klass.parse_server_id(de_tcx8).should == nil
       end
+
+      it 'returns supports the new side bar format' do
+        klass.parse_server_id(it_beta).should == "it00"
+      end
     end
 
     describe '.select_info' do

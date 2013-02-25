@@ -29,7 +29,9 @@ module Travian
     end
 
     def parse_server_id(data)
-      links = data.css('div#side_navi li:nth-child(3) a')
+      sidebar = select_sidebar(data)
+      return nil if sidebar.empty?
+      links = sidebar.css('li:nth-child(3) a')
       return nil if links.empty?
       uri = URI(links.first['href'])
       uri.query[/server=(\w+)$/]; $1
@@ -50,5 +52,9 @@ module Travian
       date_str.strip.gsub(/[^\d\.\s:+-]|\.$/i, '').gsub(/\s+/, ' ')
     end
 
+    def select_sidebar(data)
+      old_side_bar = data.css('div#side_navi')
+      old_side_bar.empty? ? data.css('div#sidebarBoxMenu') : old_side_bar
+    end
   end
 end
