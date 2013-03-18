@@ -36,7 +36,11 @@ module Travian
     end
 
     def server_data(host)
-      Nokogiri::HTML(get("#{host}").body)
+      begin
+        Nokogiri::HTML(get("#{host}").body)
+      rescue Travian::ConnectionTimeout, Travian::ConnectionRefused => e
+        Nokogiri::HTML("")
+      end
     end
 
     def status_data
@@ -67,10 +71,12 @@ module Travian
       options.merge!(DEFAULT_OPTIONS)
       begin
         HTTParty.send(req, "http://#{path}", options, &block)
-      rescue Timeout::Error, Errno::ETIMEDOUT, Errno::ECONNREFUSED, SocketError => e
+      rescue Timeout::Error, Errno::ETIMEDOUT, SocketError => e
         try += 1
         retry unless try == MAX_TRIES
         raise Travian::ConnectionTimeout.new(path, e)
+      rescue Errno::ECONNREFUSED => e
+        raise Travian::ConnectionRefused.new(path, e)
       end
     end
   end
